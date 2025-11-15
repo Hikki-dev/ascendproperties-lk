@@ -23,11 +23,11 @@ function SearchResults() {
       
       let query = supabase
         .from('properties')
-        .select('id, title, slug, status, price, location_city, location_district, bedrooms, bathrooms, size_sqft, photos, is_featured, property_type, description, amenities, created_at');
+        // Select all fields your PropertyCard might need
+        .select('id, title, slug, status, price, location_city, location_district, bedrooms, bathrooms, size_sqft, photos, is_featured, property_type, description, amenities, created_at, views_count, video_url, agent_id, meta_title, meta_description, published_at, coordinates, updated_at');
 
       // 1. Full-Text Search (for 'q' param)
       if (q) {
-        // This formats the query string for FTS, e.g., "apartment in colombo" -> "apartment & colombo"
         const ftsQuery = q.trim().split(' ').join(' & ');
         query = query.textSearch('fts', ftsQuery);
       }

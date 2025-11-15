@@ -2,12 +2,14 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LogOut, LayoutDashboard, PlusCircle } from "lucide-react";
+import { revalidatePath } from "next/cache";
 
 // Server Action for logging out
 async function logout() {
   "use server";
   const supabase = await createClient(); 
   await supabase.auth.signOut();
+  revalidatePath("/", "layout");
   redirect("/login");
 }
 
@@ -16,12 +18,15 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient(); 
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/admin/login");
-  }
+  // We no longer need to check for the user here,
+  // the proxy.ts file handles all security.
+  
+  // REMOVED THIS BLOCK TO FIX THE LOOP:
+  // const supabase = await createClient(); 
+  // const { data: { user } } = await supabase.auth.getUser();
+  // if (!user) {
+  //   redirect("/admin/login"); 
+  // }
 
   return (
     <div className="flex min-h-screen bg-hover">
