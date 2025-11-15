@@ -44,14 +44,20 @@ async function getPropertyBySlug(slug: string) {
 
   if (error) {
     console.error('Error fetching property:', error);
-    notFound(); // Triggers the 404 page
+    notFound(); // This is correct, it will show a 404
   }
   return data as Property;
 }
 
 // --- Main Page Component ---
-export default async function PropertyPage({ params }: { params: { slug: string } }) {
-  const property = await getPropertyBySlug(params.slug);
+// CHANGED: Updated the type for 'params' to be a Promise
+export default async function PropertyPage({ params }: { params: Promise<{ slug: string }> }) {
+  
+  // ADDED: Await the params promise to get the slug
+  const { slug } = await params;
+
+  // FIXED: Use the unwrapped 'slug' variable
+  const property = await getPropertyBySlug(slug);
 
   const agent = property.agents || {
     name: 'Ascend Properties',
@@ -62,36 +68,16 @@ export default async function PropertyPage({ params }: { params: { slug: string 
 
   return (
     <div className="bg-background min-h-screen">
-      {/* --- Header --- */}
-      <header className="bg-card shadow-sm sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-              <Home className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-2xl font-bold text-text-primary">AscendProperties.lk</span>
-          </Link>
-          <nav className="hidden md:flex items-center gap-8">
-            <Link href="/buy" className="text-text-secondary hover:text-primary transition-colors font-medium">Buy</Link>
-            <Link href="/rent" className="text-text-secondary hover:text-primary transition-colors font-medium">Rent</Link>
-            <Link href="/sell" className="text-text-secondary hover:text-primary transition-colors font-medium">Sell</Link>
-            <Link href="/about" className="text-text-secondary hover:text-primary transition-colors font-medium">About</Link>
-          </nav>
-          <button className="bg-primary text-white px-6 py-2.5 rounded-lg hover:bg-opacity-90 transition-all font-semibold hover:shadow-lg">
-            Get Specialized Help
-          </button>
-        </div>
-      </header>
-      
       {/* --- Main Content --- */}
       <main className="max-w-7xl mx-auto p-4 md:p-8 mt-8">
+       // ...
         {/* --- Image Gallery (like example) --- */}
         <div className="relative h-[300px] md:h-[550px] w-full overflow-hidden rounded-2xl mb-8 border border-border-light">
           <Image
             src={property.photos?.[0] || 'https://placehold.co/1200x600/F1F3F6/6E6E6E?text=No+Image'}
             alt={property.title}
-            layout="fill"
-            objectFit="cover"
+            fill // CHANGED: Use fill prop
+            className="object-cover" // CHANGED: Use Tailwind class
             priority
           />
         </div>

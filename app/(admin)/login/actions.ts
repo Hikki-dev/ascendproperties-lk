@@ -25,5 +25,5 @@ const supabase = await createClient();
   }
 
   revalidatePath("/", "layout"); // Revalidate all pages
-  redirect("/admin/dashboard");
+  redirect("/dashboard");
 }

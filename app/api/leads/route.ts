@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '../../../lib/supabase/client' 
+// CHANGED: Import the correct server-side admin client
+import { createAdminClient } from '@/lib/supabase/server' 
 
 export async function POST(request: NextRequest) {
   try {
+    // CHANGED: Instantiate the client inside the function
+    const supabaseAdmin = await createAdminClient(); 
     const body = await request.json()
     
     const { full_name, phone, email, message, lead_type } = body
@@ -19,7 +22,7 @@ export async function POST(request: NextRequest) {
     // Insert lead
     const { data, error } = await supabaseAdmin
       .from('leads')
-      .insert([body])
+      .insert([body]) // 'body' should be fine if its structure matches the table
       .select()
       .single()
 

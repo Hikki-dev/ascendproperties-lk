@@ -2,10 +2,11 @@
 // REMOVED: import React, { useState } from 'react';
 
 import { supabase } from '../../lib/supabase/client'; // Import your Supabase client
-// import Image from "next/image"; // Removed Next.js Image
-// import Link from 'next/link'; // Removed Next.js Link
+import Image from "next/image"; // Removed Next.js Image
 import { LucideIcon, Search, Home, Building2, MapPin, Bed, Bath, Square, Phone, Mail, MessageSquare, ChevronRight, Star } from 'lucide-react';
 import { HeroSearch } from '../../components/HeroSearch'; // Import our new client component
+import Link from 'next/link';
+
 
 // --- Data Fetching ---
 
@@ -107,31 +108,6 @@ const AscendPropertiesHomepage = async () => {
 
   return (
     <div className="min-h-screen bg-background text-text-primary">
-      {/* Header */}
-      <header className="bg-card shadow-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <a href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <Home className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-2xl font-bold text-text-primary">AscendProperties.lk</span>
-            </a>
-            
-            <nav className="hidden md:flex items-center gap-8">
-              <a href="/buy" className="text-text-secondary hover:text-primary transition-colors font-medium">Buy</a>
-              <a href="/rent" className="text-text-secondary hover:text-primary transition-colors font-medium">Rent</a>
-              <a href="/sell" className="text-text-secondary hover:text-primary transition-colors font-medium">Sell</a>
-              <a href="/about" className="text-text-secondary hover:text-primary transition-colors font-medium">About</a>
-            </nav>
-
-            <button className="bg-primary text-white px-6 py-2.5 rounded-lg hover:bg-opacity-90 transition-all font-semibold hover:shadow-lg">
-              Get Started
-            </button>
-          </div>
-        </div>
-      </header>
-
       {/* Hero Section */}
       <section className="relative bg-ui-soft text-text-primary overflow-hidden">
         <div className="relative max-w-7xl mx-auto px-4 py-20 md:py-32">
@@ -332,71 +308,6 @@ const AscendPropertiesHomepage = async () => {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-text-primary text-white/70 py-12">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                  <Home className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-xl font-bold text-white">AscendProperties</span>
-              </div>
-              <p className="text-white/60">Your trusted partner in finding the perfect property in Sri Lanka.</p>
-            </div>
-
-            <div>
-              <h3 className="font-bold text-white mb-4">Quick Links</h3>
-              <ul className="space-y-2">
-                <li><a href="/buy" className="hover:text-primary transition-colors">Buy Property</a></li>
-                {/* This was the line with the error. I've added the missing '=' sign. */}
-                <li><a href="/rent" className="hover:text-primary transition-colors">Rent Property</a></li>
-                <li><a href="/sell" className="hover:text-primary transition-colors">Sell Property</a></li>
-                <li><a href="/about" className="hover:text-primary transition-colors">About Us</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-bold text-white mb-4">Contact</h3>
-              <ul className="space-y-2">
-                <li className="flex items-center gap-2">
-                  <Phone className="w-4 h-4" />
-                  +94 76 150 0000
-                </li>
-                <li className="flex items-center gap-2">
-                  <Mail className="w-4 h-4" />
-                  info@ascendproperties.lk
-                </li>
-                <li className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4" />
-                  6, 4 R. A. De Mel Mawatha, Colombo 00400
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-bold text-white mb-4">Newsletter</h3>
-              <p className="text-white/60 mb-4">Get the latest property listings in your inbox.</p>
-              <div className="flex gap-2">
-                <input 
-                  type="email" 
-                  placeholder="Your email"
-                  className="flex-1 px-4 py-2 rounded-lg bg-black/30 border border-white/20 focus:border-primary outline-none text-white"
-                />
-                <button className="bg-primary px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors">
-                  Subscribe
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-white/20 pt-8 text-center text-white/60">
-            <p>© 2024 Ascend Properties (Pvt) Ltd. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
 
       <style>{`
         @keyframes fadeInUp {

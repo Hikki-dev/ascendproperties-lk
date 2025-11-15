@@ -1,9 +1,10 @@
-// lib/supabase/server.ts
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
-import { cookies } from "next/headers"; // Only used on the server
+import { cookies } from "next/headers";
 
-function createCookieStore() {
-  const cookieStore = cookies(); // synchronous
+// CHANGED: Made the function async
+async function createCookieStore() {
+  // CHANGED: Awaited the cookies() call
+  const cookieStore = await cookies();
 
   return {
     get(name: string) {
@@ -11,36 +12,49 @@ function createCookieStore() {
     },
     set(name: string, value: string, options: CookieOptions) {
       try {
-        cookieStore.set({
-          name,
-          value,
-          path: options.path,
-          domain: options.domain,
-          httpOnly: options.httpOnly,
-          secure: options.secure,
-          sameSite: options.sameSite,
-          maxAge: options.expires
-            ? Math.floor((options.expires.getTime() - Date.now()) / 1000)
-            : options.maxAge,
-        });
-      } catch {}
+        cookieStore.set({ name, value, ...options });
+      } catch (error) {
+        // The `set` method was called from a Server Component.
+        // This can be ignored if you have middleware refreshing
+        // user sessions.
+      }
     },
     remove(name: string, options: CookieOptions) {
       try {
-        cookieStore.delete({
-          name,
-          path: options.path,
-          domain: options.domain,
-        });
-      } catch {}
+        cookieStore.delete({ name, ...options });
+      } catch (error) {
+        // The `delete` method was called from a Server Component.
+        // This can be ignored if you have middleware refreshing
+        // user sessions.
+      }
     },
   };
 }
 
-export function createSupabaseServerClient() {
+/**
+ * Creates a Supabase client for Server Components, Server Actions,
+ * and Route Handlers that respects RLS.
+ */
+// CHANGED: Made the function async
+export async function createClient() {
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { cookies: createCookieStore() }
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, // Use ANON key
+    // CHANGED: Awaited the createCookieStore() call
+    { cookies: await createCookieStore() }
+  );
+}
+
+/**
+ * Creates a Supabase client for Server Components, Server Actions,
+ * and Route Handlers that bypasses RLS.
+ */
+// CHANGED: Made the function async
+export async function createAdminClient() {
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!, // Use SERVICE_ROLE key
+    // CHANGED: Awaited the createCookieStore() call
+    { cookies: await createCookieStore() }
   );
 }

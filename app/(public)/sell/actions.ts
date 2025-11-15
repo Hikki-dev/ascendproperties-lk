@@ -1,6 +1,7 @@
 "use server";
 
-import { supabaseAdmin } from '@/lib/supabase/client'; // Use the ADMIN client
+// CHANGED: Import the correct server-side admin client creator
+import { createAdminClient } from '@/lib/supabase/server'; 
 import { z } from 'zod'; // For validation
 
 // Define the shape of our form data
@@ -13,6 +14,10 @@ const LeadSchema = z.object({
 });
 
 export async function submitLead(prevState: any, formData: FormData) {
+  // ADDED: Instantiate the admin client inside the function
+  // THIS IS THE FIX: Added 'await' here
+  const supabaseAdmin = await createAdminClient();
+  
   const validatedFields = LeadSchema.safeParse({
     full_name: formData.get('full_name'),
     phone: formData.get('phone'),

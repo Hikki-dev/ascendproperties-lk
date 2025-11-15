@@ -4,6 +4,20 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   
+  // ADD THIS 'images' BLOCK
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'placehold.co',
+      },
+    ],
+  },
+  
   // This is the fix for Turbopack (the default in Next.js 16)
   // An empty object silences the warning, allowing the webpack config to be used.
   turbopack: {

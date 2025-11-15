@@ -8,7 +8,7 @@ async function logout() {
   "use server";
   const supabase = await createClient(); 
   await supabase.auth.signOut();
-  redirect("/admin/login");
+  redirect("/login");
 }
 
 export default async function AdminLayout({
@@ -29,13 +29,13 @@ export default async function AdminLayout({
         <div className="text-xl font-bold text-text-primary mb-8">Admin Panel</div>
         <ul className="space-y-2">
           <li>
-            <Link href="/admin/dashboard" className="flex items-center gap-2 text-text-secondary hover:text-primary">
+            <Link href="/dashboard" className="flex items-center gap-2 text-text-secondary hover:text-primary">
               <LayoutDashboard className="w-5 h-5" />
               Dashboard
             </Link>
           </li>
           <li>
-            <Link href="/admin/add-property" className="flex items-center gap-2 text-text-secondary hover:text-primary">
+            <Link href="/add-property" className="flex items-center gap-2 text-text-secondary hover:text-primary">
               <PlusCircle className="w-5 h-5" />
               Add Property
             </Link>
