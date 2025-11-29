@@ -1,6 +1,7 @@
+```typescript
 import { supabase } from '@/lib/supabase/client';
 import { notFound } from 'next/navigation';
-import { MapPin, Bed, Bath, Square, Phone, Mail, Home, Share2, MessageSquare } from 'lucide-react';
+import { MapPin, Bed, Bath, Square, Phone, Mail, Home, MessageSquare } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link'; 
 import { Button } from '@/components/ui/button';
@@ -8,6 +9,7 @@ import { Property } from '@/types/property';
 import { PropertyGallery } from '@/components/property/PropertyGallery';
 import { RelatedProperties } from '@/components/property/RelatedProperties';
 import { SaveButton } from '@/components/property/SaveButton';
+import { ShareButton } from '@/components/property/ShareButton';
 
 // --- Data Fetching ---
 async function getPropertyBySlug(slug: string) {
@@ -30,7 +32,7 @@ export default async function PropertyPage({ params }: { params: Promise<{ slug:
 
   // Mock agent data for now (since it wasn't in the shared type)
   const agent = {
-    name: 'Ascend Properties',
+    name: 'Adnan',
     email: 'info@ascendproperties.lk',
     phone: '+94 76 150 0000',
     photo_url: '/images/sales-agent.png'
