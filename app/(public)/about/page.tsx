@@ -10,7 +10,7 @@ export default function AboutPage() {
       <section className="relative h-[500px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-black/50 z-10" />
         <Image
-          src="https://placehold.co/1920x800/1877F2/FFFFFF?text=Elevating+Real+Estate"
+          src="/images/about-hero.png"
           alt="About Ascend Properties"
           fill
           className="object-cover"
@@ -90,7 +90,7 @@ export default function AboutPage() {
           
           <div className="relative h-[600px] rounded-2xl overflow-hidden shadow-2xl transform hover:scale-[1.02] transition-transform duration-500">
              <Image
-              src="https://placehold.co/800x1000/F1F3F6/6E6E6E?text=Our+Team"
+              src="/images/our-mission.png"
               alt="Our Team"
               fill
               className="object-cover"
@@ -114,7 +114,7 @@ export default function AboutPage() {
             <Button asChild size="lg" className="bg-white text-primary hover:bg-gray-100 border-none h-12 px-8 text-lg font-bold">
               <Link href="/properties">Browse Properties</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10 h-12 px-8 text-lg">
+            <Button asChild size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-primary h-12 px-8 text-lg font-bold transition-colors">
               <Link href="/contact">Contact Us</Link>
             </Button>
           </div>

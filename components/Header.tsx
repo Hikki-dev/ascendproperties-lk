@@ -19,7 +19,6 @@ export function Header() {
           <nav className="hidden md:flex items-center gap-8">
             <Link href="/buy" className="text-text-secondary hover:text-primary transition-colors font-medium">Buy</Link>
             <Link href="/rent" className="text-text-secondary hover:text-primary transition-colors font-medium">Rent</Link>
-            <Link href="/sell" className="text-text-secondary hover:text-primary transition-colors font-medium">Sell</Link>
             <Link href="/about" className="text-text-secondary hover:text-primary transition-colors font-medium">About</Link>
           </nav>
 
