@@ -126,7 +126,7 @@ const sampleProperties = [
     bathrooms: 4,
     size_sqft: 3500,
     amenities: ['Private Elevator', 'Jacuzzi', 'Roof Terrace', 'Concierge'],
-    photos: ['https://images.unsplash.com/photo-1512918760532-3ad8600304cc?auto=format&fit=crop&w=800&q=80'],
+    photos: ['https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=800&q=80'],
     is_featured: true,
   },
   {
