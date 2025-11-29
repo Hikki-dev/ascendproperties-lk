@@ -32,7 +32,7 @@ async function checkImages() {
     if (!p.photos || p.photos.length === 0) {
       console.log('   ❌ No photos');
     } else {
-      p.photos.forEach(photo => console.log(`   📷 ${photo}`));
+      p.photos.forEach((photo: string) => console.log(`   📷 ${photo}`));
     }
   });
 }
