@@ -74,7 +74,9 @@ export function SaveButton({ propertyId, className }: SaveButtonProps) {
       <Heart 
         className={cn(
           "w-5 h-5 transition-all duration-300", 
-          isSaved ? "fill-accent-error text-accent-error animate-heart-pop" : "text-white hover:scale-110"
+          isSaved 
+            ? "fill-accent-error text-accent-error animate-heart-pop" 
+            : "fill-white text-black hover:scale-110"
         )} 
       />
     </Button>
