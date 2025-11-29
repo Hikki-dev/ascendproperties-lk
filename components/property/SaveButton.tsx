@@ -57,14 +57,17 @@ export function SaveButton({ propertyId, className }: SaveButtonProps) {
     <Button
       variant="ghost"
       size="icon"
-      className={cn("rounded-full hover:bg-white/20", className)}
+      className={cn(
+        "rounded-full bg-black/20 hover:bg-black/40 text-white transition-all duration-300 active:scale-90 backdrop-blur-sm", 
+        className
+      )}
       onClick={handleToggle}
       disabled={loading}
     >
       <Heart 
         className={cn(
-          "w-5 h-5 transition-colors", 
-          isSaved ? "fill-accent-error text-accent-error" : "text-white"
+          "w-5 h-5 transition-all duration-300", 
+          isSaved ? "fill-accent-error text-accent-error scale-110" : "text-white hover:scale-110"
         )} 
       />
     </Button>

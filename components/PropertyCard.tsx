@@ -32,8 +32,8 @@ export function PropertyCard({ property }: { property: Property }) {
           </span>
         </div>
         {property.is_featured && (
-          <div className="absolute top-4 right-4">
-            <span className="bg-accent-gold text-text-primary px-3 py-1.5 rounded-full text-sm font-semibold flex items-center gap-1 shadow-lg">
+          <div className="absolute bottom-4 right-4">
+            <span className="bg-accent-gold text-text-primary px-3 py-1.5 rounded-full text-sm font-semibold flex items-center gap-1 shadow-lg backdrop-blur-sm bg-opacity-90">
               <Star className="w-4 h-4 fill-current" />
               Featured
             </span>

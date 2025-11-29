@@ -2,7 +2,7 @@
 
 import { useSession, signIn, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { LogIn, LogOut, User, LayoutDashboard, Settings } from "lucide-react";
+import { LogIn, LogOut, User, LayoutDashboard, Settings, Heart } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
@@ -71,6 +71,15 @@ export function UserMenu() {
             >
               <Settings className="w-4 h-4" />
               Profile Settings
+            </Link>
+
+            <Link 
+              href="/profile/favorites" 
+              className="flex items-center gap-2 px-4 py-2 text-sm text-text-primary hover:bg-hover hover:text-primary transition-colors"
+              onClick={() => setIsOpen(false)}
+            >
+              <Heart className="w-4 h-4" />
+              My Favorites
             </Link>
 
             <button 
