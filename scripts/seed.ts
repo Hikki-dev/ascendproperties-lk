@@ -30,7 +30,7 @@ const sampleProperties = [
     bathrooms: 2,
     size_sqft: 1850,
     amenities: ['Air Conditioning', 'Swimming Pool', 'Gym', 'Parking', 'Security', 'Elevator'],
-    photos: ['https://placehold.co/800x600/1a1a1a/ffffff?text=Luxury+Apartment'],
+    photos: ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80'],
     is_featured: true,
   },
   {
@@ -46,7 +46,7 @@ const sampleProperties = [
     bathrooms: 4,
     size_sqft: 3200,
     amenities: ['Swimming Pool', 'Garden', 'Solar Power', 'Maids Room', 'CCTV'],
-    photos: ['https://placehold.co/800x600/2a2a2a/ffffff?text=Modern+Villa'],
+    photos: ['https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=800&q=80'],
     is_featured: true,
   },
   {
@@ -62,7 +62,7 @@ const sampleProperties = [
     bathrooms: 2,
     size_sqft: 1500,
     amenities: ['Central AC', 'Parking', 'Security', 'Backup Generator'],
-    photos: ['https://placehold.co/800x600/3a3a3a/ffffff?text=Office+Space'],
+    photos: ['https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80'],
     is_featured: false,
   },
   {
@@ -78,7 +78,7 @@ const sampleProperties = [
     bathrooms: 5,
     size_sqft: 4500,
     amenities: ['Beach Access', 'Pool', 'Garden', 'Staff Quarters'],
-    photos: ['https://placehold.co/800x600/4a4a4a/ffffff?text=Beach+House'],
+    photos: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80'],
     is_featured: true,
   },
   {
@@ -94,7 +94,7 @@ const sampleProperties = [
     bathrooms: 0,
     size_sqft: 2722, // approx for 10 perches
     amenities: ['Water', 'Electricity', 'Road Access'],
-    photos: ['https://placehold.co/800x600/5a5a5a/ffffff?text=Land+Plot'],
+    photos: ['https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80'],
     is_featured: false,
   },
   {
@@ -110,7 +110,7 @@ const sampleProperties = [
     bathrooms: 1,
     size_sqft: 950,
     amenities: ['Sea View', 'Balcony', 'AC', 'Hot Water'],
-    photos: ['https://placehold.co/800x600/6a6a6a/ffffff?text=Sea+View+Apt'],
+    photos: ['https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80'],
     is_featured: false,
   },
   {
@@ -126,7 +126,7 @@ const sampleProperties = [
     bathrooms: 4,
     size_sqft: 3500,
     amenities: ['Private Elevator', 'Jacuzzi', 'Roof Terrace', 'Concierge'],
-    photos: ['https://placehold.co/800x600/7a7a7a/ffffff?text=Penthouse'],
+    photos: ['https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?auto=format&fit=crop&w=800&q=80'],
     is_featured: true,
   },
   {
@@ -142,7 +142,7 @@ const sampleProperties = [
     bathrooms: 2,
     size_sqft: 2200,
     amenities: ['Courtyard', 'Antique Furniture', 'Veranda'],
-    photos: ['https://placehold.co/800x600/8a8a8a/ffffff?text=Colonial+Villa'],
+    photos: ['https://images.unsplash.com/photo-1580587771525-78b9dba3b91d?auto=format&fit=crop&w=800&q=80'],
     is_featured: false,
   },
   {
@@ -158,7 +158,7 @@ const sampleProperties = [
     bathrooms: 2,
     size_sqft: 1100,
     amenities: ['Gym', 'Pool', 'Car Park'],
-    photos: ['https://placehold.co/800x600/9a9a9a/ffffff?text=Modern+Apt'],
+    photos: ['https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=800&q=80'],
     is_featured: false,
   },
   {
@@ -174,7 +174,7 @@ const sampleProperties = [
     bathrooms: 2,
     size_sqft: 5000,
     amenities: ['3 Phase Electricity', 'Loading Bay', 'Office Room'],
-    photos: ['https://placehold.co/800x600/aa1a1a/ffffff?text=Warehouse'],
+    photos: ['https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80'],
     is_featured: false,
   },
   {
@@ -190,7 +190,7 @@ const sampleProperties = [
     bathrooms: 1,
     size_sqft: 600,
     amenities: ['Security', 'Lift'],
-    photos: ['https://placehold.co/800x600/bb2a2a/ffffff?text=Budget+Apt'],
+    photos: ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80'],
     is_featured: false,
   },
   {
@@ -206,7 +206,7 @@ const sampleProperties = [
     bathrooms: 2,
     size_sqft: 1600,
     amenities: ['Garden', 'Garage'],
-    photos: ['https://placehold.co/800x600/cc3a3a/ffffff?text=Quiet+House'],
+    photos: ['https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=800&q=80'],
     is_featured: false,
   },
   {
@@ -222,7 +222,7 @@ const sampleProperties = [
     bathrooms: 0,
     size_sqft: 5445, // 20 perches
     amenities: ['Water', 'Electricity'],
-    photos: ['https://placehold.co/800x600/dd4a4a/ffffff?text=Land+Gampaha'],
+    photos: ['https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80'],
     is_featured: false,
   },
   {
@@ -238,7 +238,7 @@ const sampleProperties = [
     bathrooms: 2,
     size_sqft: 1300,
     amenities: ['AC', 'Parking'],
-    photos: ['https://placehold.co/800x600/ee5a5a/ffffff?text=Apt+Dehiwala'],
+    photos: ['https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80'],
     is_featured: false,
   }
 ];
