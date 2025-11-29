@@ -33,7 +33,7 @@ export default async function PropertyPage({ params }: { params: Promise<{ slug:
     name: 'Ascend Properties',
     email: 'info@ascendproperties.lk',
     phone: '+94 76 150 0000',
-    photo_url: 'https://placehold.co/100x100/1877F2/FFFFFF?text=A'
+    photo_url: '/images/sales-agent.png'
   };
 
   const whatsappMessage = encodeURIComponent(`Hi, I'm interested in ${property.title} (${property.slug}). Please provide more details.`);
