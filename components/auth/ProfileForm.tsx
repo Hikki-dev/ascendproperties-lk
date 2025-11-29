@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ImageUpload } from "@/components/admin/ImageUpload";
-import { updateProfile } from "@/app/profile/actions";
+import { updateProfile } from "@/app/(public)/profile/actions";
 import { useSession } from "next-auth/react";
 import { User, Mail, Save } from "lucide-react";
 
@@ -92,16 +92,21 @@ export function ProfileForm({ user }: { user: any }) {
         <p className="text-xs text-text-secondary">Email cannot be changed.</p>
       </div>
 
-      <Button type="submit" variant="primary" className="w-full" disabled={loading}>
-        {loading ? (
-          "Saving..."
-        ) : (
-          <>
-            <Save className="w-4 h-4 mr-2" />
-            Save Changes
-          </>
-        )}
-      </Button>
+      <div className="flex gap-4">
+        <Button type="button" variant="ghost" className="w-full" onClick={() => window.history.back()}>
+          Cancel
+        </Button>
+        <Button type="submit" variant="primary" className="w-full" disabled={loading}>
+          {loading ? (
+            "Saving..."
+          ) : (
+            <>
+              <Save className="w-4 h-4 mr-2" />
+              Save Changes
+            </>
+          )}
+        </Button>
+      </div>
     </form>
   );
 }
