@@ -76,7 +76,7 @@ function SignInContent() {
                 type="email" 
                 required
                 className="w-full px-4 py-3 rounded-lg border border-border-light focus:border-primary outline-none bg-background"
-                placeholder="admin@ascend.lk"
+                placeholder="name@example.com"
               />
             </div>
             <div>
