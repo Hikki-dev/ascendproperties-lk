@@ -75,7 +75,7 @@ function SignInContent() {
                 name="email"
                 type="email" 
                 required
-                className="w-full px-4 py-3 rounded-lg border border-border-light focus:border-primary outline-none bg-background"
+                className="w-full px-4 py-3 rounded-lg border border-border-light focus:border-primary outline-none bg-background text-text-primary"
                 placeholder="name@example.com"
               />
             </div>
@@ -85,7 +85,7 @@ function SignInContent() {
                 name="password"
                 type="password" 
                 required
-                className="w-full px-4 py-3 rounded-lg border border-border-light focus:border-primary outline-none bg-background"
+                className="w-full px-4 py-3 rounded-lg border border-border-light focus:border-primary outline-none bg-background text-text-primary"
                 placeholder="••••••••"
               />
             </div>
