@@ -13,9 +13,10 @@ interface ImageUploadProps {
   onChange: (value: string[]) => void;
   disabled?: boolean;
   bucket?: string;
+  maxFiles?: number;
 }
 
-export function ImageUpload({ value, onChange, disabled, bucket = 'properties' }: ImageUploadProps) {
+export function ImageUpload({ value, onChange, disabled, bucket = 'properties', maxFiles }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [croppingImage, setCroppingImage] = useState<string | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
@@ -39,8 +40,6 @@ export function ImageUpload({ value, onChange, disabled, bucket = 'properties' }
     setIsUploading(true);
     setCroppingImage(null); // Close cropper
     
-// ... inside component
-
     try {
       const fileExt = pendingFile.name.split('.').pop();
       const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
@@ -58,7 +57,11 @@ export function ImageUpload({ value, onChange, disabled, bucket = 'properties' }
       }
 
       if (result.url) {
-        onChange([...value, result.url]);
+        if (maxFiles === 1) {
+          onChange([result.url]); // Replace existing
+        } else {
+          onChange([...value, result.url]); // Append
+        }
       }
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -72,6 +75,9 @@ export function ImageUpload({ value, onChange, disabled, bucket = 'properties' }
   const onRemove = (url: string) => {
     onChange(value.filter((current) => current !== url));
   };
+
+  const isSingleMode = maxFiles === 1;
+  const hasImage = value.length > 0;
 
   return (
     <div className="space-y-4">
@@ -87,56 +93,87 @@ export function ImageUpload({ value, onChange, disabled, bucket = 'properties' }
         />
       )}
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {value.map((url) => (
-          <div key={url} className="relative aspect-video rounded-lg overflow-hidden border border-border-light group">
-            <Image
-              fill
-              src={url}
-              alt="Uploaded Image"
-              className="object-cover"
-            />
-            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <Button
-                type="button"
-                onClick={() => onRemove(url)}
-                variant="destructive"
-                size="icon"
-                className="h-6 w-6"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div>
-      
-      <div>
-        <input
-          type="file"
-          accept="image/*"
-          className="hidden"
-          ref={fileInputRef}
-          onChange={onSelectFile}
-          disabled={disabled || isUploading}
-        />
-        <Button
-          type="button"
+      {/* Hidden Input */}
+      <input
+        type="file"
+        accept="image/*"
+        className="hidden"
+        ref={fileInputRef}
+        onChange={onSelectFile}
+        disabled={disabled || isUploading}
+      />
+
+      {/* Single Image Mode */}
+      {isSingleMode && hasImage ? (
+        <div 
+          className="relative w-full h-64 rounded-xl overflow-hidden border-2 border-border-light group cursor-pointer hover:border-primary transition-colors"
           onClick={() => fileInputRef.current?.click()}
-          disabled={disabled || isUploading}
-          variant="outline"
-          className="w-full h-24 border-dashed border-2 border-border-light hover:border-primary hover:bg-primary/5 flex flex-col items-center justify-center gap-2 text-text-secondary hover:text-primary transition-colors"
         >
-          {isUploading ? (
-            <Loader2 className="h-6 w-6 animate-spin" />
-          ) : (
-            <ImagePlus className="h-6 w-6" />
+          <Image
+            fill
+            src={value[0]}
+            alt="Uploaded Image"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+             <div className="text-white flex flex-col items-center gap-2">
+               <ImagePlus className="h-8 w-8" />
+               <span className="font-medium">Click to change</span>
+             </div>
+          </div>
+          {isUploading && (
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-10">
+              <Loader2 className="h-8 w-8 animate-spin text-white" />
+            </div>
           )}
-          <span className="font-medium">
-            {isUploading ? 'Uploading...' : 'Click to upload image'}
-          </span>
-        </Button>
-      </div>
+        </div>
+      ) : (
+        /* Multiple Image Mode or Empty Single Mode */
+        <>
+          {value.length > 0 && !isSingleMode && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {value.map((url) => (
+                <div key={url} className="relative aspect-video rounded-lg overflow-hidden border border-border-light group">
+                  <Image
+                    fill
+                    src={url}
+                    alt="Uploaded Image"
+                    className="object-cover"
+                  />
+                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button
+                      type="button"
+                      onClick={() => onRemove(url)}
+                      variant="destructive"
+                      size="icon"
+                      className="h-6 w-6"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          
+          <Button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={disabled || isUploading}
+            variant="outline"
+            className="w-full h-24 border-dashed border-2 border-border-light hover:border-primary hover:bg-primary/5 flex flex-col items-center justify-center gap-2 text-text-secondary hover:text-primary transition-colors"
+          >
+            {isUploading ? (
+              <Loader2 className="h-6 w-6 animate-spin" />
+            ) : (
+              <ImagePlus className="h-6 w-6" />
+            )}
+            <span className="font-medium">
+              {isUploading ? 'Uploading...' : 'Click to upload image'}
+            </span>
+          </Button>
+        </>
+      )}
     </div>
   );
 }

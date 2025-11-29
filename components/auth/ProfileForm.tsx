@@ -60,6 +60,7 @@ export function ProfileForm({ user }: { user: any }) {
               value={avatar} 
               onChange={(urls) => setAvatar([urls[urls.length - 1]])} // Keep only the last uploaded image
               bucket="avatars"
+              maxFiles={1}
             />
           </div>
         </div>
