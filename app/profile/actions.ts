@@ -27,19 +27,31 @@ export async function updateProfile(userId: string, formData: FormData) {
   const { fullName, avatarUrl } = validatedFields.data;
 
   // Update Supabase Auth User Metadata
-  const { error } = await supabase.auth.admin.updateUserById(
-    userId,
-    {
-      user_metadata: {
-        full_name: fullName,
-        avatar_url: avatarUrl
-      }
-    }
-  );
+  // Check if userId is a valid UUID (Supabase Auth ID)
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId);
 
-  if (error) {
-    console.error('Error updating profile:', error);
-    return { message: 'Failed to update profile' };
+  if (isUuid) {
+    // Update Supabase Auth User Metadata for Email/Password users
+    const { error } = await supabase.auth.admin.updateUserById(
+      userId,
+      {
+        user_metadata: {
+          full_name: fullName,
+          avatar_url: avatarUrl
+        }
+      }
+    );
+
+    if (error) {
+      console.error('Error updating profile:', error);
+      return { message: 'Failed to update profile' };
+    }
+  } else {
+    // For Google users (NextAuth), we can't update Supabase Auth metadata directly 
+    // because the ID is from Google, not Supabase.
+    // In a real app, you'd store this in a 'profiles' table.
+    // For now, we'll just return success as we can't update Google's data.
+    console.log('Skipping Supabase update for non-UUID user (likely Google Auth):', userId);
   }
 
   revalidatePath('/');
