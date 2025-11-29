@@ -41,7 +41,7 @@ export function PropertyCard({ property }: { property: Property }) {
         )}
       </div>
 
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         <h3 className="text-2xl font-bold text-text-primary mb-2">
           LKR {(property.price / 1000000).toFixed(1)}M
         </h3>

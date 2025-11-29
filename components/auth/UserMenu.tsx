@@ -97,8 +97,8 @@ export function UserMenu() {
 
   return (
     <Button variant="ghost" onClick={() => signIn()} className="text-text-primary hover:text-primary font-medium">
-      <LogIn className="w-4 h-4 mr-2" />
-      Sign In
+      <LogIn className="w-4 h-4 md:mr-2" />
+      <span className="hidden md:inline">Sign In</span>
     </Button>
   );
 }

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 
 export function FloatingWhatsApp() {
   return (
-    <div className="fixed bottom-6 left-6 z-50">
+    <div className="fixed bottom-6 right-6 z-50">
       <Button
         asChild
         className="rounded-full w-14 h-14 bg-[#25D366] hover:bg-[#128C7E] text-white shadow-lg hover:scale-110 transition-transform duration-300 flex items-center justify-center p-0 overflow-hidden"
