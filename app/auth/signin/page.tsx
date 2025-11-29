@@ -26,7 +26,7 @@ function SignInContent() {
 
         <div className="space-y-4">
           <Button 
-            className="w-full h-12 text-lg font-medium" 
+            className="w-full h-12 text-lg font-medium border-border-light hover:bg-gray-50 text-text-primary" 
             variant="outline"
             onClick={() => signIn("google", { callbackUrl })}
           >
@@ -50,49 +50,6 @@ function SignInContent() {
             </svg>
             Continue with Google
           </Button>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-border-light" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-text-secondary">Or continue with email</span>
-            </div>
-          </div>
-
-          <form 
-            className="space-y-4 text-left"
-            onSubmit={(e) => {
-              e.preventDefault();
-              const email = (e.currentTarget.elements.namedItem('email') as HTMLInputElement).value;
-              const password = (e.currentTarget.elements.namedItem('password') as HTMLInputElement).value;
-              signIn("credentials", { email, password, callbackUrl });
-            }}
-          >
-            <div>
-              <label className="text-sm font-medium text-text-secondary block mb-1">Email</label>
-              <input 
-                name="email"
-                type="email" 
-                required
-                className="w-full px-4 py-3 rounded-lg border border-border-light focus:border-primary outline-none bg-background"
-                placeholder="admin@ascend.lk"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-text-secondary block mb-1">Password</label>
-              <input 
-                name="password"
-                type="password" 
-                required
-                className="w-full px-4 py-3 rounded-lg border border-border-light focus:border-primary outline-none bg-background"
-                placeholder="••••••••"
-              />
-            </div>
-            <Button type="submit" className="w-full h-12 text-lg font-medium" variant="primary">
-              Sign In
-            </Button>
-          </form>
         </div>
       </div>
     </div>
