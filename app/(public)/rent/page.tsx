@@ -10,7 +10,7 @@ async function getPropertiesForRent() {
   const { data, error } = await supabase
     .from('properties')
     .select('id, title, slug, property_type, status, price, location_district, location_city, address, bedrooms, bathrooms, size_sqft, description, photos, amenities, is_featured, views_count, created_at')
-    .or('status.eq.rent,status.eq.both'); // Filter for 'rent' or 'both'
+    .eq('status', 'rent'); // Filter for 'rent'
 
   if (error) {
     console.error('Error fetching properties:', error);
