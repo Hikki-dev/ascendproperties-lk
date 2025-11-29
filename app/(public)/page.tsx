@@ -259,14 +259,18 @@ const AscendPropertiesHomepage = async () => {
             Let our expert team help you discover the perfect home in Sri Lanka
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant="secondary" className="bg-white text-primary hover:bg-white/90 h-auto py-4 px-8 text-lg">
-              <MessageSquare className="w-5 h-5 mr-2" />
-              Chat on WhatsApp
-            </Button>
-            <Button variant="primary" className="bg-text-primary text-white hover:bg-black h-auto py-4 px-8 text-lg">
-              <Phone className="w-5 h-5 mr-2" />
-              Call Us Now
-            </Button>
+            <a href="https://wa.me/94761500000" target="_blank" rel="noopener noreferrer">
+              <Button variant="secondary" className="bg-white text-primary hover:bg-white/90 h-auto py-4 px-8 text-lg w-full sm:w-auto">
+                <MessageSquare className="w-5 h-5 mr-2" />
+                Chat on WhatsApp
+              </Button>
+            </a>
+            <a href="tel:+94761500000">
+              <Button variant="primary" className="bg-text-primary text-white hover:bg-black h-auto py-4 px-8 text-lg w-full sm:w-auto">
+                <Phone className="w-5 h-5 mr-2" />
+                Call Us Now
+              </Button>
+            </a>
           </div>
         </div>
       </section>
