@@ -10,9 +10,10 @@ interface ImageUploadProps {
   value: string[];
   onChange: (value: string[]) => void;
   disabled?: boolean;
+  bucket?: string;
 }
 
-export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
+export function ImageUpload({ value, onChange, disabled, bucket = 'properties' }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -30,7 +31,7 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
         const filePath = `${fileName}`;
 
         const { error: uploadError } = await supabase.storage
-          .from('properties')
+          .from(bucket)
           .upload(filePath, file);
 
         if (uploadError) {
@@ -38,7 +39,7 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
         }
 
         const { data } = supabase.storage
-          .from('properties')
+          .from(bucket)
           .getPublicUrl(filePath);
 
         newUrls.push(data.publicUrl);

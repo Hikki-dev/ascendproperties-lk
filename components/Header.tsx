@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LoginButton } from "@/components/auth/LoginButton";
+import { UserMenu } from '@/components/auth/UserMenu';
 
 export function Header() {
   return (
@@ -23,7 +24,7 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-4">
-            <LoginButton />
+            <UserMenu />
           <Button asChild variant="primary">
             <Link href="/properties">Get Started</Link>
           </Button>
