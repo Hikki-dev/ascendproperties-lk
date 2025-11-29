@@ -10,6 +10,7 @@ import { Property } from '@/types/property';
 type PropertyType = {
   icon: LucideIcon;
   label: string;
+  value: string;
   count: number;
 };
 
@@ -34,23 +35,29 @@ async function getFeaturedProperties() {
 
 // 3. Function to get property types and counts
 async function getPropertyTypes(): Promise<PropertyType[]> {
-  const types = ['House', 'Apartment', 'Land', 'Commercial'];
+  const types = [
+    { value: 'house', label: 'House', icon: Home },
+    { value: 'apartment', label: 'Apartment', icon: Building2 },
+    { value: 'land', label: 'Land', icon: MapPin },
+    { value: 'commercial', label: 'Commercial', icon: Building2 }
+  ];
+
   const counts = await Promise.all(
     types.map(async (type) => {
       const { count } = await supabase
         .from('properties')
         .select('*', { count: 'exact', head: true })
-        .eq('property_type', type);
+        .eq('property_type', type.value);
       return count || 0;
     })
   );
 
-  return [
-    { icon: Home, label: 'House', count: counts[0] },
-    { icon: Building2, label: 'Apartment', count: counts[1] },
-    { icon: MapPin, label: 'Land', count: counts[2] },
-    { icon: Building2, label: 'Commercial', count: counts[3] }
-  ];
+  return types.map((type, index) => ({
+    icon: type.icon,
+    label: type.label,
+    value: type.value, // Add value to type definition if needed, or just use label for display and value for link
+    count: counts[index]
+  })) as any; // Cast to any to avoid strict type checking for now or update PropertyType
 }
 
 const AscendPropertiesHomepage = async () => {
@@ -93,7 +100,7 @@ const AscendPropertiesHomepage = async () => {
               const Icon = type.icon;
               return (
                 <Link 
-                  href={`/search?type=${type.label}`}
+                  href={`/search?type=${type.value}`}
                   key={index}
                   className="group bg-hover rounded-2xl p-8 hover:bg-primary transition-all duration-300 cursor-pointer hover:shadow-xl hover:-translate-y-1 block"
                 >
