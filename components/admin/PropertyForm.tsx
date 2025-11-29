@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase/client';
 import { Property } from '@/types/property';
 import { propertySchema } from '@/lib/validations';
+import { ImageUpload } from '@/components/admin/ImageUpload';
 
 interface PropertyFormProps {
   initialData?: Partial<Property>;
@@ -111,7 +112,7 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
         
         <div className="grid md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-text-secondary">Title</label>
+            <label className="text-sm font-bold text-text-primary">Title</label>
             <input
               name="title"
               value={formData.title}
@@ -122,7 +123,7 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
           </div>
           
           <div className="space-y-2">
-            <label className="text-sm font-medium text-text-secondary">Slug (URL)</label>
+            <label className="text-sm font-bold text-text-primary">Slug (URL)</label>
             <input
               name="slug"
               value={formData.slug}
@@ -133,7 +134,7 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-text-secondary">Price (LKR)</label>
+            <label className="text-sm font-bold text-text-primary">Price (LKR)</label>
             <input
               type="number"
               name="price"
@@ -145,7 +146,7 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-text-secondary">Status</label>
+            <label className="text-sm font-bold text-text-primary">Status</label>
             <select
               name="status"
               value={formData.status}
@@ -162,7 +163,7 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-text-secondary">Description</label>
+          <label className="text-sm font-bold text-text-primary">Description</label>
           <textarea
             name="description"
             value={formData.description}
@@ -174,11 +175,20 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
       </div>
 
       <div className="bg-card p-6 rounded-xl shadow-sm border border-border-light space-y-6">
+        <h2 className="text-xl font-bold text-text-primary">Property Images</h2>
+        <ImageUpload 
+          value={formData.photos} 
+          onChange={(urls) => setFormData(prev => ({ ...prev, photos: urls }))}
+          disabled={loading}
+        />
+      </div>
+
+      <div className="bg-card p-6 rounded-xl shadow-sm border border-border-light space-y-6">
         <h2 className="text-xl font-bold text-text-primary">Property Details</h2>
         
         <div className="grid md:grid-cols-3 gap-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-text-secondary">Type</label>
+            <label className="text-sm font-bold text-text-primary">Type</label>
             <select
               name="property_type"
               value={formData.property_type}
@@ -193,7 +203,7 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-text-secondary">Bedrooms</label>
+            <label className="text-sm font-bold text-text-primary">Bedrooms</label>
             <input
               type="number"
               name="bedrooms"
@@ -204,7 +214,7 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-text-secondary">Bathrooms</label>
+            <label className="text-sm font-bold text-text-primary">Bathrooms</label>
             <input
               type="number"
               name="bathrooms"
@@ -215,7 +225,7 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-text-secondary">Size (Sq. Ft)</label>
+            <label className="text-sm font-bold text-text-primary">Size (Sq. Ft)</label>
             <input
               type="number"
               name="size_sqft"
@@ -226,7 +236,7 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-text-secondary">City</label>
+            <label className="text-sm font-bold text-text-primary">City</label>
             <input
               name="location_city"
               value={formData.location_city}
@@ -237,7 +247,7 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-text-secondary">District</label>
+            <label className="text-sm font-bold text-text-primary">District</label>
             <input
               name="location_district"
               value={formData.location_district}
