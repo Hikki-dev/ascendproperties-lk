@@ -2,8 +2,13 @@
 
 import { supabase } from '@/lib/supabase/client';
 import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 
+export async function getSession() {
+  return await getServerSession(authOptions);
+}
 // Note: In a real app with NextAuth, we'd get the user ID from the session.
 // However, since we're using Supabase RLS, we need to sync the NextAuth user with Supabase Auth or use a custom solution.
 // For this MVP, we'll assume the user is authenticated via Supabase or we'll mock the user ID if using NextAuth only.

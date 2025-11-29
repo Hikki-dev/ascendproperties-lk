@@ -1,14 +1,15 @@
-
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { getSavedProperties } from "@/actions/property";
+import { createClient } from "@/lib/supabase/server";
 import { PropertyCard } from "@/components/PropertyCard";
+import { getSavedProperties } from "@/actions/property";
+import { authOptions } from "@/lib/auth";
 import { Heart } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default async function FavoritesPage() {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
 
   if (!session || !session.user?.email) {
     redirect("/");
