@@ -5,7 +5,7 @@ export default withAuth(
   function middleware(req) {
     // If the user is authenticated, the token will be available in req.nextauth.token
     const token = req.nextauth.token;
-    const isAdmin = token?.email === process.env.ADMIN_EMAIL || token?.email === "admin@ascend.lk"; // Fallback for demo
+    const isAdmin = token?.email === process.env.ADMIN_EMAIL || token?.email === "admin@ascend.lk";
 
     // If accessing admin routes and not an admin, redirect to home
     if (req.nextUrl.pathname.startsWith("/admin") && !isAdmin) {
