@@ -60,9 +60,37 @@ const handler = NextAuth({
         token.picture = user.image;
         token.name = user.name;
       }
+
+      // Fetch latest profile data from DB on sign in or update
+      if (user || trigger === "update") {
+        try {
+          const { createClient } = await import('@supabase/supabase-js');
+          const supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+          );
+          
+          const userId = (user?.id || token.id) as string;
+          
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('full_name, avatar_url')
+            .eq('id', userId)
+            .single();
+            
+          if (profile) {
+            if (profile.full_name) token.name = profile.full_name;
+            if (profile.avatar_url) token.picture = profile.avatar_url;
+          }
+        } catch (error) {
+          console.error("Error fetching profile:", error);
+        }
+      }
+
       if (trigger === "update" && session) {
-        token.name = session.name;
-        token.picture = session.image;
+        // Allow client-side update to override immediately (optimistic)
+        if (session.name) token.name = session.name;
+        if (session.image) token.picture = session.image;
       }
       return token;
     },
