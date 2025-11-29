@@ -79,7 +79,7 @@ export function ImageCropper({ imageSrc, onCropComplete, onCancel, aspect = 16 /
           </div>
 
           <div className="flex justify-end gap-3">
-            <Button variant="ghost" onClick={onCancel}>
+            <Button variant="outline" onClick={onCancel} className="text-text-primary border-border-light hover:bg-gray-100">
               Cancel
             </Button>
             <Button onClick={createCroppedImage} variant="primary">
