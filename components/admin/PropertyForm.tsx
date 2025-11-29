@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase/client';
 import { Property } from '@/types/property';
+import { propertySchema } from '@/lib/validations';
 
 interface PropertyFormProps {
   initialData?: Partial<Property>;
@@ -30,18 +31,48 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
     is_featured: initialData?.is_featured || false,
   });
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'number' ? parseFloat(value) : 
+      [name]: type === 'number' ? (value === '' ? 0 : parseFloat(value)) : 
               type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
     }));
+    // Clear error when user types
+    if (errors[name]) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setErrors({});
+
+    // Validate with Zod
+    const result = propertySchema.safeParse(formData);
+
+    if (!result.success) {
+      const formattedErrors = result.error.flatten().fieldErrors;
+      const fieldErrors: Record<string, string> = {};
+      
+      // Convert array of strings to single string for our simple error state
+      Object.entries(formattedErrors).forEach(([key, value]) => {
+        if (value && value.length > 0) {
+          fieldErrors[key] = value[0];
+        }
+      });
+      
+      setErrors(fieldErrors);
+      setLoading(false);
+      return;
+    }
 
     try {
       const dataToSubmit = {
