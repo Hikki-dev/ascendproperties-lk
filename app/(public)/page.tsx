@@ -72,13 +72,25 @@ const AscendPropertiesHomepage = async () => {
   return (
     <div className="min-h-screen bg-background text-text-primary">
       {/* Hero Section */}
-      <section className="relative bg-ui-soft text-text-primary overflow-hidden">
-        <div className="relative max-w-7xl mx-auto px-4 py-20 md:py-32">
+      <section className="relative h-[600px] flex items-center justify-center overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/images/hero-bg.png"
+            alt="Galle Face Green Colombo"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-black/40" /> {/* Overlay for readability */}
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 w-full">
           <div className="max-w-3xl">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 animate-fade-in-up text-text-primary">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 animate-fade-in-up text-white drop-shadow-lg">
               Find Your Dream Home in Sri Lanka
             </h1>
-            <p className="text-xl md:text-2xl text-text-secondary mb-10 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+            <p className="text-xl md:text-2xl text-white/90 mb-10 animate-fade-in-up drop-shadow-md" style={{ animationDelay: '0.1s' }}>
               Discover luxury properties from Colombo to Galle
             </p>
 
