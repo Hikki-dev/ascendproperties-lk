@@ -6,6 +6,7 @@ import { ImagePlus, X, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabase/client';
 import { ImageCropper } from '@/components/ui/image-cropper';
+import { uploadImage } from '@/app/actions/upload';
 
 interface ImageUploadProps {
   value: string[];
@@ -38,30 +39,30 @@ export function ImageUpload({ value, onChange, disabled, bucket = 'properties' }
     setIsUploading(true);
     setCroppingImage(null); // Close cropper
     
+// ... inside component
+
     try {
       const fileExt = pendingFile.name.split('.').pop();
       const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
       const filePath = `${fileName}`;
       
-      // Create a File from Blob
-      const fileToUpload = new File([croppedBlob], fileName, { type: 'image/jpeg' });
+      const formData = new FormData();
+      formData.append('file', croppedBlob, fileName);
+      formData.append('bucket', bucket);
+      formData.append('path', filePath);
 
-      const { error: uploadError } = await supabase.storage
-        .from(bucket)
-        .upload(filePath, fileToUpload);
+      const result = await uploadImage(formData);
 
-      if (uploadError) {
-        throw uploadError;
+      if (result.error) {
+        throw new Error(result.error);
       }
 
-      const { data } = supabase.storage
-        .from(bucket)
-        .getPublicUrl(filePath);
-
-      onChange([...value, data.publicUrl]);
+      if (result.url) {
+        onChange([...value, result.url]);
+      }
     } catch (error) {
       console.error('Error uploading image:', error);
-      alert('Error uploading image');
+      alert('Error uploading image: ' + (error as Error).message);
     } finally {
       setIsUploading(false);
       setPendingFile(null);
