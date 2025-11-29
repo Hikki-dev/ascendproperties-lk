@@ -30,26 +30,33 @@ export function SaveButton({ propertyId, className }: SaveButtonProps) {
   }, [propertyId, session]);
 
   const handleToggle = async (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent link navigation if inside a card
+    e.preventDefault();
     e.stopPropagation();
 
     if (!session) {
-      // Redirect to login or show modal
       alert("Please login to save properties");
       return;
     }
 
     if (!session.user?.email) return;
 
-    setLoading(true);
+    // Optimistic update
+    const newSavedState = !isSaved;
+    setIsSaved(newSavedState);
+
     try {
       const result = await toggleSaveProperty(propertyId, session.user.email);
-      setIsSaved(result.saved);
+      
+      // If server result differs from optimistic state, revert
+      if (result.saved !== newSavedState) {
+        setIsSaved(result.saved);
+      }
+      
       router.refresh();
     } catch (error) {
       console.error("Error saving property", error);
-    } finally {
-      setLoading(false);
+      // Revert on error
+      setIsSaved(!newSavedState);
     }
   };
 
@@ -67,7 +74,7 @@ export function SaveButton({ propertyId, className }: SaveButtonProps) {
       <Heart 
         className={cn(
           "w-5 h-5 transition-all duration-300", 
-          isSaved ? "fill-accent-error text-accent-error scale-110" : "text-white hover:scale-110"
+          isSaved ? "fill-accent-error text-accent-error animate-heart-pop" : "text-white hover:scale-110"
         )} 
       />
     </Button>
