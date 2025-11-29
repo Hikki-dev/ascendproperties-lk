@@ -167,7 +167,14 @@ export default async function PropertyPage({ params }: { params: Promise<{ slug:
                   className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white h-12 text-lg"
                 >
                   <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-                    <MessageSquare className="w-5 h-5 mr-2" />
+                    <div className="relative w-6 h-6 mr-2">
+                      <Image 
+                        src="/images/whatsapp-logo.png" 
+                        alt="WhatsApp" 
+                        fill
+                        className="object-contain brightness-0 invert"
+                      />
+                    </div>
                     WhatsApp
                   </a>
                 </Button>
