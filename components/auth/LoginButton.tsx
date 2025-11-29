@@ -37,7 +37,7 @@ export function LoginButton() {
   }
 
   return (
-    <Button variant="ghost" onClick={() => signIn('google')} className="text-text-primary hover:text-primary font-medium">
+    <Button variant="ghost" onClick={() => signIn()} className="text-text-primary hover:text-primary font-medium">
       <LogIn className="w-4 h-4 mr-2" />
       Sign In
     </Button>

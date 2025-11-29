@@ -16,23 +16,30 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials, req) {
-        // Simple admin check against env variables
-        const adminEmail = process.env.ADMIN_EMAIL;
-        const adminPassword = process.env.ADMIN_PASSWORD;
+        if (!credentials?.email || !credentials?.password) return null;
 
-        if (
-          credentials?.email === adminEmail && 
-          credentials?.password === adminPassword &&
-          adminEmail && adminPassword
-        ) {
-          return {
-            id: "admin-user",
-            name: "Admin User",
-            email: adminEmail,
-            image: "https://placehold.co/100x100/1877F2/FFFFFF?text=Admin",
-          };
+        const { createClient } = await import('@supabase/supabase-js');
+        const supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        );
+
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: credentials.email,
+          password: credentials.password,
+        });
+
+        if (error || !data.user) {
+          console.error("Supabase auth error:", error);
+          return null;
         }
-        return null;
+
+        return {
+          id: data.user.id,
+          name: data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || "Admin",
+          email: data.user.email,
+          image: data.user.user_metadata?.avatar_url || "https://placehold.co/100x100/1877F2/FFFFFF?text=User",
+        };
       }
     })
   ],
