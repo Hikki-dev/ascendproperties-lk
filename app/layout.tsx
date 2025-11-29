@@ -1,3 +1,5 @@
+import { AuthProvider } from "@/components/auth/AuthProvider";
+import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
@@ -5,8 +7,30 @@ import { Inter } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Ascend Properties - Find Your Dream Home in Sri Lanka',
-  description: 'Discover luxury properties from Colombo to Galle. Buy, rent, or sell with Sri Lanka\'s trusted real estate agency.',
+  title: {
+    default: 'Ascend Properties | Luxury Real Estate in Sri Lanka',
+    template: '%s | Ascend Properties'
+  },
+  description: 'Discover luxury apartments, houses, and lands for sale and rent in Colombo and across Sri Lanka. Your trusted partner for premium real estate.',
+  keywords: ['Real Estate Sri Lanka', 'Colombo Apartments', 'Luxury Houses', 'Land for Sale', 'Commercial Property'],
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://ascendproperties.lk',
+    siteName: 'Ascend Properties',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Ascend Properties',
+      },
+    ],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 }
 
 export default function RootLayout({
@@ -16,7 +40,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <AuthProvider>
+          {children}
+          <FloatingWhatsApp />
+        </AuthProvider>
+      </body>
     </html>
   )
 }

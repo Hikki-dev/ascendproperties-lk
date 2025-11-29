@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { SaveButton } from '@/components/property/SaveButton';
 import Image from 'next/image';
 import { MapPin, Bed, Bath, Square, Star } from 'lucide-react';
 import type { Property } from '@/types/property'; // Import your main Property type
@@ -8,9 +10,9 @@ export function PropertyCard({ property }: { property: Property }) {
 
   return (
     <Link 
-      href={`/properties/${property.slug}`}
+      href={`/property/${property.slug}`}
       key={property.id}
-      className="group bg-card rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer hover:-translate-y-2 block border border-border-light"
+      className="group bg-card rounded-2xl shadow-sm hover:shadow-2xl hover:bg-hover transition-all duration-300 overflow-hidden cursor-pointer hover:-translate-y-2 block border border-border-light"
     >
       <div className="relative h-64 overflow-hidden">
         <Image 
@@ -19,6 +21,9 @@ export function PropertyCard({ property }: { property: Property }) {
           fill
           className="object-cover group-hover:scale-110 transition-transform duration-500"
         />
+        <div className="absolute top-4 right-4 z-10">
+          <SaveButton propertyId={property.id} />
+        </div>
         <div className="absolute top-4 left-4">
           <span className={`px-4 py-1.5 rounded-full text-sm font-semibold shadow-lg ${
             property.status === 'sale' ? 'bg-accent-error text-white' : 'bg-accent-success text-white'

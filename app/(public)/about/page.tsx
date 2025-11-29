@@ -1,96 +1,125 @@
+import Image from 'next/image';
+import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Home, Phone, Mail, MapPin, Award, Users, TrendingUp, ShieldCheck, Target, Eye, Gem } from 'lucide-react';
-
-// Reusable component for "Why Us" items
-function InfoCard({ icon: Icon, title, description }: { icon: any, title: string, description: string }) {
-  return (
-    <div className="bg-card p-6 rounded-2xl border border-border-light shadow-sm">
-      <div className="w-12 h-12 bg-primary/10 text-primary rounded-lg flex items-center justify-center mb-4">
-        <Icon className="w-6 h-6" />
-      </div>
-      <h3 className="text-xl font-bold text-text-primary mb-2">{title}</h3>
-      <p className="text-text-secondary">{description}</p>
-    </div>
-  );
-}
+import { CheckCircle2, Users, Building2, Trophy } from 'lucide-react';
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-background text-text-primary">
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto p-4 md:p-8 my-12">
-        {/* Hero Section */}
-        <section className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-4">
-            About Ascend Properties
+    <div className="bg-background min-h-screen">
+      {/* Hero Section */}
+      <section className="relative h-[500px] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 bg-black/50 z-10" />
+        <Image
+          src="https://placehold.co/1920x800/1877F2/FFFFFF?text=Elevating+Real+Estate"
+          alt="About Ascend Properties"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="relative z-20 text-center px-4 max-w-4xl animate-fade-in-up">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white drop-shadow-lg">
+            Redefining Luxury Living in Sri Lanka
           </h1>
-          <p className="text-xl text-text-secondary max-w-3xl mx-auto">
-            Your trusted partner in navigating the Sri Lankan real estate market. We are dedicated to finding your perfect property with integrity and expertise.
+          <p className="text-xl md:text-2xl text-white/90 max-w-2xl mx-auto leading-relaxed">
+            Your trusted partner for premium residential and commercial properties in Colombo and beyond.
           </p>
-        </section>
+        </div>
+      </section>
 
-        {/* Mission & Vision */}
-        <section className="grid md:grid-cols-2 gap-8 mb-16">
-          <div className="bg-card p-8 rounded-2xl border border-border-light shadow-lg">
-            <div className="flex items-center gap-3 mb-4">
-              <Target className="w-8 h-8 text-primary" />
-              <h2 className="text-3xl font-bold text-text-primary">Our Mission</h2>
-            </div>
-            <p className="text-text-secondary text-lg">
-              To provide an exceptional, transparent, and personalized real estate experience for every client. We leverage local expertise and modern technology to achieve your property goals, whether you are buying, selling, or renting.
-            </p>
+      {/* Stats Section */}
+      <section className="py-12 bg-white border-b border-border-light">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            {[
+              { label: 'Years Experience', value: '10+', icon: Trophy },
+              { label: 'Properties Sold', value: '500+', icon: Building2 },
+              { label: 'Happy Clients', value: '1000+', icon: Users },
+              { label: 'Awards Won', value: '15', icon: CheckCircle2 },
+            ].map((stat, i) => {
+              const Icon = stat.icon;
+              return (
+                <div key={i} className="space-y-2">
+                  <div className="flex justify-center mb-4">
+                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+                      <Icon className="w-6 h-6" />
+                    </div>
+                  </div>
+                  <h3 className="text-3xl font-bold text-text-primary">{stat.value}</h3>
+                  <p className="text-text-secondary font-medium">{stat.label}</p>
+                </div>
+              );
+            })}
           </div>
-          <div className="bg-card p-8 rounded-2xl border border-border-light shadow-lg">
-            <div className="flex items-center gap-3 mb-4">
-              <Eye className="w-8 h-8 text-primary" />
-              <h2 className="text-3xl font-bold text-text-primary">Our Vision</h2>
-            </div>
-            <p className="text-text-secondary text-lg">
-              To be Sri Lanka's most trusted and sought-after real estate agency, renowned for our market knowledge, ethical practices, and unwavering commitment to client success.
-            </p>
-          </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Why Choose Us */}
-        <section>
-          <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-10 text-center">
-            Why Choose Us?
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <InfoCard 
-              icon={Award}
-              title="Expert Knowledge"
-              description="Our agents possess deep, localized knowledge of Colombo, Galle, and beyond, ensuring you get the best advice and valuation."
-            />
-            <InfoCard 
-              icon={ShieldCheck}
-              title="Transparent & Honest"
-              description="We operate with 100% transparency. No hidden fees, no surprises—just clear communication from start to finish."
-            />
-            <InfoCard 
-              icon={Users}
-              title="Client-Centric Service"
-              description="You are our priority. We listen to your unique needs and tailor our services to match your specific goals."
-            />
-            <InfoCard 
-              icon={TrendingUp}
-              title="Data-Driven Insights"
-              description="We use the latest market data and trends to ensure you're making an informed decision, whether buying or selling."
-            />
-            <InfoCard 
-              icon={Gem}
-              title="Curated Portfolio"
-              description="We focus on quality. Our listings are carefully selected to offer the best value and opportunities in the market."
-            />
-            <InfoCard 
-              icon={Phone}
-              title="Full-Service Support"
-              description="From legal consultation to property management, we provide a seamless, end-to-end service for your convenience."
-            />
+      {/* Mission & Vision */}
+      <section className="py-20 max-w-7xl mx-auto px-4">
+        <div className="grid md:grid-cols-2 gap-16 items-center">
+          <div className="space-y-8">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-6">Our Mission</h2>
+              <p className="text-text-secondary text-lg leading-relaxed">
+                At Ascend Properties, we believe that finding a home is more than just a transaction; it's about finding a space where life unfolds. Our mission is to provide a seamless, transparent, and premium real estate experience that empowers our clients to make informed decisions.
+              </p>
+            </div>
+            
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold text-text-primary">Why Choose Ascend?</h3>
+              <ul className="space-y-3">
+                {[
+                  'Unmatched Local Market Knowledge',
+                  'Curated Portfolio of Premium Properties',
+                  'End-to-End Legal & Financial Support',
+                  'Personalized Concierge Service'
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3 text-text-primary text-lg">
+                    <CheckCircle2 className="w-5 h-5 text-accent-success shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="pt-4">
+              <Button asChild size="lg" variant="primary" className="h-12 px-8 text-lg">
+                <Link href="/contact">Get in Touch</Link>
+              </Button>
+            </div>
           </div>
-        </section>
-      </main>
+          
+          <div className="relative h-[600px] rounded-2xl overflow-hidden shadow-2xl transform hover:scale-[1.02] transition-transform duration-500">
+             <Image
+              src="https://placehold.co/800x1000/F1F3F6/6E6E6E?text=Our+Team"
+              alt="Our Team"
+              fill
+              className="object-cover"
+            />
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-8">
+              <p className="text-white text-xl font-bold">Dedicated to Excellence</p>
+              <p className="text-white/80">Our team of experts is here for you.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="bg-primary py-20 text-center text-white">
+        <div className="max-w-3xl mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Find Your Dream Property?</h2>
+          <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
+            Browse our exclusive listings or contact our agents for a private consultation.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Button asChild size="lg" className="bg-white text-primary hover:bg-gray-100 border-none h-12 px-8 text-lg font-bold">
+              <Link href="/properties">Browse Properties</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10 h-12 px-8 text-lg">
+              <Link href="/contact">Contact Us</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

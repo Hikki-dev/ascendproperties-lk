@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Home, Phone, Mail, MapPin } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export function Footer() {
   return (
@@ -53,9 +54,9 @@ export function Footer() {
                 placeholder="Your email"
                 className="flex-1 px-4 py-2 rounded-lg bg-black/30 border border-white/20 focus:border-primary outline-none text-white"
               />
-              <button className="bg-primary px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors">
+              <Button variant="primary" className="rounded-lg">
                 Subscribe
-              </button>
+              </Button>
             </div>
           </div>
         </div>

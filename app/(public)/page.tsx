@@ -1,39 +1,19 @@
-// REMOVED: "use client";
-// REMOVED: import React, { useState } from 'react';
-
-import { supabase } from '../../lib/supabase/client'; // Import your Supabase client
-import Image from "next/image"; // Removed Next.js Image
+import { supabase } from '@/lib/supabase/client';
+import Image from "next/image";
 import { LucideIcon, Search, Home, Building2, MapPin, Bed, Bath, Square, Phone, Mail, MessageSquare, ChevronRight, Star } from 'lucide-react';
-import { HeroSearch } from '../../components/HeroSearch'; // Import our new client component
+import { HeroSearch } from '@/components/HeroSearch';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Property } from '@/types/property';
 
-
-// --- Data Fetching ---
-
-// 1. Define a type for our Property (matching your DB schema)
-type Property = {
-  id: string; // uuid
-  title: string;
-  slug: string;
-  property_type: string; // USER-DEFINED enum
-  status: string; // USER-DEFINED enum ('sale', 'rent')
-  price: number;
-  location_city: string;
-  bedrooms: number | null;
-  bathrooms: number | null;
-  size_sqft: number | null;
-  photos: string[]; // ARRAY of text[]
-  is_featured: boolean;
-};
-
-// 2. Define the PropertyType for the counts
+// 1. Define the PropertyType for the counts
 type PropertyType = {
   icon: LucideIcon;
   label: string;
   count: number;
 };
 
-// 3. Function to get featured properties
+// 2. Function to get featured properties
 async function getFeaturedProperties() {
   const { data, error } = await supabase
     .from('properties')
@@ -52,10 +32,10 @@ async function getFeaturedProperties() {
   })) as (Property & { image: string })[];
 }
 
-// 4. Function to get property types and counts
+// 3. Function to get property types and counts
 async function getPropertyTypes(): Promise<PropertyType[]> {
   const { data, error } = await supabase
-    .rpc('get_property_type_counts') // We'll create this SQL function
+    .rpc('get_property_type_counts')
 
   if (error) {
     console.error('Error fetching property types:', error);
@@ -68,7 +48,6 @@ async function getPropertyTypes(): Promise<PropertyType[]> {
     ];
   }
   
-  // Map Supabase data to your component's expected format
   return data.map((type: { property_type: string, count: number }) => ({
     icon: type.property_type === 'House' ? Home : 
           type.property_type === 'Apartment' ? Building2 :
@@ -78,29 +57,10 @@ async function getPropertyTypes(): Promise<PropertyType[]> {
   }));
 }
 
-// --- SQL Function for Property Types ---
-// You need to run this ONCE in your Supabase SQL Editor:
-/*
-  create or replace function get_property_type_counts()
-  returns table (property_type text, count bigint)
-  language sql
-  as $$
-    select 
-      property_type, -- This matches your schema
-      count(*) as count
-    from properties
-    group by property_type;
-  $$;
-*/
-
-// --- Your Component (Now a Server Component) ---
-
 const AscendPropertiesHomepage = async () => {
-  // 5. Fetch data when the page loads on the server
   const featuredProperties = await getFeaturedProperties();
   const propertyTypes = await getPropertyTypes();
 
-  // Static testimonials (can be fetched from DB later)
   const testimonials = [
     { name: 'Priya Fernando', role: 'Homebuyer', content: 'Ascend Properties made our dream home a reality...', rating: 5 },
     { name: 'Ravi Perera', role: 'Property Investor', content: 'Best real estate agency in Colombo...', rating: 5 }
@@ -119,7 +79,6 @@ const AscendPropertiesHomepage = async () => {
               Discover luxury properties from Colombo to Galle
             </p>
 
-            {/* 6. Render the HeroSearch Client Component */}
             <HeroSearch />
 
           </div>
@@ -162,28 +121,27 @@ const AscendPropertiesHomepage = async () => {
             <h2 className="text-3xl md:text-4xl font-bold text-text-primary">
               Featured Properties
             </h2>
-            <a href="/buy" className="text-primary hover:text-opacity-80 font-semibold flex items-center gap-2 group">
+            <Link href="/buy" className="text-primary hover:text-opacity-80 font-semibold flex items-center gap-2 group">
               View All
               <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </a>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {featuredProperties.map((property) => (
-              <a 
-                href={`/properties/${property.slug}`} // Use SLUG for the URL
+              <Link 
+                href={`/property/${property.slug}`}
                 key={property.id}
                 className="group bg-card rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer hover:-translate-y-2 block border border-border-light"
               >
                 <div className="relative h-64 overflow-hidden">
-                  <img 
-                    src={property.image} // Use the mapped image
+                  <Image 
+                    src={property.image}
                     alt={property.title}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    className="group-hover:scale-110 transition-transform duration-500"
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                   <div className="absolute top-4 left-4">
-                    {/* Use 'status' column and new colors */}
                     <span className={`px-4 py-1.5 rounded-full text-sm font-semibold shadow-lg ${
                       property.status === 'sale' ? 'bg-accent-error text-white' : 'bg-accent-success text-white'
                     }`}>
@@ -231,7 +189,7 @@ const AscendPropertiesHomepage = async () => {
                     )}
                   </div>
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
         </div>
@@ -297,14 +255,14 @@ const AscendPropertiesHomepage = async () => {
             Let our expert team help you discover the perfect home in Sri Lanka
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-primary px-8 py-4 rounded-xl font-semibold hover:bg-hover transition-all hover:shadow-2xl flex items-center justify-center gap-2">
-              <MessageSquare className="w-5 h-5" />
+            <Button variant="secondary" className="bg-white text-primary hover:bg-white/90 h-auto py-4 px-8 text-lg">
+              <MessageSquare className="w-5 h-5 mr-2" />
               Chat on WhatsApp
-            </button>
-            <button className="bg-text-primary text-white px-8 py-4 rounded-xl font-semibold hover:bg-black transition-all hover:shadow-2xl flex items-center justify-center gap-2">
-              <Phone className="w-5 h-5" />
+            </Button>
+            <Button variant="primary" className="bg-text-primary text-white hover:bg-black h-auto py-4 px-8 text-lg">
+              <Phone className="w-5 h-5 mr-2" />
               Call Us Now
-            </button>
+            </Button>
           </div>
         </div>
       </section>

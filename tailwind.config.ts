@@ -9,24 +9,35 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // From your palette doc
-        primary: '#1877F2',
-        background: '#FAFBFD',
-        card: '#FFFFFF',
-        hover: '#F1F3F6',
-        'text-primary': '#1A1A1A',
-        'text-secondary': '#6E6E6E',
-        'text-placeholder': '#A3A3A3',
-        'border-light': '#E5E7EB',
-        'ui-soft': '#F1F3F6',
-        
-        // Functional Colors
-        'accent-success': '#2ECC71',
-        'accent-warning': '#F39C12',
-        'accent-error': '#E74C3C', // Was 'Error / Sold'
-        'accent-gold': '#F8CF40', // Was 'Gold Soft'
+        primary: {
+          DEFAULT: "#1877F2",
+          foreground: "#FFFFFF",
+        },
+        background: "#FAFBFD",
+        card: "#FFFFFF",
+        hover: "#F1F3F6",
+        text: {
+          primary: "#1A1A1A",
+          secondary: "#6E6E6E",
+          placeholder: "#A3A3A3",
+        },
+        border: {
+          light: "#E5E7EB",
+        },
+        ui: {
+          soft: "#F1F3F6",
+        },
+        accent: {
+          success: "#2ECC71",
+          warning: "#F39C12",
+          error: "#E74C3C",
+          gold: "#F8CF40",
+          "gold-light": "#FFCE38",
+        },
       },
-      // You can also add your fonts here if needed
+      fontFamily: {
+        sans: ["var(--font-inter)", "sans-serif"],
+      },
     },
   },
   plugins: [],

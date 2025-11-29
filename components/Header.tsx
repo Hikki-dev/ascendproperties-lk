@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { Home } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { LoginButton } from "@/components/auth/LoginButton";
 
 export function Header() {
   return (
@@ -21,18 +23,10 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-4">
-            <Link 
-              href="/login" 
-              className="bg-hover text-text-primary px-6 py-2.5 rounded-lg hover:bg-border-light transition-all font-semibold"
-            >
-              Login
-            </Link>
-            <Link 
-              href="/sell" 
-              className="bg-primary text-white px-6 py-2.5 rounded-lg hover:bg-opacity-90 transition-all font-semibold hover:shadow-lg hidden sm:block"
-            >
-              Get Started
-            </Link>
+            <LoginButton />
+          <Button asChild variant="primary">
+            <Link href="/properties">Get Started</Link>
+          </Button>
           </div>
         </div>
       </div>

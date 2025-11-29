@@ -3,8 +3,10 @@
 @tailwind utilities;
 
 :root {
-  --background: #fafbfd; /* Your 'Base Background' */
-  --foreground: #1a1a1a; /* Your 'Primary Text' */
+  --background: #fafbfd;
+  --foreground: #1a1a1a;
+  --primary: #1877f2;
+  --primary-foreground: #ffffff;
 }
 
 /* 2. DELETE THIS @theme BLOCK */

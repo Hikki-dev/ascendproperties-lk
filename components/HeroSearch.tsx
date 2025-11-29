@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 // import { useRouter } from 'next/navigation'; // Removed this line
 import { Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export const HeroSearch = () => {
   // const router = useRouter(); // Removed this line
@@ -60,13 +61,14 @@ export const HeroSearch = () => {
           <option value="100m+">100M+</option>
         </select>
 
-        <button 
+        <Button 
           onClick={handleSearch}
-          className="bg-primary text-white px-8 py-3 rounded-xl hover:bg-opacity-90 transition-all font-semibold hover:shadow-lg flex items-center gap-2"
+          variant="primary"
+          className="px-8 py-3 h-auto text-base"
         >
-          <Search className="w-5 h-5" />
+          <Search className="w-5 h-5 mr-2" />
           Search
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -1,99 +1,77 @@
-import { supabase } from '../../../../lib/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 import { notFound } from 'next/navigation';
-import { MapPin, Bed, Bath, Square, Phone, Mail, Home } from 'lucide-react';
+import { MapPin, Bed, Bath, Square, Phone, Mail, Home, Share2, MessageSquare } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link'; 
-
-// --- Type Definitions ---
-type Agent = {
-  name: string;
-  email: string;
-  phone: string;
-  photo_url: string;
-} | null;
-
-type Property = {
-  id: string;
-  title: string;
-  slug: string;
-  property_type: string;
-  status: string;
-  price: number;
-  location_city: string;
-  location_district: string;
-  address: string | null;
-  bedrooms: number | null;
-  bathrooms: number | null;
-  size_sqft: number | null;
-  description: string | null;
-  photos: string[];
-  amenities: string[]; // Assuming amenities is jsonb -> string[]
-  agents: Agent;
-};
+import { Button } from '@/components/ui/button';
+import { Property } from '@/types/property';
+import { PropertyGallery } from '@/components/property/PropertyGallery';
+import { RelatedProperties } from '@/components/property/RelatedProperties';
+import { SaveButton } from '@/components/property/SaveButton';
 
 // --- Data Fetching ---
 async function getPropertyBySlug(slug: string) {
   const { data, error } = await supabase
     .from('properties')
-    .select(`
-      *,
-      agents ( name, email, phone, photo_url )
-    `)
+    .select('*')
     .eq('slug', slug)
     .single();
 
   if (error) {
     console.error('Error fetching property:', error);
-    notFound(); // This is correct, it will show a 404
+    notFound();
   }
   return data as Property;
 }
 
-// --- Main Page Component ---
-// CHANGED: Updated the type for 'params' to be a Promise
 export default async function PropertyPage({ params }: { params: Promise<{ slug: string }> }) {
-  
-  // ADDED: Await the params promise to get the slug
   const { slug } = await params;
-
-  // FIXED: Use the unwrapped 'slug' variable
   const property = await getPropertyBySlug(slug);
 
-  const agent = property.agents || {
+  // Mock agent data for now (since it wasn't in the shared type)
+  const agent = {
     name: 'Ascend Properties',
     email: 'info@ascendproperties.lk',
     phone: '+94 76 150 0000',
     photo_url: 'https://placehold.co/100x100/1877F2/FFFFFF?text=A'
   };
 
+  const whatsappMessage = encodeURIComponent(`Hi, I'm interested in ${property.title} (${property.slug}). Please provide more details.`);
+  const whatsappLink = `https://wa.me/94761500000?text=${whatsappMessage}`;
+
   return (
     <div className="bg-background min-h-screen">
-      {/* --- Main Content --- */}
       <main className="max-w-7xl mx-auto p-4 md:p-8 mt-8">
-       // ...
-        {/* --- Image Gallery (like example) --- */}
-        <div className="relative h-[300px] md:h-[550px] w-full overflow-hidden rounded-2xl mb-8 border border-border-light">
-          <Image
-            src={property.photos?.[0] || 'https://placehold.co/1200x600/F1F3F6/6E6E6E?text=No+Image'}
-            alt={property.title}
-            fill // CHANGED: Use fill prop
-            className="object-cover" // CHANGED: Use Tailwind class
-            priority
-          />
+        
+        {/* Gallery */}
+        <div className="mb-8">
+          <PropertyGallery images={property.photos} title={property.title} />
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
           
-          {/* --- Left Column (Details) --- */}
+          {/* Left Column (Details) */}
           <div className="w-full lg:w-2/3">
             {/* Title & Price */}
             <div className="bg-card p-6 rounded-2xl shadow-sm border border-border-light mb-6">
-              <h1 className="text-3xl md:text-4xl font-bold text-text-primary">{property.title}</h1>
-              <p className="text-lg text-text-secondary flex items-center gap-2 mt-2">
-                <MapPin className="w-5 h-5" />
-                {property.address || `${property.location_city}, ${property.location_district}`}
-              </p>
+              <div className="flex justify-between items-start">
+                <div>
+                  <h1 className="text-3xl md:text-4xl font-bold text-text-primary">{property.title}</h1>
+                  <p className="text-lg text-text-secondary flex items-center gap-2 mt-2">
+                    <MapPin className="w-5 h-5" />
+                    {property.location_city}, {property.location_district}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <SaveButton propertyId={property.id} className="text-text-secondary hover:text-accent-error" />
+                  <Button variant="outline" size="icon" className="shrink-0">
+                    <Share2 className="w-5 h-5" />
+                  </Button>
+                </div>
+              </div>
+              
               <div className="border-t border-border-light my-4"></div>
+              
               <div className="flex justify-between items-center">
                 <div>
                   <p className="text-sm text-text-secondary">Price</p>
@@ -154,15 +132,22 @@ export default async function PropertyPage({ params }: { params: Promise<{ slug:
                 </div>
               </div>
             )}
+
+            {/* Related Properties */}
+            <RelatedProperties 
+              currentPropertyId={property.id} 
+              type={property.property_type} 
+              city={property.location_city} 
+            />
           </div>
 
-          {/* --- Right Column (Sticky Sidebar) --- */}
+          {/* Right Column (Sticky Sidebar) */}
           <div className="w-full lg:w-1/3">
             <div className="bg-card p-6 rounded-2xl shadow-md border border-border-light sticky top-24">
               <h3 className="text-xl font-bold text-text-primary mb-4">
-                Agent Information
+                Interested?
               </h3>
-              <div className="flex items-center gap-4 mb-4">
+              <div className="flex items-center gap-4 mb-6">
                 <Image 
                   src={agent.photo_url} 
                   alt={agent.name}
@@ -172,23 +157,43 @@ export default async function PropertyPage({ params }: { params: Promise<{ slug:
                 />
                 <div>
                   <p className="font-bold text-lg text-text-primary">{agent.name}</p>
-                  <p className="text-text-secondary">{agent.phone}</p>
+                  <p className="text-text-secondary">Sales Agent</p>
                 </div>
               </div>
-              <a 
-                href={`tel:${agent.phone}`}
-                className="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-opacity-90 flex items-center justify-center gap-2 transition-all"
-              >
-                <Phone className="w-5 h-5" />
-                Contact Agent
-              </a>
-              <a 
-                href={`mailto:${agent.email}`}
-                className="w-full bg-hover text-text-primary mt-2 py-3 rounded-lg font-semibold hover:bg-border-light flex items-center justify-center gap-2 transition-all"
-              >
-                <Mail className="w-5 h-5" />
-                Send Email
-              </a>
+              
+              <div className="space-y-3">
+                <Button 
+                  asChild 
+                  className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white h-12 text-lg"
+                >
+                  <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
+                    <MessageSquare className="w-5 h-5 mr-2" />
+                    WhatsApp
+                  </a>
+                </Button>
+                
+                <Button 
+                  asChild 
+                  variant="outline" 
+                  className="w-full h-12 text-lg border-primary text-primary hover:bg-primary hover:text-white transition-colors"
+                >
+                  <a href={`tel:${agent.phone}`}>
+                    <Phone className="w-5 h-5 mr-2" />
+                    Call Agent
+                  </a>
+                </Button>
+
+                <Button 
+                  asChild 
+                  variant="outline" 
+                  className="w-full h-12 text-lg border-text-secondary text-text-primary hover:bg-text-secondary hover:text-white transition-colors"
+                >
+                  <a href={`mailto:${agent.email}`}>
+                    <Mail className="w-5 h-5 mr-2" />
+                    Send Email
+                  </a>
+                </Button>
+              </div>
             </div>
           </div>
 
