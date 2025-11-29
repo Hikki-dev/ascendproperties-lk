@@ -123,6 +123,7 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
             >
               <option value="sale">For Sale</option>
               <option value="rent">For Rent</option>
+              <option value="both">Both (Sale & Rent)</option>
               <option value="sold">Sold</option>
               <option value="off_market">Off Market</option>
             </select>

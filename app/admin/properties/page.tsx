@@ -1,8 +1,9 @@
 import { supabase } from '@/lib/supabase/client';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Plus, Pencil, Trash2, Eye } from 'lucide-react';
+import { Plus, Pencil, Eye } from 'lucide-react';
 import Image from 'next/image';
+import { DeletePropertyButton } from '@/components/admin/DeletePropertyButton';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -92,9 +93,7 @@ export default async function AdminPropertiesPage() {
                           <Pencil className="w-4 h-4" />
                         </Link>
                       </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-accent-error hover:text-accent-error hover:bg-accent-error/10">
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      <DeletePropertyButton id={property.id} />
                     </div>
                   </td>
                 </tr>

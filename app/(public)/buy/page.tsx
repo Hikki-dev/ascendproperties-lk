@@ -11,7 +11,7 @@ async function getPropertiesForSale() {
     .from('properties')
     // UPDATED: Select all fields from your main Property type
     .select('id, title, slug, property_type, status, price, location_district, location_city, address, bedrooms, bathrooms, size_sqft, description, photos, amenities, is_featured, views_count, created_at')
-    .eq('status', 'sale'); // Filter for 'sale'
+    .or('status.eq.sale,status.eq.both'); // Filter for 'sale' or 'both'
 
   if (error) {
     console.error('Error fetching properties:', error);
