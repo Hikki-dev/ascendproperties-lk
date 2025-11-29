@@ -76,7 +76,7 @@ const AscendPropertiesHomepage = async () => {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/images/hero-bg.png"
+            src="/images/hero-bg.jpg"
             alt="Galle Face Green Colombo"
             fill
             className="object-cover"

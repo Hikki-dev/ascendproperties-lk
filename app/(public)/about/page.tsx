@@ -114,7 +114,7 @@ export default function AboutPage() {
             <Button asChild size="lg" className="bg-white text-primary hover:bg-gray-100 border-none h-12 px-8 text-lg font-bold">
               <Link href="/properties">Browse Properties</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-primary h-12 px-8 text-lg font-bold transition-colors">
+            <Button asChild size="lg" variant="outline" className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-primary h-12 px-8 text-lg font-bold transition-colors">
               <Link href="/contact">Contact Us</Link>
             </Button>
           </div>
