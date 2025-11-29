@@ -65,9 +65,7 @@ export default async function PropertyPage({ params }: { params: Promise<{ slug:
                 </div>
                 <div className="flex gap-2">
                   <SaveButton propertyId={property.id} className="text-text-secondary hover:text-accent-error" />
-                  <Button variant="outline" size="icon" className="shrink-0">
-                    <Share2 className="w-5 h-5" />
-                  </Button>
+                  <ShareButton title={property.title} />
                 </div>
               </div>
               
