@@ -22,14 +22,51 @@ export function ImageUpload({ value, onChange, disabled, bucket = 'properties', 
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onSelectFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      setPendingFile(file);
-      const reader = new FileReader();
-      reader.addEventListener('load', () => setCroppingImage(reader.result as string));
-      reader.readAsDataURL(file);
-      // Reset input so same file can be selected again
+      const files = Array.from(e.target.files);
+
+      // If multiple files (or just one but we want to skip crop for bulk), upload all directly
+      // For now, let's keep crop ONLY if exactly 1 file is selected AND we are not in a "bulk mode" explicitly?
+      // Actually, standard behavior: 1 file -> crop. >1 files -> bulk upload no crop.
+      
+      if (files.length === 1) {
+        const file = files[0];
+        setPendingFile(file);
+        const reader = new FileReader();
+        reader.addEventListener('load', () => setCroppingImage(reader.result as string));
+        reader.readAsDataURL(file);
+      } else {
+        // Bulk upload
+        setIsUploading(true);
+        try {
+          const newUrls: string[] = [];
+          
+          for (const file of files) {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+            const filePath = `${fileName}`;
+            
+            const formData = new FormData();
+            formData.append('file', file, fileName); // Direct file, no crop
+            formData.append('bucket', bucket);
+            formData.append('path', filePath);
+
+            const result = await uploadImage(formData);
+            if (result.error) throw new Error(result.error);
+            if (result.url) newUrls.push(result.url);
+          }
+
+          onChange([...value, ...newUrls]);
+        } catch (error) {
+          console.error('Error uploading images:', error);
+          alert('Error uploading images: ' + (error as Error).message);
+        } finally {
+          setIsUploading(false);
+        }
+      }
+      
+      // Reset input
       e.target.value = '';
     }
   };
@@ -101,6 +138,7 @@ export function ImageUpload({ value, onChange, disabled, bucket = 'properties', 
         ref={fileInputRef}
         onChange={onSelectFile}
         disabled={disabled || isUploading}
+        multiple={maxFiles !== 1}
       />
 
       {/* Single Image Mode */}

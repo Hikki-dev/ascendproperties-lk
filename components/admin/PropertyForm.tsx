@@ -82,8 +82,10 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
         }
       });
       
+      console.error('Validation errors:', fieldErrors);
       setErrors(fieldErrors);
       setLoading(false);
+      alert('Please fix the validation errors shown in the form.');
       return;
     }
 
@@ -111,7 +113,14 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
       router.refresh();
     } catch (error) {
       console.error('Error saving property:', error);
-      alert('Error saving property. Please try again.');
+      // Detailed error logging
+      if (error instanceof Error) {
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+      }
+      // @ts-ignore
+      if (error?.message) alert(`Error saving property: ${error.message}`);
+      else alert('Error saving property. Please check console for details.');
     } finally {
       setLoading(false);
     }
@@ -345,7 +354,7 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
         </div>
       </div>
 
-      <div className="flex gap-4 pt-4">
+      <div className="flex flex-col md:flex-row gap-4 pt-4">
         <Button type="submit" variant="primary" size="lg" className="px-8" disabled={loading}>
           {loading ? 'Saving...' : isEdit ? 'Update Property' : 'Create Property'}
         </Button>
