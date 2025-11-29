@@ -126,7 +126,7 @@ const sampleProperties = [
     bathrooms: 4,
     size_sqft: 3500,
     amenities: ['Private Elevator', 'Jacuzzi', 'Roof Terrace', 'Concierge'],
-    photos: ['https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?auto=format&fit=crop&w=800&q=80'],
+    photos: ['https://images.unsplash.com/photo-1512918760532-3ad8600304cc?auto=format&fit=crop&w=800&q=80'],
     is_featured: true,
   },
   {
@@ -142,7 +142,7 @@ const sampleProperties = [
     bathrooms: 2,
     size_sqft: 2200,
     amenities: ['Courtyard', 'Antique Furniture', 'Veranda'],
-    photos: ['https://images.unsplash.com/photo-1580587771525-78b9dba3b91d?auto=format&fit=crop&w=800&q=80'],
+    photos: ['https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80'],
     is_featured: false,
   },
   {
