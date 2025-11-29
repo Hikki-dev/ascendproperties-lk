@@ -3,6 +3,7 @@ import { Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LoginButton } from "@/components/auth/LoginButton";
 import { UserMenu } from '@/components/auth/UserMenu';
+import { MobileMenu } from '@/components/MobileMenu';
 
 export function Header() {
   return (
@@ -24,9 +25,12 @@ export function Header() {
 
           <div className="flex items-center gap-4">
             <UserMenu />
-          <Button asChild variant="primary">
-            <Link href="/properties">Get Started</Link>
-          </Button>
+            <div className="hidden md:block">
+              <Button asChild variant="primary">
+                <Link href="/properties">Get Started</Link>
+              </Button>
+            </div>
+            <MobileMenu />
           </div>
         </div>
       </div>
