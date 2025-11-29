@@ -16,6 +16,7 @@ export function PropertyFilters() {
     price: searchParams.get('price') || 'all',
     bedrooms: searchParams.get('bedrooms') || 'all',
   });
+  const [isOpen, setIsOpen] = useState(false);
 
   // Update local state when URL params change
   useEffect(() => {
@@ -44,12 +45,17 @@ export function PropertyFilters() {
 
   return (
     <div className="bg-card rounded-xl shadow-sm border border-border-light p-6 sticky top-24">
-      <div className="flex items-center gap-2 mb-6">
-        <Filter className="w-5 h-5 text-primary" />
-        <h2 className="font-bold text-lg text-text-primary">Filters</h2>
+      <div className="flex items-center justify-between mb-6 cursor-pointer lg:cursor-default" onClick={() => setIsOpen(!isOpen)}>
+        <div className="flex items-center gap-2">
+          <Filter className="w-5 h-5 text-primary" />
+          <h2 className="font-bold text-lg text-text-primary">Filters</h2>
+        </div>
+        <div className="lg:hidden">
+          {isOpen ? 'Hide' : 'Show'}
+        </div>
       </div>
 
-      <div className="space-y-6">
+      <div className={`space-y-6 ${isOpen ? 'block' : 'hidden lg:block'}`}>
         {/* Search */}
         <div>
           <label className="text-sm font-medium text-text-secondary mb-2 block">Search</label>

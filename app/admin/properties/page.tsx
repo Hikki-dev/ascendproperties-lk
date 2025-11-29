@@ -42,9 +42,9 @@ export default async function AdminPropertiesPage() {
             <thead className="bg-ui-soft border-b border-border-light">
               <tr>
                 <th className="px-6 py-4 text-left text-sm font-bold text-text-primary">Property</th>
-                <th className="px-6 py-4 text-left text-sm font-bold text-text-primary">Type</th>
+                <th className="hidden md:table-cell px-6 py-4 text-left text-sm font-bold text-text-primary">Type</th>
                 <th className="px-6 py-4 text-left text-sm font-bold text-text-primary">Price</th>
-                <th className="px-6 py-4 text-left text-sm font-bold text-text-primary">Status</th>
+                <th className="hidden lg:table-cell px-6 py-4 text-left text-sm font-bold text-text-primary">Status</th>
                 <th className="px-6 py-4 text-right text-sm font-bold text-text-primary">Actions</th>
               </tr>
             </thead>
@@ -53,7 +53,7 @@ export default async function AdminPropertiesPage() {
                 <tr key={property.id} className="hover:bg-hover transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
-                      <div className="relative w-16 h-12 rounded-lg overflow-hidden bg-gray-100 border border-border-light">
+                      <div className="relative w-16 h-12 rounded-lg overflow-hidden bg-gray-100 border border-border-light flex-shrink-0">
                         <Image
                           src={property.photos?.[0] || 'https://placehold.co/100x100/F1F3F6/6E6E6E?text=No+Image'}
                           alt={property.title}
@@ -61,17 +61,17 @@ export default async function AdminPropertiesPage() {
                           className="object-cover"
                         />
                       </div>
-                      <div>
+                      <div className="min-w-0">
                         <p className="font-bold text-text-primary line-clamp-1">{property.title}</p>
-                        <p className="text-sm text-text-primary font-medium">{property.location_city}</p>
+                        <p className="text-sm text-text-primary font-medium truncate">{property.location_city}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-text-primary font-medium">{property.property_type}</td>
-                  <td className="px-6 py-4 text-text-primary font-bold">
+                  <td className="hidden md:table-cell px-6 py-4 text-text-primary font-medium">{property.property_type}</td>
+                  <td className="px-6 py-4 text-text-primary font-bold whitespace-nowrap">
                     LKR {(property.price / 1000000).toFixed(1)}M
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="hidden lg:table-cell px-6 py-4">
                     <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                       property.status === 'sale' ? 'bg-blue-100 text-blue-800' :
                       property.status === 'rent' ? 'bg-green-100 text-green-800' :
