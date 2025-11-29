@@ -54,9 +54,24 @@ const handler = NextAuth({
       else if (new URL(url).origin === baseUrl) return url
       return baseUrl
     },
+    async jwt({ token, user, trigger, session }) {
+      if (user) {
+        token.id = user.id;
+        token.picture = user.image;
+        token.name = user.name;
+      }
+      if (trigger === "update" && session) {
+        token.name = session.name;
+        token.picture = session.image;
+      }
+      return token;
+    },
     async session({ session, token }) {
       if (session.user) {
-        // session.user.id = token.sub!; // Add user ID to session if needed
+        // @ts-ignore
+        session.user.id = token.id as string;
+        session.user.name = token.name;
+        session.user.image = token.picture;
         // @ts-ignore
         session.user.role = (session.user.email === process.env.ADMIN_EMAIL || session.user.email === "admin@ascend.lk") ? "admin" : "user";
       }
