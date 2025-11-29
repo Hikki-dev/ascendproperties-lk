@@ -2,7 +2,7 @@
 
 import { useSession, signIn, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { LogIn, LogOut, User } from "lucide-react";
+import { LogIn, LogOut, User, Heart } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -34,6 +34,13 @@ export function LoginButton() {
              <Link href="/admin">Dashboard</Link>
            </Button>
         )}
+
+        <Button variant="ghost" size="sm" asChild className="text-text-primary hover:text-primary font-medium">
+          <Link href="/profile/favorites">
+            <Heart className="w-4 h-4 mr-2" />
+            Favorites
+          </Link>
+        </Button>
 
         <Button variant="ghost" size="sm" onClick={() => signOut()} className="text-text-primary hover:text-primary font-medium">
           <LogOut className="w-4 h-4 mr-2" />

@@ -62,3 +62,34 @@ export async function checkIsSaved(propertyId: string, userId: string) {
     
   return !!data;
 }
+
+export async function getSavedProperties(userId: string) {
+  const { data, error } = await supabase
+    .from('saved_properties')
+    .select(`
+      property_id,
+      properties:property_id (
+        id,
+        title,
+        slug,
+        price,
+        location_city,
+        bedrooms,
+        bathrooms,
+        size_sqft,
+        photos,
+        status,
+        is_featured,
+        property_type
+      )
+    `)
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error('Error fetching saved properties:', error);
+    return [];
+  }
+
+  // Flatten the structure to return an array of properties
+  return data.map((item: any) => item.properties).filter(Boolean);
+}
