@@ -1,4 +1,3 @@
-```typescript
 import { supabase } from '@/lib/supabase/client';
 import { notFound } from 'next/navigation';
 import { MapPin, Bed, Bath, Square, Phone, Mail, Home, MessageSquare } from 'lucide-react';
