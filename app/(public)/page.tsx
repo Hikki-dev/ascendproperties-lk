@@ -34,27 +34,23 @@ async function getFeaturedProperties() {
 
 // 3. Function to get property types and counts
 async function getPropertyTypes(): Promise<PropertyType[]> {
-  const { data, error } = await supabase
-    .rpc('get_property_type_counts')
+  const types = ['House', 'Apartment', 'Land', 'Commercial'];
+  const counts = await Promise.all(
+    types.map(async (type) => {
+      const { count } = await supabase
+        .from('properties')
+        .select('*', { count: 'exact', head: true })
+        .eq('property_type', type);
+      return count || 0;
+    })
+  );
 
-  if (error) {
-    console.error('Error fetching property types:', error);
-    // Fallback to static data on error
-    return [
-      { icon: Home, label: 'Houses', count: 0 },
-      { icon: Building2, label: 'Apartments', count: 0 },
-      { icon: MapPin, label: 'Land', count: 0 },
-      { icon: Building2, label: 'Commercial', count: 0 }
-    ];
-  }
-  
-  return data.map((type: { property_type: string, count: number }) => ({
-    icon: type.property_type === 'House' ? Home : 
-          type.property_type === 'Apartment' ? Building2 :
-          type.property_type === 'Land' ? MapPin : Building2,
-    label: type.property_type,
-    count: type.count
-  }));
+  return [
+    { icon: Home, label: 'House', count: counts[0] },
+    { icon: Building2, label: 'Apartment', count: counts[1] },
+    { icon: MapPin, label: 'Land', count: counts[2] },
+    { icon: Building2, label: 'Commercial', count: counts[3] }
+  ];
 }
 
 const AscendPropertiesHomepage = async () => {
@@ -96,9 +92,10 @@ const AscendPropertiesHomepage = async () => {
             {propertyTypes.map((type: PropertyType, index: number) => {
               const Icon = type.icon;
               return (
-                <div 
+                <Link 
+                  href={`/search?type=${type.label}`}
                   key={index}
-                  className="group bg-hover rounded-2xl p-8 hover:bg-primary transition-all duration-300 cursor-pointer hover:shadow-xl hover:-translate-y-1"
+                  className="group bg-hover rounded-2xl p-8 hover:bg-primary transition-all duration-300 cursor-pointer hover:shadow-xl hover:-translate-y-1 block"
                 >
                   <Icon className="w-12 h-12 text-primary group-hover:text-white mb-4 transition-colors" />
                   <h3 className="text-xl font-bold text-text-primary group-hover:text-white mb-2 transition-colors">
@@ -107,7 +104,7 @@ const AscendPropertiesHomepage = async () => {
                   <p className="text-text-secondary group-hover:text-white/90 transition-colors">
                     {type.count} properties
                   </p>
-                </div>
+                </Link>
               );
             })}
           </div>
