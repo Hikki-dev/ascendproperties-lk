@@ -66,7 +66,7 @@ function SignInContent() {
               e.preventDefault();
               const email = (e.currentTarget.elements.namedItem('email') as HTMLInputElement).value;
               const password = (e.currentTarget.elements.namedItem('password') as HTMLInputElement).value;
-              signIn("credentials", { email, password, callbackUrl });
+              signIn("credentials", { email, password, callbackUrl: "/admin" });
             }}
           >
             <div>

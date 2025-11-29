@@ -28,6 +28,13 @@ export function LoginButton() {
           )}
           <span className="text-sm font-bold text-text-primary hidden md:block">{session.user?.name}</span>
         </div>
+        
+        {(session.user?.email === "admin@ascend.lk" || session.user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL) && (
+           <Button variant="ghost" size="sm" asChild className="text-text-primary hover:text-primary font-medium">
+             <Link href="/admin">Dashboard</Link>
+           </Button>
+        )}
+
         <Button variant="ghost" size="sm" onClick={() => signOut()} className="text-text-primary hover:text-primary font-medium">
           <LogOut className="w-4 h-4 mr-2" />
           Sign Out

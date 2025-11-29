@@ -47,9 +47,18 @@ const handler = NextAuth({
     signIn: '/auth/signin',
   },
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url
+      return baseUrl
+    },
     async session({ session, token }) {
       if (session.user) {
         // session.user.id = token.sub!; // Add user ID to session if needed
+        // @ts-ignore
+        session.user.role = (session.user.email === process.env.ADMIN_EMAIL || session.user.email === "admin@ascend.lk") ? "admin" : "user";
       }
       return session;
     },
