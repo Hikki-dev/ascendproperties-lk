@@ -20,13 +20,17 @@ export function SaveButton({ propertyId, className }: SaveButtonProps) {
   const router = useRouter();
 
   useEffect(() => {
-    if (session?.user?.email) {
-      // We use email as ID for this demo if UUID not available, but ideally use ID
-      // For now, let's assume session.user.id is available (we might need to add it to session callback)
-      // If not, we can't save.
-      // I'll assume we updated the session callback in route.ts
-      checkIsSaved(propertyId, session.user.email).then(setIsSaved); 
-    }
+    const checkStatus = async () => {
+      if (session?.user?.email) {
+        try {
+          const saved = await checkIsSaved(propertyId, session.user.email);
+          setIsSaved(saved);
+        } catch (err) {
+          console.error("Error checking status:", err);
+        }
+      }
+    };
+    checkStatus();
   }, [propertyId, session]);
 
   const handleToggle = async (e: React.MouseEvent) => {
@@ -64,10 +68,7 @@ export function SaveButton({ propertyId, className }: SaveButtonProps) {
     <Button
       variant="ghost"
       size="icon"
-      className={cn(
-        "rounded-full bg-black/20 hover:bg-black/40 text-white transition-all duration-300 active:scale-90 backdrop-blur-sm", 
-        className
-      )}
+      className="rounded-full bg-black/20 hover:bg-black/40 backdrop-blur-sm transition-all active:scale-90"
       onClick={handleToggle}
       disabled={loading}
     >
@@ -76,7 +77,7 @@ export function SaveButton({ propertyId, className }: SaveButtonProps) {
           "w-5 h-5 transition-all duration-300", 
           isSaved 
             ? "fill-accent-error text-accent-error animate-heart-pop" 
-            : "fill-white text-black hover:scale-110"
+            : "fill-white/70 text-black hover:scale-110"
         )} 
       />
     </Button>
