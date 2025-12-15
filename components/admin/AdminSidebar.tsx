@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Building2, Users, Settings, LogOut, Home } from 'lucide-react';
+import { LayoutDashboard, Building2, Users, Settings, LogOut, Home, Megaphone, BookOpen, BarChart3 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 
 export function AdminSidebar() {
@@ -51,6 +51,39 @@ export function AdminSidebar() {
         >
           <Users className="w-5 h-5" />
           Enquiries
+        </Link>
+        <Link 
+          href="/admin/marketing" 
+          className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors font-medium ${
+            isActive('/admin/marketing') 
+              ? 'bg-primary/10 text-primary' 
+              : 'text-text-primary hover:bg-hover hover:text-primary'
+          }`}
+        >
+          <Megaphone className="w-5 h-5" />
+          Marketing
+        </Link>
+        <Link 
+          href="/admin/knowledge-base" 
+          className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors font-medium ${
+            isActive('/admin/knowledge-base') 
+              ? 'bg-primary/10 text-primary' 
+              : 'text-text-primary hover:bg-hover hover:text-primary'
+          }`}
+        >
+          <BookOpen className="w-5 h-5" />
+          Knowledge Base
+        </Link>
+        <Link 
+          href="/admin/analytics" 
+          className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors font-medium ${
+            isActive('/admin/analytics') 
+              ? 'bg-primary/10 text-primary' 
+              : 'text-text-primary hover:bg-hover hover:text-primary'
+          }`}
+        >
+          <BarChart3 className="w-5 h-5" />
+          Analytics
         </Link>
         <Link 
           href="/admin/settings" 

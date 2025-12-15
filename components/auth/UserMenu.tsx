@@ -74,7 +74,7 @@ export function UserMenu() {
             </Link>
 
             <Link 
-              href="/profile/favorites" 
+              href="/favorites" 
               className="flex items-center gap-2 px-4 py-2 text-sm text-text-primary hover:bg-hover hover:text-primary transition-colors"
               onClick={() => setIsOpen(false)}
             >

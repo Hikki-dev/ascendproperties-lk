@@ -1,39 +1,36 @@
 "use server";
 
-import { createAdminClient } from '@/lib/supabase/server';
+import cloudinary from '@/lib/cloudinary';
 
 export async function uploadImage(formData: FormData) {
   const file = formData.get('file') as File;
-  const bucket = formData.get('bucket') as string;
-  const path = formData.get('path') as string;
+  const folder = (formData.get('bucket') as string) || 'ascend-properties'; // Use bucket as folder
 
-  if (!file || !bucket || !path) {
-    return { error: 'Missing required fields' };
+  if (!file) {
+    return { error: 'No file provided' };
   }
 
   try {
-    const supabase = await createAdminClient();
-    const fileBuffer = await file.arrayBuffer();
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-    const { data, error } = await supabase.storage
-      .from(bucket)
-      .upload(path, fileBuffer, {
-        contentType: file.type,
-        upsert: true,
-      });
+    // Upload to Cloudinary using a Promise wrapper
+    const result = await new Promise<any>((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          folder: folder,
+          resource_type: 'auto', // Detect image/video
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      ).end(buffer);
+    });
 
-    if (error) {
-      console.error('Supabase upload error:', error);
-      return { error: error.message };
-    }
-
-    const { data: publicUrlData } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(path);
-
-    return { url: publicUrlData.publicUrl };
+    return { url: result.secure_url };
   } catch (error) {
-    console.error('Server upload error:', error);
-    return { error: 'Internal server error' };
+    console.error('Cloudinary upload error:', error);
+    return { error: 'Failed to upload image' };
   }
 }

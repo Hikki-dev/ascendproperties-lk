@@ -1,5 +1,6 @@
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
+import ChatWidget from "@/components/ChatWidget";
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
@@ -44,6 +45,7 @@ export default function RootLayout({
         <AuthProvider>
           {children}
           <FloatingWhatsApp />
+          <ChatWidget />
         </AuthProvider>
       </body>
     </html>

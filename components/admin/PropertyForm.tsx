@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/lib/supabase/client';
+import { upsertProperty } from '@/app/actions/admin';
+// import { supabase } from '@/lib/supabase/client'; // Removed direct client usage
 import { Property } from '@/types/property';
 import { propertySchema } from '@/lib/validations';
 import { ImageUpload } from '@/components/admin/ImageUpload';
@@ -97,16 +98,11 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
       };
 
       if (isEdit && initialData?.id) {
-        const { error } = await supabase
-          .from('properties')
-          .update(dataToSubmit)
-          .eq('id', initialData.id);
-        if (error) throw error;
+        const result = await upsertProperty(dataToSubmit, initialData.id);
+        if (result.error) throw new Error(result.error);
       } else {
-        const { error } = await supabase
-          .from('properties')
-          .insert([dataToSubmit]);
-        if (error) throw error;
+        const result = await upsertProperty(dataToSubmit);
+        if (result.error) throw new Error(result.error);
       }
 
       router.push('/admin/properties');

@@ -33,6 +33,25 @@ async function getFeaturedProperties() {
   })) as (Property & { image: string })[];
 }
 
+// 2.a Function to get new properties
+async function getNewProperties() {
+  const { data, error } = await supabase
+    .from('properties')
+    .select('id, title, slug, status, price, location_city, bedrooms, bathrooms, size_sqft, photos, is_featured, created_at')
+    .order('created_at', { ascending: false })
+    .limit(3);
+
+  if (error) {
+    console.error('Error fetching new properties:', error);
+    return [];
+  }
+  return data.map(item => ({
+    ...item,
+    image: item.photos?.[0] || 'https://placehold.co/400x300/F1F3F6/6E6E6E?text=No+Image',
+  })) as (Property & { image: string })[];
+}
+
+
 // 3. Function to get property types and counts
 async function getPropertyTypes(): Promise<PropertyType[]> {
   const types = [
@@ -62,11 +81,26 @@ async function getPropertyTypes(): Promise<PropertyType[]> {
 
 const AscendPropertiesHomepage = async () => {
   const featuredProperties = await getFeaturedProperties();
+  const newProperties = await getNewProperties();
   const propertyTypes = await getPropertyTypes();
 
   const testimonials = [
     { name: 'Priya Fernando', role: 'Homebuyer', content: 'Ascend Properties made our dream home a reality...', rating: 5 },
     { name: 'Ravi Perera', role: 'Property Investor', content: 'Best real estate agency in Colombo...', rating: 5 }
+  ];
+
+  const whyChooseUs = [
+    { icon: Star, title: "Luxury Experts", desc: "Specializing in premium properties across Sri Lanka." },
+    { icon: MapPin, title: "Local Insight", desc: "Deep knowledge of Colombo's most exclusive neighborhoods." },
+    { icon: Home, title: "Trusted Partners", desc: "Guiding you through every step of the buying or selling process." },
+    { icon: Phone, title: "Personal Service", desc: "Dedicated agents focused on your unique requirements." }
+  ];
+
+  const neighborhoods = [
+    { name: "Colombo 03", image: "/images/colombo-03.jpg", count: "15+ Properties" },
+    { name: "Colombo 07", image: "/images/colombo-07.jpg", count: "10+ Properties" },
+    { name: "Galle Face", image: "/images/galle-face.jpg", count: "8+ Properties" },
+    { name: "Rajagiriya", image: "/images/rajagiriya.jpg", count: "12+ Properties" }
   ];
 
   return (
@@ -100,6 +134,24 @@ const AscendPropertiesHomepage = async () => {
         </div>
       </section>
 
+      {/* Why Choose Ascend */}
+      <section className="py-16 bg-background">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-12">Why Choose Ascend</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {whyChooseUs.map((item, index) => (
+                    <div key={index} className="flex flex-col items-center p-6 bg-card rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                            <item.icon className="w-8 h-8 text-primary" />
+                        </div>
+                        <h3 className="text-xl font-bold text-text-primary mb-3">{item.title}</h3>
+                        <p className="text-text-secondary">{item.desc}</p>
+                    </div>
+                ))}
+            </div>
+        </div>
+      </section>
+
       {/* Property Types */}
       <section className="py-16 bg-card">
         <div className="max-w-7xl mx-auto px-4">
@@ -130,6 +182,87 @@ const AscendPropertiesHomepage = async () => {
         </div>
       </section>
 
+      {/* New Listings (Auto-populated) */}
+      <section className="py-16 bg-background">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center justify-between mb-10">
+            <h2 className="text-3xl md:text-4xl font-bold text-text-primary">
+              New Listings
+            </h2>
+            <Link href="/search?sort=newest" className="text-primary hover:text-opacity-80 font-semibold flex items-center gap-2 group">
+              View All
+              <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {newProperties.map((property) => (
+              <Link 
+                href={`/property/${property.slug}`}
+                key={property.id}
+                className="group bg-card rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer hover:-translate-y-2 block border border-border-light"
+              >
+                <div className="relative h-64 overflow-hidden">
+                  <Image 
+                    src={property.image}
+                    alt={property.title}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute top-4 left-4">
+                    <span className={`px-4 py-1.5 rounded-full text-sm font-semibold shadow-lg ${
+                      property.status === 'sale' ? 'bg-accent-error text-white' : 'bg-accent-success text-white'
+                    }`}>
+                      For {property.status.charAt(0).toUpperCase() + property.status.slice(1)}
+                    </span>
+                  </div>
+                  {property.is_featured && (
+                    <div className="absolute top-4 right-4">
+                      <span className="bg-accent-gold text-text-primary px-3 py-1.5 rounded-full text-sm font-semibold flex items-center gap-1 shadow-lg">
+                        <Star className="w-4 h-4 fill-current" />
+                        Featured
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="p-6">
+                  <h3 className="text-2xl font-bold text-text-primary mb-2">
+                    LKR {(property.price / 1000000).toFixed(1)}M
+                  </h3>
+                  <p className="text-lg font-semibold text-text-primary mb-1">{property.title}</p>
+                  <p className="text-text-secondary mb-4 flex items-center gap-1">
+                    <MapPin className="w-4 h-4" />
+                    {property.location_city}
+                  </p>
+
+                  <div className="flex gap-4 text-sm text-text-secondary border-t border-border-light pt-4">
+                    {property.bedrooms && (
+                      <div className="flex items-center gap-1">
+                        <Bed className="w-4 h-4" />
+                        {property.bedrooms} beds
+                      </div>
+                    )}
+                    {property.bathrooms && (
+                      <div className="flex items-center gap-1">
+                        <Bath className="w-4 h-4" />
+                        {property.bathrooms} baths
+                      </div>
+                    )}
+                    {property.size_sqft && (
+                      <div className="flex items-center gap-1">
+                        <Square className="w-4 h-4" />
+                        {property.size_sqft} sqft
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Featured Properties */}
       <section className="py-16 bg-background">
         <div className="max-w-7xl mx-auto px-4">
@@ -137,7 +270,7 @@ const AscendPropertiesHomepage = async () => {
             <h2 className="text-3xl md:text-4xl font-bold text-text-primary">
               Featured Properties
             </h2>
-            <Link href="/buy" className="text-primary hover:text-opacity-80 font-semibold flex items-center gap-2 group">
+            <Link href="/buy?featured=true" className="text-primary hover:text-opacity-80 font-semibold flex items-center gap-2 group">
               View All
               <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
@@ -211,6 +344,31 @@ const AscendPropertiesHomepage = async () => {
         </div>
       </section>
 
+      {/* Neighborhood Guides */}
+      <section className="py-16 bg-card">
+        <div className="max-w-7xl mx-auto px-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-12 text-center">Popular Neighborhoods</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {neighborhoods.map((area, index) => (
+                    <Link href={`/search?q=${area.name}`} key={index} className="group relative h-64 rounded-2xl overflow-hidden cursor-pointer">
+                        {/* Placeholder for neighborhood images - since we don't have them yet, using a color block/pattern or a placeholder image service */}
+                        <div className="absolute inset-0 bg-primary/20 group-hover:bg-primary/30 transition-colors z-10" />
+                        <Image
+                            src={`https://placehold.co/400x600/1877F2/FFFFFF?text=${area.name}`}
+                            alt={area.name}
+                            fill
+                            className="object-cover group-hover:scale-110 transition-transform duration-700"
+                        />
+                        <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
+                            <h3 className="text-2xl font-bold text-white mb-1 group-hover:translate-x-2 transition-transform">{area.name}</h3>
+                            <p className="text-white/80 text-sm group-hover:translate-x-2 transition-transform delay-75">{area.count}</p>
+                        </div>
+                    </Link>
+                ))}
+            </div>
+        </div>
+      </section>
+
       {/* Trust Signals */}
       <section className="py-16 bg-hover">
         <div className="max-w-7xl mx-auto px-4">
@@ -236,7 +394,7 @@ const AscendPropertiesHomepage = async () => {
       </section>
 
       {/* Testimonials */}
-      <section className="py-16 bg-card">
+      <section className="py-16 bg-background">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-10 text-center">
             What Our Clients Say
@@ -244,7 +402,7 @@ const AscendPropertiesHomepage = async () => {
 
           <div className="grid md:grid-cols-2 gap-8">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-hover rounded-2xl p-8 hover:shadow-xl transition-shadow border border-border-light">
+              <div key={index} className="bg-card rounded-2xl p-8 hover:shadow-xl transition-shadow border border-border-light">
                 <div className="flex gap-1 mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <Star key={i} className="w-5 h-5 fill-accent-gold text-accent-gold" />
