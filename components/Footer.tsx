@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Home, Phone, Mail, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -8,11 +9,13 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <Home className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-white">AscendProperties</span>
+            <div className="relative w-56 h-16 mb-4">
+              <Image 
+                src="/images/logo.png" 
+                alt="Ascend Properties" 
+                fill
+                className="object-contain object-left"
+              />
             </div>
             <p className="text-white/60">Your trusted partner in finding the perfect property in Sri Lanka.</p>
           </div>

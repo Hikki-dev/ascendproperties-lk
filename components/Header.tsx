@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Home } from 'lucide-react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { LoginButton } from "@/components/auth/LoginButton";
 import { UserMenu } from '@/components/auth/UserMenu';
@@ -11,10 +12,15 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-              <Home className="w-6 h-6 text-white" />
+            <div className="relative w-64 h-20">
+              <Image 
+                src="/images/logo.png" 
+                alt="Ascend Properties" 
+                fill
+                className="object-contain object-left"
+                priority
+              />
             </div>
-            <span className="text-2xl font-bold text-text-primary">AscendProperties.lk</span>
           </Link>
           
           <nav className="hidden md:flex items-center gap-8">
