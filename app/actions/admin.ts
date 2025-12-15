@@ -7,14 +7,29 @@ import { authOptions } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
 // Helper to check admin permission
+// Helper to check admin permission
 async function checkAdmin() {
   const session = await getServerSession(authOptions);
   
-  // Replace this with your actual admin check logic (e.g. against a whitelist or role in DB)
-  // For now, checking if email exists as a basic check, or specific admin emails
-  const isAdmin = session?.user?.email === "admin@ascend.lk" || 
-                  session?.user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL ||
-                  !!session?.user?.email; // TEMPORARY: Allow any logged in user for this demo/setup phase if strict admin not set
+  if (!session?.user?.email) {
+    throw new Error("Unauthorized: Not logged in.");
+  }
+
+  // 1. Hardcoded Super Admin (Safety net)
+  if (session.user.email === 'admin@ascend.lk') return session;
+
+  // 2. Check Database Role
+  const supabase = await createAdminClient();
+  
+  // Assuming 'profiles' table has a 'role' column. 
+  // If not, you should add it: `alter table profiles add column role text default 'user';`
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', (session.user as any).id)
+    .single();
+
+  const isAdmin = profile?.role === 'admin';
 
   if (!isAdmin) {
     throw new Error("Unauthorized: You must be an admin to perform this action.");
