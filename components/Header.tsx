@@ -12,7 +12,7 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="relative w-64 h-20">
+            <div className="relative h-12 w-48">
               <Image 
                 src="/images/logo.png" 
                 alt="Ascend Properties" 
