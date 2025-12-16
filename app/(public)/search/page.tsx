@@ -5,7 +5,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { PropertyCard } from '@/components/PropertyCard';
 import { Button } from '@/components/ui/button';
-import type { Property } from '@/types/property'; // Import your main Property type
+import type { Property } from '@/types/property';
 
 function SearchResults() {
   const router = useRouter();
@@ -14,8 +14,7 @@ function SearchResults() {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
   
-  // Local state for filters (initially from URL)
-  // Price is handled in Millions for user input, so we convert from/to URL values (which are raw numbers)
+  // Local state for filters
   const initialMinPrice = searchParams.get('minPrice') ? (parseInt(searchParams.get('minPrice')!) / 1000000).toString() : '';
   const initialMaxPrice = searchParams.get('maxPrice') ? (parseInt(searchParams.get('maxPrice')!) / 1000000).toString() : '';
 
@@ -26,14 +25,10 @@ function SearchResults() {
   const [minSize, setMinSize] = useState(searchParams.get('minSize') || '');
   const [maxSize, setMaxSize] = useState(searchParams.get('maxSize') || '');
   const [status, setStatus] = useState(searchParams.get('status') || ''); 
-  // Sort is now handled directly via URL for instant feedback
 
   const q = searchParams.get('q');
   const type = searchParams.get('type');
   
-  // NOTE: 'price' param from HeroSearch might be existing (e.g. "0-25000000"), we should respect it if valid, 
-  // but the sidebar filters override specific min/max.
-
   useEffect(() => {
     const fetchProperties = async () => {
       setLoading(true);
@@ -41,12 +36,14 @@ function SearchResults() {
       
       let query = supabase
         .from('properties')
-        .select('*'); // Select all for now to be safe
+        .select('*'); 
 
-      // 1. Full-Text Search
+      // 1. Keyword Search (Use ilike for robust partial matching)
       if (q) {
-        const ftsQuery = q.trim().split(' ').join(' & ');
-        query = query.textSearch('fts', ftsQuery);
+        // "q" comes from the URL, e.g. "Colombo 03"
+        // We match it against title, location, or even description
+        const cleanQ = q.trim();
+        query = query.or(`title.ilike.%${cleanQ}%,location_city.ilike.%${cleanQ}%,description.ilike.%${cleanQ}%`);
       }
       
       // 2. Property Type
@@ -54,15 +51,14 @@ function SearchResults() {
         query = query.eq('property_type', type);
       }
       
-      // 3. Price Range (from URL params)
+      // 3. Price Range
       const urlMinPrice = searchParams.get('minPrice');
       const urlMaxPrice = searchParams.get('maxPrice');
-      const urlPriceRange = searchParams.get('price'); // fallback for HeroSearch dropdown
+      const urlPriceRange = searchParams.get('price'); 
 
       if (urlMinPrice) query = query.gte('price', parseInt(urlMinPrice));
       if (urlMaxPrice) query = query.lte('price', parseInt(urlMaxPrice));
       
-      // Handle the range string from HeroSearch if manual min/max aren't set
       if (!urlMinPrice && !urlMaxPrice && urlPriceRange && urlPriceRange !== 'all') {
          if (urlPriceRange.includes('+')) {
              const min = parseInt(urlPriceRange.replace('+', ''));
@@ -117,7 +113,7 @@ function SearchResults() {
     };
 
     fetchProperties();
-  }, [searchParams]); // Depend only on URL SearchParams
+  }, [searchParams, q, type]); 
 
   const applyFilters = () => {
     const params = new URLSearchParams(searchParams.toString());
@@ -126,14 +122,13 @@ function SearchResults() {
     if (status) params.set('status', status);
     else params.delete('status');
 
-    // Price (Convert Millions to Absolute)
+    // Price
     if (minPrice) params.set('minPrice', (parseFloat(minPrice) * 1000000).toString());
     else params.delete('minPrice');
     
     if (maxPrice) params.set('maxPrice', (parseFloat(maxPrice) * 1000000).toString());
     else params.delete('maxPrice');
 
-    // Remove the generic 'price' param if manual filters are applied to avoid conflict
     if (minPrice || maxPrice) params.delete('price');
 
     // Beds
@@ -151,8 +146,6 @@ function SearchResults() {
     if (maxSize) params.set('maxSize', maxSize);
     else params.delete('maxSize');
     
-    // Sort is preserved because we start with searchParams.toString()
-
     router.push(`/search?${params.toString()}`);
   };
 
@@ -294,14 +287,16 @@ function SearchResults() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {properties.length > 0 ? (
+          {loading ? (
+             <div className="col-span-2 text-center py-20">Loading...</div>
+          ) : properties.length > 0 ? (
             properties.map((property) => (
               <PropertyCard key={property.id} property={property} />
             ))
           ) : (
-            <p className="text-text-secondary md:col-span-2 text-center py-20">
-              No properties found matching your criteria. Try adjusting your filters.
-            </p>
+            <div className="col-span-2 text-center py-20">
+               {errorMsg ? <span className="text-red-500">{errorMsg}</span> : "No properties found matching your criteria. Try adjusting your filters."}
+            </div>
           )}
         </div>
       </div>

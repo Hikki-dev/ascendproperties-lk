@@ -112,10 +112,10 @@ const AscendPropertiesHomepage = async () => {
   ];
 
   const neighborhoods = [
-    { name: "Colombo 03", image: "/images/colombo-03.jpg", count: "15+ Properties" },
-    { name: "Colombo 07", image: "/images/colombo-07.jpg", count: "10+ Properties" },
-    { name: "Galle Face", image: "/images/galle-face.jpg", count: "8+ Properties" },
-    { name: "Rajagiriya", image: "/images/rajagiriya.jpg", count: "12+ Properties" }
+    { name: "Colombo 03", image: "/images/colombo-03.jpg", count: "Check Availability" },
+    { name: "Colombo 7", image: "/images/colombo-07.jpg", count: "1 Property Available" },
+    { name: "Galle Face", image: "/images/galle-face.jpg", count: "Check Availability" },
+    { name: "Rajagiriya", image: "/images/rajagiriya.jpg", count: "Check Availability" }
   ];
 
   return (
@@ -373,6 +373,7 @@ const AscendPropertiesHomepage = async () => {
                             alt={area.name}
                             fill
                             className="object-cover group-hover:scale-110 transition-transform duration-700"
+                            unoptimized
                         />
                         <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
                             <h3 className="text-2xl font-bold text-white mb-1 group-hover:translate-x-2 transition-transform">{area.name}</h3>

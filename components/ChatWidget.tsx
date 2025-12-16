@@ -11,7 +11,7 @@ type Message = {
   timestamp: Date;
 };
 
-export default function ChatWidget() {
+export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -42,14 +42,8 @@ export default function ChatWidget() {
   };
 
   useEffect(() => {
-    if (isOpen && messages.length === 0) {
-       // logic if needed
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, isOpen, isChatLoading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,17 +64,19 @@ export default function ChatWidget() {
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userMessage.content }),
+        body: JSON.stringify({ messages: [...messages, userMessage] }), // Send history if API supports it, or just content
       });
+
+      if (!response.ok) {
+           throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       const data = await response.json();
 
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        role: "bot",
-        content:
-          data.reply ||
-          "I'm sorry, I didn't verify that. Could you try asking in a different way?",
+        role: "assistant",
+        content: data.response || "I'm sorry, I couldn't understand that.",
         timestamp: new Date(),
       };
 
@@ -89,7 +85,7 @@ export default function ChatWidget() {
       console.error("Chat error:", error);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        role: "bot",
+        role: "assistant",
         content:
           "Sorry, I'm having trouble connecting to the server. Please try again later.",
         timestamp: new Date(),
