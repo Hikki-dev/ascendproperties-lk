@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/server';
 import Image from "next/image";
 import { LucideIcon, Search, Home, Building2, MapPin, Bed, Bath, Square, Phone, Mail, MessageSquare, ChevronRight, Star } from 'lucide-react';
 import { HeroSearch } from '@/components/HeroSearch';
@@ -16,44 +16,59 @@ type PropertyType = {
 
 // 2. Function to get featured properties
 async function getFeaturedProperties() {
-  const { data, error } = await supabase
-    .from('properties')
-    .select('id, title, slug, status, price, location_city, bedrooms, bathrooms, size_sqft, photos, is_featured')
-    .eq('is_featured', true)
-    .limit(3);
+  try {
+    const sbUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    console.log('Connecting to Supabase at:', sbUrl ? sbUrl.substring(0, 20) + '...' : 'UNDEFINED');
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('properties')
+      .select('id, title, slug, status, price, location_city, bedrooms, bathrooms, size_sqft, photos, is_featured')
+      .eq('is_featured', true)
+      .limit(3);
 
-  if (error) {
-    console.error('Error fetching featured properties:', error);
+    if (error) {
+      console.error('Error fetching featured properties:', error);
+      return [];
+    }
+    // Map data to include a single 'image' for the card
+    return data.map(item => ({
+      ...item,
+      image: item.photos?.[0] || 'https://placehold.co/400x300/F1F3F6/6E6E6E?text=No+Image', // Use first photo or placeholder
+    })) as (Property & { image: string })[];
+  } catch (err) {
+    console.error('Unexpected error fetching featured properties:', err);
     return [];
   }
-  // Map data to include a single 'image' for the card
-  return data.map(item => ({
-    ...item,
-    image: item.photos?.[0] || 'https://placehold.co/400x300/F1F3F6/6E6E6E?text=No+Image', // Use first photo or placeholder
-  })) as (Property & { image: string })[];
 }
 
 // 2.a Function to get new properties
 async function getNewProperties() {
-  const { data, error } = await supabase
-    .from('properties')
-    .select('id, title, slug, status, price, location_city, bedrooms, bathrooms, size_sqft, photos, is_featured, created_at')
-    .order('created_at', { ascending: false })
-    .limit(3);
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('properties')
+      .select('id, title, slug, status, price, location_city, bedrooms, bathrooms, size_sqft, photos, is_featured, created_at')
+      .order('created_at', { ascending: false })
+      .limit(3);
 
-  if (error) {
-    console.error('Error fetching new properties:', error);
-    return [];
+    if (error) {
+      console.error('Error fetching new properties:', error);
+      return [];
+    }
+    return data.map(item => ({
+      ...item,
+      image: item.photos?.[0] || 'https://placehold.co/400x300/F1F3F6/6E6E6E?text=No+Image',
+    })) as (Property & { image: string })[];
+  } catch (err) {
+     console.error('Unexpected error fetching new properties:', err);
+     return [];
   }
-  return data.map(item => ({
-    ...item,
-    image: item.photos?.[0] || 'https://placehold.co/400x300/F1F3F6/6E6E6E?text=No+Image',
-  })) as (Property & { image: string })[];
 }
 
 
 // 3. Function to get property types and counts
 async function getPropertyTypes(): Promise<PropertyType[]> {
+  const supabase = await createClient();
   const types = [
     { value: 'house', label: 'House', icon: Home },
     { value: 'apartment', label: 'Apartment', icon: Building2 },
@@ -106,7 +121,7 @@ const AscendPropertiesHomepage = async () => {
   return (
     <div className="min-h-screen bg-background text-text-primary">
       {/* Hero Section */}
-      <section className="relative h-[600px] flex items-center justify-center overflow-hidden">
+      <section className="relative h-[600px] flex items-center justify-center">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image

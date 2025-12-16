@@ -12,13 +12,14 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="relative h-12 w-48">
+            <div className="relative h-20 w-64">
               <Image 
-                src="/images/logo.png" 
+                src="/logo-new.png" 
                 alt="Ascend Properties" 
                 fill
                 className="object-contain object-left"
                 priority
+                unoptimized
               />
             </div>
           </Link>

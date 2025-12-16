@@ -1,30 +1,38 @@
 "use client";
 
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useState, useEffect, Suspense } from 'react';
 import { supabase } from '@/lib/supabase/client';
-import { PropertyCard } from '@/components/PropertyCard'; // Import our new card
+import { PropertyCard } from '@/components/PropertyCard';
+import { Button } from '@/components/ui/button';
 import type { Property } from '@/types/property'; // Import your main Property type
 
 function SearchResults() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
   
-  // New state for advanced filters
-  const [minPrice, setMinPrice] = useState(searchParams.get('minPrice') || '');
-  const [maxPrice, setMaxPrice] = useState(searchParams.get('maxPrice') || '');
+  // Local state for filters (initially from URL)
+  // Price is handled in Millions for user input, so we convert from/to URL values (which are raw numbers)
+  const initialMinPrice = searchParams.get('minPrice') ? (parseInt(searchParams.get('minPrice')!) / 1000000).toString() : '';
+  const initialMaxPrice = searchParams.get('maxPrice') ? (parseInt(searchParams.get('maxPrice')!) / 1000000).toString() : '';
+
+  const [minPrice, setMinPrice] = useState(initialMinPrice);
+  const [maxPrice, setMaxPrice] = useState(initialMaxPrice);
   const [beds, setBeds] = useState(searchParams.get('beds') || '');
   const [baths, setBaths] = useState(searchParams.get('baths') || '');
   const [minSize, setMinSize] = useState(searchParams.get('minSize') || '');
   const [maxSize, setMaxSize] = useState(searchParams.get('maxSize') || '');
-  const [status, setStatus] = useState(searchParams.get('status') || ''); // 'sale', 'rent', or empty for both
-  const [sort, setSort] = useState(searchParams.get('sort') || 'newest'); // 'newest', 'price-asc', 'price-desc'
+  const [status, setStatus] = useState(searchParams.get('status') || ''); 
+  // Sort is now handled directly via URL for instant feedback
 
   const q = searchParams.get('q');
   const type = searchParams.get('type');
-  const price = searchParams.get('price');
+  
+  // NOTE: 'price' param from HeroSearch might be existing (e.g. "0-25000000"), we should respect it if valid, 
+  // but the sidebar filters override specific min/max.
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -33,55 +41,69 @@ function SearchResults() {
       
       let query = supabase
         .from('properties')
-        // Select all fields your PropertyCard might need
-        .select('id, title, slug, status, price, location_city, location_district, bedrooms, bathrooms, size_sqft, photos, is_featured, property_type, description, amenities, created_at, views_count, video_url, agent_id, meta_title, meta_description, published_at, coordinates, updated_at');
+        .select('*'); // Select all for now to be safe
 
-      // 1. Full-Text Search (for 'q' param)
+      // 1. Full-Text Search
       if (q) {
         const ftsQuery = q.trim().split(' ').join(' & ');
         query = query.textSearch('fts', ftsQuery);
       }
       
-      // 2. Property Type Filter (for 'type' param)
+      // 2. Property Type
       if (type && type !== 'all') {
         query = query.eq('property_type', type);
       }
       
-      // 3. Price Range (Manual inputs now)
-      if (minPrice) {
-        query = query.gte('price', parseInt(minPrice));
-      }
-      if (maxPrice) {
-        query = query.lte('price', parseInt(maxPrice));
+      // 3. Price Range (from URL params)
+      const urlMinPrice = searchParams.get('minPrice');
+      const urlMaxPrice = searchParams.get('maxPrice');
+      const urlPriceRange = searchParams.get('price'); // fallback for HeroSearch dropdown
+
+      if (urlMinPrice) query = query.gte('price', parseInt(urlMinPrice));
+      if (urlMaxPrice) query = query.lte('price', parseInt(urlMaxPrice));
+      
+      // Handle the range string from HeroSearch if manual min/max aren't set
+      if (!urlMinPrice && !urlMaxPrice && urlPriceRange && urlPriceRange !== 'all') {
+         if (urlPriceRange.includes('+')) {
+             const min = parseInt(urlPriceRange.replace('+', ''));
+             query = query.gte('price', min);
+         } else {
+             const [min, max] = urlPriceRange.split('-').map(Number);
+             query = query.gte('price', min).lte('price', max);
+         }
       }
 
       // 4. Beds & Baths
-      if (beds && beds !== 'any') {
-        if (beds === '4+') query = query.gte('bedrooms', 4);
-        else query = query.eq('bedrooms', parseInt(beds));
+      const urlBeds = searchParams.get('beds');
+      if (urlBeds && urlBeds !== 'any') {
+        if (urlBeds === '4+') query = query.gte('bedrooms', 4);
+        else query = query.eq('bedrooms', parseInt(urlBeds));
       }
-      if (baths && baths !== 'any') {
-         if (baths === '4+') query = query.gte('bathrooms', 4);
-         else query = query.eq('bathrooms', parseInt(baths));
+      
+      const urlBaths = searchParams.get('baths');
+      if (urlBaths && urlBaths !== 'any') {
+         if (urlBaths === '4+') query = query.gte('bathrooms', 4);
+         else query = query.eq('bathrooms', parseInt(urlBaths));
       }
 
-      // 5. Land/Floor Size
-      if (minSize) query = query.gte('size_sqft', parseInt(minSize));
-      if (maxSize) query = query.lte('size_sqft', parseInt(maxSize));
+      // 5. Size
+      const urlMinSize = searchParams.get('minSize');
+      const urlMaxSize = searchParams.get('maxSize');
+      if (urlMinSize) query = query.gte('size_sqft', parseInt(urlMinSize));
+      if (urlMaxSize) query = query.lte('size_sqft', parseInt(urlMaxSize));
 
       // 6. Status & Sort
-      if (status && status !== 'all') {
-        query = query.eq('status', status);
+      const urlStatus = searchParams.get('status');
+      if (urlStatus && urlStatus !== 'all') {
+        query = query.eq('status', urlStatus);
       } else {
         query = query.in('status', ['sale', 'rent']);
       }
 
-      if (sort === 'newest') query = query.order('created_at', { ascending: false });
-      if (sort === 'price-asc') query = query.order('price', { ascending: true });
-      if (sort === 'price-desc') query = query.order('price', { ascending: false });
-
-      // Only show properties that are for sale or rent
-
+      const urlSort = searchParams.get('sort') || 'newest';
+      if (urlSort === 'newest') query = query.order('created_at', { ascending: false });
+      if (urlSort === 'price-asc') query = query.order('price', { ascending: true });
+      if (urlSort === 'price-desc') query = query.order('price', { ascending: false });
 
       const { data, error } = await query;
 
@@ -95,16 +117,51 @@ function SearchResults() {
     };
 
     fetchProperties();
-    fetchProperties();
-  }, [q, type, price, minPrice, maxPrice, beds, baths, minSize, maxSize, status, sort]); // Depend on all filter states
+  }, [searchParams]); // Depend only on URL SearchParams
 
-  if (loading) {
-    return <div className="text-center text-text-secondary">Loading search results...</div>;
-  }
+  const applyFilters = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    
+    // Status
+    if (status) params.set('status', status);
+    else params.delete('status');
 
-  if (errorMsg) {
-    return <div className="text-center text-accent-error">{errorMsg}</div>;
-  }
+    // Price (Convert Millions to Absolute)
+    if (minPrice) params.set('minPrice', (parseFloat(minPrice) * 1000000).toString());
+    else params.delete('minPrice');
+    
+    if (maxPrice) params.set('maxPrice', (parseFloat(maxPrice) * 1000000).toString());
+    else params.delete('maxPrice');
+
+    // Remove the generic 'price' param if manual filters are applied to avoid conflict
+    if (minPrice || maxPrice) params.delete('price');
+
+    // Beds
+    if (beds) params.set('beds', beds);
+    else params.delete('beds');
+
+    // Baths
+    if (baths) params.set('baths', baths);
+    else params.delete('baths');
+    
+    // Size
+    if (minSize) params.set('minSize', minSize);
+    else params.delete('minSize');
+
+    if (maxSize) params.set('maxSize', maxSize);
+    else params.delete('maxSize');
+    
+    // Sort is preserved because we start with searchParams.toString()
+
+    router.push(`/search?${params.toString()}`);
+  };
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newSort = e.target.value;
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('sort', newSort);
+    router.push(`/search?${params.toString()}`);
+  };
 
   return (
     <div className="flex flex-col md:flex-row gap-8">
@@ -129,23 +186,30 @@ function SearchResults() {
 
           {/* Price Range */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-text-secondary">Price Range (LKR)</label>
-            <div className="flex gap-2">
+            <div className="flex justify-between items-center">
+                <label className="text-sm font-semibold text-text-secondary">Price Range</label>
+                <span className="text-xs text-primary font-medium bg-primary/10 px-2 py-0.5 rounded">Millions (LKR)</span>
+            </div>
+            <div className="flex gap-2 items-center">
                 <input 
                     type="number" 
-                    placeholder="Min" 
+                    placeholder="Min (M)" 
                     value={minPrice}
                     onChange={(e) => setMinPrice(e.target.value)}
                     className="w-full p-2 rounded-lg border border-border-light bg-hover text-text-primary focus:outline-none focus:ring-2 focus:ring-primary text-sm"
                 />
+                <span className="text-gray-400">-</span>
                 <input 
                     type="number" 
-                    placeholder="Max" 
+                    placeholder="Max (M)" 
                     value={maxPrice}
                     onChange={(e) => setMaxPrice(e.target.value)}
                     className="w-full p-2 rounded-lg border border-border-light bg-hover text-text-primary focus:outline-none focus:ring-2 focus:ring-primary text-sm"
                 />
             </div>
+            <p className="text-xs text-text-secondary text-center">
+                Example: Type <strong>32</strong> for 32 Million
+            </p>
           </div>
 
           {/* Beds & Baths */}
@@ -206,6 +270,11 @@ function SearchResults() {
                 />
             </div>
           </div>
+          
+          <Button onClick={applyFilters} className="w-full">
+            Apply Filters
+          </Button>
+
         </div>
       </aside>
 
@@ -214,8 +283,8 @@ function SearchResults() {
         <div className="flex justify-between items-center mb-6">
             <p className="text-text-secondary">{properties.length} Properties found</p>
             <select 
-                value={sort} 
-                onChange={(e) => setSort(e.target.value)}
+                value={searchParams.get('sort') || 'newest'} 
+                onChange={handleSortChange}
                 className="p-2 rounded-lg border border-border-light bg-white text-text-primary focus:outline-none"
             >
                 <option value="newest">Newest First</option>

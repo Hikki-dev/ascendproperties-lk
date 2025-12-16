@@ -6,34 +6,44 @@ import { cn } from "@/lib/utils";
 
 type Message = {
   id: string;
-  role: "user" | "bot";
+  role: "user" | "bot" | "assistant";
   content: string;
   timestamp: Date;
 };
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: "1",
+      role: "assistant",
+      content:
+        "Welcome to Ascend Properties! Are you looking to Buy, Sell, or Rent today?",
+      timestamp: new Date(),
+    },
+  ]);
   const [inputValue, setInputValue] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isApiLoading, setIsApiLoading] = useState(false);
+  const [isChatLoading, setIsChatLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const toggleChat = () => {
+    if (!isOpen) {
+      setIsOpen(true);
+      setIsChatLoading(true);
+      setTimeout(() => setIsChatLoading(false), 1500);
+    } else {
+      setIsOpen(false);
+    }
+  };
+
   useEffect(() => {
     if (isOpen && messages.length === 0) {
-      // Initial greeting
-      setMessages([
-        {
-          id: "1",
-          role: "bot",
-          content:
-            "Welcome to Ascend Properties! Are you looking to Buy, Sell, or Rent today?",
-          timestamp: new Date(),
-        },
-      ]);
+       // logic if needed
     }
   }, [isOpen]);
 
@@ -54,7 +64,7 @@ export default function ChatWidget() {
 
     setMessages((prev) => [...prev, userMessage]);
     setInputValue("");
-    setIsLoading(true);
+    setIsApiLoading(true);
 
     try {
       const response = await fetch("/api/chat", {
@@ -86,7 +96,7 @@ export default function ChatWidget() {
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
-      setIsLoading(false);
+      setIsApiLoading(false);
     }
   };
 
@@ -104,7 +114,7 @@ export default function ChatWidget() {
               </p>
             </div>
             <button
-              onClick={() => setIsOpen(false)}
+              onClick={toggleChat}
               className="hover:bg-gray-800 p-1 rounded transition-colors"
             >
               <X className="w-5 h-5" />
@@ -113,20 +123,34 @@ export default function ChatWidget() {
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-            {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={cn(
-                  "max-w-[85%] p-3 rounded-lg text-sm",
-                  msg.role === "user"
-                    ? "ml-auto bg-black text-white rounded-br-none"
-                    : "bg-white border border-gray-100 shadow-sm rounded-bl-none text-gray-800"
-                )}
-              >
-                {msg.content}
+            {isChatLoading ? (
+               <div className="flex justify-start">
+                <div className="bg-white p-4 rounded-2xl rounded-tl-none shadow-sm border border-gray-100">
+                  <div className="flex space-x-2">
+                    <div className="w-2 h-2 bg-primary/40 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                    <div className="w-2 h-2 bg-primary/40 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                    <div className="w-2 h-2 bg-primary/40 rounded-full animate-bounce"></div>
+                  </div>
+                </div>
               </div>
-            ))}
-            {isLoading && (
+            ) : (
+                <>
+                {messages.map((msg) => (
+                <div
+                    key={msg.id}
+                    className={cn(
+                    "max-w-[85%] p-3 rounded-lg text-sm",
+                    msg.role === "user"
+                        ? "ml-auto bg-black text-white rounded-br-none"
+                        : "bg-white border border-gray-100 shadow-sm rounded-bl-none text-gray-800"
+                    )}
+                >
+                    {msg.content}
+                </div>
+                ))}
+            </>
+            )}
+            {isApiLoading && (
               <div className="bg-white border border-gray-100 shadow-sm rounded-lg rounded-bl-none p-3 w-fit">
                 <div className="flex gap-1">
                   <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
@@ -156,7 +180,7 @@ export default function ChatWidget() {
               />
               <button
                 type="submit"
-                disabled={isLoading || !inputValue.trim()}
+                disabled={isApiLoading || !inputValue.trim()}
                 className="bg-black text-white p-3 rounded-full hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex-shrink-0"
               >
                 <Send className="w-4 h-4" />
@@ -168,7 +192,7 @@ export default function ChatWidget() {
 
       {/* Toggle Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={toggleChat}
         className={cn(
           "w-14 h-14 rounded-full bg-black text-white shadow-lg flex items-center justify-center transition-all hover:scale-110",
           isOpen ? "rotate-90" : "hover:bg-gray-800"

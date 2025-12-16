@@ -1,11 +1,15 @@
+"use client";
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { SaveButton } from '@/components/property/SaveButton';
 import Image from 'next/image';
 import { MapPin, Bed, Bath, Square, Star } from 'lucide-react';
-import type { Property } from '@/types/property'; // Import your main Property type
+import type { Property } from '@/types/property';
+import { useState } from 'react';
 
 export function PropertyCard({ property }: { property: Property }) {
+  const [imageError, setImageError] = useState(false);
   const imageUrl = property.photos?.[0] || 'https://placehold.co/400x300/F1F3F6/6E6E6E?text=No+Image';
 
   return (
@@ -16,10 +20,12 @@ export function PropertyCard({ property }: { property: Property }) {
     >
       <div className="relative h-64 overflow-hidden">
         <Image 
-          src={imageUrl}
+          src={imageError ? 'https://placehold.co/600x400?text=No+Image' : imageUrl}
           alt={property.title}
           fill
-          className="object-cover group-hover:scale-110 transition-transform duration-500"
+          className="object-cover transition-transform duration-500 group-hover:scale-110"
+          onError={() => setImageError(true)}
+          unoptimized
         />
         <div className="absolute top-4 right-4 z-10">
           <SaveButton propertyId={property.id} />

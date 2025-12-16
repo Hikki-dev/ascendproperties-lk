@@ -8,6 +8,7 @@ import { Inter } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://ascendproperties.lk'),
   title: {
     default: 'Ascend Properties | Luxury Real Estate in Sri Lanka',
     template: '%s | Ascend Properties'

@@ -11,10 +11,11 @@ export function Footer() {
           <div>
             <div className="relative w-56 h-16 mb-4">
               <Image 
-                src="/images/logo.png" 
+                src="/logo-new.png" 
                 alt="Ascend Properties" 
                 fill
                 className="object-contain object-left"
+                unoptimized
               />
             </div>
             <p className="text-white/60">Your trusted partner in finding the perfect property in Sri Lanka.</p>
