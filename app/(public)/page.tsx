@@ -136,7 +136,7 @@ const AscendPropertiesHomepage = async () => {
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 w-full">
           <div className="max-w-3xl">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 animate-fade-in-up text-white drop-shadow-lg">
+            <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6 animate-fade-in-up text-white drop-shadow-lg">
               Find Your Dream Home in Sri Lanka
             </h1>
             <p className="text-xl md:text-2xl text-white/90 mb-10 animate-fade-in-up drop-shadow-md" style={{ animationDelay: '0.1s' }}>
@@ -150,7 +150,7 @@ const AscendPropertiesHomepage = async () => {
       </section>
 
       {/* Why Choose Ascend */}
-      <section className="py-16 bg-background">
+      <section className="py-10 md:py-16 bg-background">
         <div className="max-w-7xl mx-auto px-4 text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-12">Why Choose Ascend</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -168,7 +168,7 @@ const AscendPropertiesHomepage = async () => {
       </section>
 
       {/* Property Types */}
-      <section className="py-16 bg-card">
+      <section className="py-10 md:py-16 bg-card">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-10 text-center">
             Browse by Property Type
@@ -198,7 +198,7 @@ const AscendPropertiesHomepage = async () => {
       </section>
 
       {/* New Listings (Auto-populated) */}
-      <section className="py-16 bg-background">
+      <section className="py-10 md:py-16 bg-background">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between mb-10">
             <h2 className="text-3xl md:text-4xl font-bold text-text-primary">
@@ -279,7 +279,7 @@ const AscendPropertiesHomepage = async () => {
       </section>
 
       {/* Featured Properties */}
-      <section className="py-16 bg-background">
+      <section className="py-10 md:py-16 bg-background">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between mb-10">
             <h2 className="text-3xl md:text-4xl font-bold text-text-primary">
@@ -360,7 +360,7 @@ const AscendPropertiesHomepage = async () => {
       </section>
 
       {/* Neighborhood Guides */}
-      <section className="py-16 bg-card">
+      <section className="py-10 md:py-16 bg-card">
         <div className="max-w-7xl mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-12 text-center">Popular Neighborhoods</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -386,7 +386,7 @@ const AscendPropertiesHomepage = async () => {
       </section>
 
       {/* Trust Signals */}
-      <section className="py-16 bg-hover">
+      <section className="py-10 md:py-16 bg-hover">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
@@ -410,7 +410,7 @@ const AscendPropertiesHomepage = async () => {
       </section>
 
       {/* Testimonials */}
-      <section className="py-16 bg-background">
+      <section className="py-10 md:py-16 bg-background">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-10 text-center">
             What Our Clients Say
@@ -436,7 +436,7 @@ const AscendPropertiesHomepage = async () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-primary to-blue-500 text-white">
+      <section className="py-14 md:py-20 bg-gradient-to-r from-primary to-blue-500 text-white">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Ready to Find Your Dream Property?
