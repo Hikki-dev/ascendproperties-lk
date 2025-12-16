@@ -56,4 +56,33 @@ DROP POLICY IF EXISTS "Anyone can create leads" ON public.leads;
 --   ON properties FOR UPDATE
 --   USING ( (select auth.uid()) = user_id );
 
+-- 5. STORAGE: Enable RLS and Public Access Policies (Fixing 'Failed to upload' / Access Denied)
+-- We need to ensure the 'avatars' and 'properties' buckets exist and are public.
+-- Since we can't create buckets via SQL easily in all setups, we assume they exist (User confirmed).
+-- We WILL create policies to allow public read access (essential for getting URLs).
+
+-- Allow Public Read Access to 'avatars'
+DROP POLICY IF EXISTS "Public Access Avatars" ON storage.objects;
+CREATE POLICY "Public Access Avatars"
+ON storage.objects FOR SELECT
+USING ( bucket_id = 'avatars' );
+
+-- Allow Public Read Access to 'properties'
+DROP POLICY IF EXISTS "Public Access Properties" ujON storage.objects;
+CREATE POLICY "Public Access Properties"
+ON storage.objects FOR SELECT
+USING ( bucket_id = 'properties' );
+
+-- Note: We are using Service Role in the backend for uploads, so we don't strictly need INSERT policies for authenticated users yet,
+-- but it's good practice. For now, Public Read is the critical missing piece for `getPublicUrl` to work visible.
+
+
+-- 6. DATA FIX: Replace Broken Unsplash URLs with Working Placeholders
+-- This fixes the "upstream image response failed" errors in your terminal.
+
+UPDATE properties
+SET photos = ARRAY['https://placehold.co/800x600/1e293b/ffffff?text=Luxury+Home', 'https://placehold.co/800x600/334155/ffffff?text=Interior']
+WHERE photos::text LIKE '%unsplash%';
+
 -- Note: Run the items in Section 5 manually after verifying the exact logic you want.
+

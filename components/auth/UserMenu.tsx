@@ -37,6 +37,7 @@ export function UserMenu() {
               width={32} 
               height={32} 
               className="rounded-full border border-border-light"
+              unoptimized
             />
           ) : (
             <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
