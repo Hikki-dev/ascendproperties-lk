@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase/client';
+import { createAdminClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import { MapPin, Bed, Bath, Square, Star, ChevronRight } from 'lucide-react';
 import { PropertyCard } from '@/components/PropertyCard'; // Import our new card
@@ -7,6 +7,7 @@ import Image from 'next/image'; // Use Next.js Image
 
 // --- Data Fetching Function ---
 async function getPropertiesForSale() {
+  const supabase = await createAdminClient();
   const { data, error } = await supabase
     .from('properties')
     // UPDATED: Select all fields from your main Property type

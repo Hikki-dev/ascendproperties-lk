@@ -22,6 +22,7 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
           fill
           className="object-cover"
           priority
+          unoptimized
         />
       </div>
 
@@ -41,6 +42,7 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
               alt={`${title} - Photo ${index + 1}`}
               fill
               className="object-cover"
+              unoptimized
             />
           </button>
         ))}

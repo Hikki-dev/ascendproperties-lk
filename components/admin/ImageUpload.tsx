@@ -20,7 +20,20 @@ export function ImageUpload({ value, onChange, disabled, bucket = 'properties', 
   const [isUploading, setIsUploading] = useState(false);
   const [croppingImage, setCroppingImage] = useState<string | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [imageUrlInput, setImageUrlInput] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAddUrl = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!imageUrlInput.trim()) return;
+
+    if (maxFiles === 1) {
+      onChange([imageUrlInput.trim()]);
+    } else {
+      onChange([...value, imageUrlInput.trim()]);
+    }
+    setImageUrlInput('');
+  };
 
   const onSelectFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -130,6 +143,26 @@ export function ImageUpload({ value, onChange, disabled, bucket = 'properties', 
         />
       )}
 
+      {/* URL Input Section */}
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={imageUrlInput}
+          onChange={(e) => setImageUrlInput(e.target.value)}
+          placeholder="Or paste image URL here..."
+          className="flex-1 px-4 py-2 rounded-xl border border-border-light focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-text-primary bg-white"
+          disabled={disabled || isUploading}
+        />
+        <Button 
+          type="button" 
+          onClick={handleAddUrl}
+          disabled={disabled || isUploading || !imageUrlInput.trim()}
+          variant="secondary"
+        >
+          Add URL
+        </Button>
+      </div>
+
       {/* Hidden Input */}
       <input
         type="file"
@@ -152,6 +185,7 @@ export function ImageUpload({ value, onChange, disabled, bucket = 'properties', 
             src={value[0]}
             alt="Uploaded Image"
             className="object-cover"
+            unoptimized
           />
           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
              <div className="text-white flex flex-col items-center gap-2">
@@ -177,6 +211,7 @@ export function ImageUpload({ value, onChange, disabled, bucket = 'properties', 
                     src={url}
                     alt="Uploaded Image"
                     className="object-cover"
+                    unoptimized
                   />
                   <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Button

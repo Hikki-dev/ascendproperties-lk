@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createAdminClient } from '@/lib/supabase/server';
 import Image from "next/image";
 import { LucideIcon, Search, Home, Building2, MapPin, Bed, Bath, Square, Phone, Mail, MessageSquare, ChevronRight, Star } from 'lucide-react';
 import { HeroSearch } from '@/components/HeroSearch';
@@ -17,26 +17,23 @@ type PropertyType = {
 // 2. Function to get featured properties
 async function getFeaturedProperties() {
   try {
-    const sbUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    console.log('Connecting to Supabase at:', sbUrl ? sbUrl.substring(0, 20) + '...' : 'UNDEFINED');
-    const supabase = await createClient();
+    // USE ADMIN CLIENT for public data to bypass cookie/RLS overhead which might be causing timeouts
+    const supabase = createAdminClient();
     const { data, error } = await supabase
       .from('properties')
       .select('id, title, slug, status, price, location_city, bedrooms, bathrooms, size_sqft, photos, is_featured')
       .eq('is_featured', true)
-      .limit(3);
+      .eq('status', 'sale')
+      .limit(6);
 
-    if (error) {
-      console.error('Error fetching featured properties:', error);
-      return [];
-    }
+    if (error) throw error;
     // Map data to include a single 'image' for the card
-    return data.map(item => ({
+    return (data || []).map(item => ({
       ...item,
       image: item.photos?.[0] || 'https://placehold.co/400x300/F1F3F6/6E6E6E?text=No+Image', // Use first photo or placeholder
     })) as (Property & { image: string })[];
-  } catch (err) {
-    console.error('Unexpected error fetching featured properties:', err);
+  } catch (error) {
+    console.error('Error fetching featured properties:', error);
     return [];
   }
 }
@@ -44,7 +41,7 @@ async function getFeaturedProperties() {
 // 2.a Function to get new properties
 async function getNewProperties() {
   try {
-    const supabase = await createClient();
+    const supabase = await createAdminClient();
     const { data, error } = await supabase
       .from('properties')
       .select('id, title, slug, status, price, location_city, bedrooms, bathrooms, size_sqft, photos, is_featured, created_at')

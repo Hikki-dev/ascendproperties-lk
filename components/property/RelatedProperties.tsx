@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/server';
 import { Property } from '@/types/property';
 import { PropertyCard } from '@/components/PropertyCard';
 
@@ -9,6 +9,7 @@ interface RelatedPropertiesProps {
 }
 
 async function getRelatedProperties(currentId: string, type: string, city: string) {
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('properties')
     .select('*')

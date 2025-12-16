@@ -10,7 +10,7 @@ import { useState } from 'react';
 
 export function PropertyCard({ property }: { property: Property }) {
   const [imageError, setImageError] = useState(false);
-  const imageUrl = property.photos?.[0] || 'https://placehold.co/400x300/F1F3F6/6E6E6E?text=No+Image';
+  const imageUrl = property.photos?.[0] || 'https://placehold.co/600x400.png?text=No+Image';
 
   return (
     <Link 

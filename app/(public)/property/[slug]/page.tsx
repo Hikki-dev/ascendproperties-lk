@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import { MapPin, Bed, Bath, Square, Phone, Mail, Home, MessageSquare } from 'lucide-react';
 import Image from 'next/image';
@@ -12,6 +12,7 @@ import { ShareButton } from '@/components/property/ShareButton';
 
 // --- Data Fetching ---
 async function getPropertyBySlug(slug: string) {
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('properties')
     .select('*')

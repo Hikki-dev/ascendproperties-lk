@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase/client';
+import { createAdminClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import { MapPin, Bed, Bath, Square, Star, ChevronRight } from 'lucide-react';
 import { PropertyCard } from '@/components/PropertyCard';
@@ -7,6 +7,7 @@ import Image from 'next/image';
 
 // --- Data Fetching Function ---
 async function getPropertiesForRent() {
+  const supabase = await createAdminClient();
   const { data, error } = await supabase
     .from('properties')
     .select('id, title, slug, property_type, status, price, location_district, location_city, address, bedrooms, bathrooms, size_sqft, description, photos, amenities, is_featured, views_count, created_at')
