@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { CheckCircle2, Users, Building2, Trophy } from 'lucide-react';
+import { CountUp } from '@/components/ui/CountUp';
 
 export default function AboutPage() {
   return (
@@ -10,7 +11,7 @@ export default function AboutPage() {
       <section className="relative h-[500px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-black/50 z-10" />
         <Image
-          src="/images/about-hero.png"
+          src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1600&q=80"
           alt="About Ascend Properties"
           fill
           className="object-cover"
@@ -31,10 +32,10 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
-              { label: 'Years Experience', value: '10+', icon: Trophy },
-              { label: 'Properties Sold', value: '500+', icon: Building2 },
-              { label: 'Happy Clients', value: '1000+', icon: Users },
-              { label: 'Awards Won', value: '15', icon: CheckCircle2 },
+              { label: 'Years Experience', end: 10, suffix: '+', icon: Trophy },
+              { label: 'Properties Sold', end: 500, suffix: '+', icon: Building2 },
+              { label: 'Happy Clients', end: 1000, suffix: '+', icon: Users },
+              { label: 'Awards Won', end: 15, suffix: '', icon: CheckCircle2 },
             ].map((stat, i) => {
               const Icon = stat.icon;
               return (
@@ -44,7 +45,9 @@ export default function AboutPage() {
                       <Icon className="w-6 h-6" />
                     </div>
                   </div>
-                  <h3 className="text-3xl font-bold text-text-primary">{stat.value}</h3>
+                  <h3 className="text-3xl font-bold text-text-primary flex justify-center items-center">
+                    <CountUp end={stat.end} suffix={stat.suffix} />
+                  </h3>
                   <p className="text-text-secondary font-medium">{stat.label}</p>
                 </div>
               );
@@ -90,7 +93,7 @@ export default function AboutPage() {
           
           <div className="relative h-[600px] rounded-2xl overflow-hidden shadow-2xl transform hover:scale-[1.02] transition-transform duration-500">
              <Image
-              src="/images/our-mission.png"
+              src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80"
               alt="Our Team"
               fill
               className="object-cover"

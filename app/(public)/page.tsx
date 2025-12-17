@@ -5,6 +5,7 @@ import { HeroSearch } from '@/components/HeroSearch';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Property } from '@/types/property';
+import { CountUp } from '@/components/ui/CountUp';
 
 // 1. Define the PropertyType for the counts
 type PropertyType = {
@@ -18,7 +19,7 @@ type PropertyType = {
 async function getFeaturedProperties() {
   try {
     // USE ADMIN CLIENT for public data to bypass cookie/RLS overhead which might be causing timeouts
-    const supabase = createAdminClient();
+    const supabase = await createAdminClient();
     const { data, error } = await supabase
       .from('properties')
       .select('id, title, slug, status, price, location_city, bedrooms, bathrooms, size_sqft, photos, is_featured')
@@ -109,10 +110,10 @@ const AscendPropertiesHomepage = async () => {
   ];
 
   const neighborhoods = [
-    { name: "Colombo 03", image: "/images/colombo-03.jpg", count: "Check Availability" },
-    { name: "Colombo 7", image: "/images/colombo-07.jpg", count: "1 Property Available" },
-    { name: "Galle Face", image: "/images/galle-face.jpg", count: "Check Availability" },
-    { name: "Rajagiriya", image: "/images/rajagiriya.jpg", count: "Check Availability" }
+    { name: "Colombo 03", image: "https://images.unsplash.com/photo-1590442341999-52d3f6f707f5?w=600&q=80", count: "Check Availability" },
+    { name: "Colombo 7", image: "https://images.unsplash.com/photo-1548057929-234292cc2139?w=600&q=80", count: "1 Property Available" },
+    { name: "Galle Face", image: "https://images.unsplash.com/photo-1588668214407-6ea9e6d8c27c?w=600&q=80", count: "Check Availability" },
+    { name: "Rajagiriya", image: "https://images.unsplash.com/photo-1625906232320-91c64eb325be?w=600&q=80", count: "Check Availability" }
   ];
 
   return (
@@ -387,19 +388,27 @@ const AscendPropertiesHomepage = async () => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-primary mb-2">10+</div>
+              <div className="text-4xl md:text-5xl font-bold text-primary mb-2 flex justify-center items-center">
+                <CountUp end={10} suffix="+" />
+              </div>
               <div className="text-text-secondary">Years Experience</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-primary mb-2">500+</div>
+              <div className="text-4xl md:text-5xl font-bold text-primary mb-2 flex justify-center items-center">
+                <CountUp end={500} suffix="+" />
+              </div>
               <div className="text-text-secondary">Properties Sold</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-primary mb-2">1000+</div>
+              <div className="text-4xl md:text-5xl font-bold text-primary mb-2 flex justify-center items-center">
+                <CountUp end={1000} suffix="+" />
+              </div>
               <div className="text-text-secondary">Happy Clients</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-primary mb-2">4.9</div>
+              <div className="text-4xl md:text-5xl font-bold text-primary mb-2 flex justify-center items-center">
+                <CountUp end={4.9} decimals={1} />
+              </div>
               <div className="text-text-secondary">Average Rating</div>
             </div>
           </div>
