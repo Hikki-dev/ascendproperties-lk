@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase/client';
+import { createAdminClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Plus, Pencil, Eye } from 'lucide-react';
@@ -9,6 +9,7 @@ import { DeletePropertyButton } from '@/components/admin/DeletePropertyButton';
 export const dynamic = 'force-dynamic';
 
 async function getProperties() {
+  const supabase = await createAdminClient();
   const { data, error } = await supabase
     .from('properties')
     .select('*')

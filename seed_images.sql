@@ -2,8 +2,8 @@
 UPDATE properties
 SET photos = ARRAY[
   'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80',
-  'https://images.unsplash.com/photo-1512918760532-3edbed71747b?w=1200&q=80',
-  'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=1200&q=80'
+  'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=1200&q=80',
+  'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&q=80'
 ]
 WHERE title ILIKE '%Apartment%' OR title ILIKE '%Condo%' OR title ILIKE '%Flat%' OR property_type::text ILIKE 'Apartment';
 
@@ -11,8 +11,8 @@ WHERE title ILIKE '%Apartment%' OR title ILIKE '%Condo%' OR title ILIKE '%Flat%'
 UPDATE properties
 SET photos = ARRAY[
   'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200&q=80', 
-  'https://images.unsplash.com/photo-1600596542815-2a4d04774c13?w=1200&q=80',
-  'https://images.unsplash.com/photo-1580587771525-78b9dba3b91d?w=1200&q=80'
+  'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200&q=80',
+  'https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=1200&q=80'
 ]
 WHERE title ILIKE '%Villa%' OR title ILIKE '%House%' OR title ILIKE '%Home%' OR title ILIKE '%Bungalow%' OR property_type::text ILIKE 'House';
 

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
-import { supabase } from '@/lib/supabase/client';
+import { deleteProperty } from '@/app/actions/admin';
 
 export function DeletePropertyButton({ id }: { id: string }) {
   const router = useRouter();
@@ -15,17 +15,16 @@ export function DeletePropertyButton({ id }: { id: string }) {
 
     setLoading(true);
     try {
-      const { error } = await supabase
-        .from('properties')
-        .delete()
-        .eq('id', id);
+      const result = await deleteProperty(id);
 
-      if (error) throw error;
+      if (result.error) throw new Error(result.error);
 
-      router.refresh();
+      // No need to manually refresh if the server action revalidates path
+      // router.refresh(); 
     } catch (error) {
       console.error('Error deleting property:', error);
-      alert('Error deleting property');
+      // @ts-ignore
+      alert(error.message || 'Error deleting property');
     } finally {
       setLoading(false);
     }

@@ -33,7 +33,7 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
     title: initialData?.title || '',
     slug: initialData?.slug || '',
     description: initialData?.description || '',
-    property_type: initialData?.property_type || 'House',
+    property_type: initialData?.property_type || 'house',
     status: initialData?.status || 'sale',
     price: initialData?.price || 0,
     location_city: initialData?.location_city || '',
@@ -86,7 +86,10 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
       console.error('Validation errors:', fieldErrors);
       setErrors(fieldErrors);
       setLoading(false);
-      alert('Please fix the validation errors shown in the form.');
+      const errorMessages = Object.entries(fieldErrors)
+        .map(([field, message]) => `${field}: ${message}`)
+        .join('\n');
+      alert(`Please fix the following validation errors:\n\n${errorMessages}`);
       return;
     }
 
@@ -256,10 +259,10 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
                 onChange={handleChange}
                 className="w-full pl-10 pr-4 py-3 rounded-xl border border-border-light focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-text-primary bg-white appearance-none cursor-pointer"
               >
-                <option value="House" className="text-text-primary">House</option>
-                <option value="Apartment" className="text-text-primary">Apartment</option>
-                <option value="Land" className="text-text-primary">Land</option>
-                <option value="Commercial" className="text-text-primary">Commercial</option>
+                <option value="house" className="text-text-primary">House</option>
+                <option value="apartment" className="text-text-primary">Apartment</option>
+                <option value="land" className="text-text-primary">Land</option>
+                <option value="commercial" className="text-text-primary">Commercial</option>
               </select>
             </div>
           </div>

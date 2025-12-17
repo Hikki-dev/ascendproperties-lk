@@ -4,7 +4,7 @@ export const propertySchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters"),
   slug: z.string().optional(), // We generate this if empty
   description: z.string().optional(),
-  property_type: z.enum(['House', 'Apartment', 'Land', 'Commercial']),
+  property_type: z.enum(['house', 'apartment', 'land', 'commercial']),
   status: z.enum(['sale', 'rent', 'both', 'sold', 'off_market']),
   price: z.number().min(0, "Price must be a positive number"),
   location_city: z.string().min(1, "City is required"),

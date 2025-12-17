@@ -3,17 +3,14 @@ CREATE OR REPLACE FUNCTION get_random_photos(category text) RETURNS text[] AS $$
 DECLARE
     apartment_pool text[] := ARRAY[
         'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80',
-        'https://images.unsplash.com/photo-1512918760532-3edbed71747b?w=1200&q=80',
         'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=1200&q=80',
         'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&q=80',
         'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&q=80',
         'https://images.unsplash.com/photo-1515263487990-61b07816b324?w=1200&q=80',
-        'https://images.unsplash.com/photo-1460317442991-0ec2aaef2883?w=1200&q=80'
+        'https://images.unsplash.com/photo-1501183638710-841dd1904471?w=1200&q=80'
     ];
     house_pool text[] := ARRAY[
         'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200&q=80', 
-        'https://images.unsplash.com/photo-1600596542815-2a4d04774c13?w=1200&q=80',
-        'https://images.unsplash.com/photo-1580587771525-78b9dba3b91d?w=1200&q=80',
         'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200&q=80',
         'https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=1200&q=80',
         'https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=1200&q=80',
