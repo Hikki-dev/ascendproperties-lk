@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
@@ -18,13 +18,18 @@ const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         // Custom variants for Ascend
-        primary: "bg-primary text-white hover:bg-blue-700 shadow-md hover:shadow-lg transition-all duration-300",
+        primary: "bg-primary text-white hover:bg-primary-dark shadow-md hover:shadow-lg transition-all duration-300",
         "primary-outline": "border-2 border-primary text-primary bg-transparent hover:bg-primary hover:text-white transition-all duration-300",
+        // Luxury variants
+        luxury: "bg-gold-gradient text-dark font-semibold hover:shadow-[0_0_30px_rgba(198,169,98,0.4)] transition-all duration-500",
+        "luxury-outline": "border border-primary text-primary bg-transparent hover:bg-primary/10 tracking-wider uppercase text-xs font-medium transition-all duration-500",
+        "luxury-dark": "bg-dark text-primary border border-transparent hover:border-primary/30 tracking-wider uppercase text-xs font-medium transition-all duration-500",
       },
       size: {
         default: "h-10 px-4 py-2",
         sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
+        lg: "h-12 rounded-md px-8 text-base",
+        xl: "h-14 rounded-md px-10 text-base",
         icon: "h-10 w-10",
       },
     },

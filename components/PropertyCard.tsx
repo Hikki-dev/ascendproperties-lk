@@ -1,7 +1,6 @@
 "use client";
 
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { SaveButton } from '@/components/property/SaveButton';
 import Image from 'next/image';
 import { MapPin, Bed, Bath, Square, Star } from 'lucide-react';
@@ -13,66 +12,82 @@ export function PropertyCard({ property }: { property: Property }) {
   const imageUrl = property.photos?.[0] || 'https://placehold.co/600x400.png?text=No+Image';
 
   return (
-    <Link 
+    <Link
       href={`/property/${property.slug}`}
       key={property.id}
-      className="group bg-card rounded-2xl shadow-sm hover:shadow-2xl hover:bg-hover transition-all duration-300 overflow-hidden cursor-pointer hover:-translate-y-2 block border border-border-light"
+      className="group block bg-white luxury-card-glow overflow-hidden border border-border-light/50 hover:border-primary/20 transition-all duration-700"
     >
-      <div className="relative h-64 overflow-hidden">
-        <Image 
+      {/* Image Container */}
+      <div className="relative aspect-[4/3] overflow-hidden">
+        <Image
           src={imageError ? 'https://placehold.co/600x400?text=No+Image' : imageUrl}
           alt={property.title}
           fill
-          className="object-cover transition-transform duration-500 group-hover:scale-110"
+          className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           onError={() => setImageError(true)}
           unoptimized
         />
+        {/* Hover overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+        {/* Save Button */}
         <div className="absolute top-4 right-4 z-10">
           <SaveButton propertyId={property.id} />
         </div>
+
+        {/* Status Badge */}
         <div className="absolute top-4 left-4">
-          <span className={`px-4 py-1.5 rounded-full text-sm font-semibold shadow-lg ${
-            property.status === 'sale' ? 'bg-accent-error text-white' : 'bg-accent-success text-white'
+          <span className={`px-4 py-1.5 text-[10px] font-medium tracking-widest uppercase ${
+            property.status === 'sale'
+              ? 'bg-dark/80 backdrop-blur-sm text-white border border-white/20'
+              : 'bg-primary/90 backdrop-blur-sm text-dark border border-primary/40'
           }`}>
-            For {property.status.charAt(0).toUpperCase() + property.status.slice(1)}
+            For {property.status === 'sale' ? 'Sale' : 'Lease'}
           </span>
         </div>
+
+        {/* Featured Badge */}
         {property.is_featured && (
-          <div className="absolute bottom-4 right-4">
-            <span className="bg-accent-gold text-text-primary px-3 py-1.5 rounded-full text-sm font-semibold flex items-center gap-1 shadow-lg backdrop-blur-sm bg-opacity-90">
-              <Star className="w-4 h-4 fill-current" />
-              Featured
+          <div className="absolute bottom-4 left-4">
+            <span className="bg-primary/90 backdrop-blur-sm text-dark px-4 py-1.5 text-[10px] font-medium tracking-widest uppercase flex items-center gap-1.5">
+              <Star className="w-3 h-3 fill-current" />
+              Exclusive
             </span>
           </div>
         )}
       </div>
 
-      <div className="p-4 md:p-6">
-        <h3 className="text-2xl font-bold text-text-primary mb-2">
+      {/* Content */}
+      <div className="p-5 md:p-6">
+        {/* Gold accent line */}
+        <div className="w-8 h-[1px] bg-primary mb-4" />
+
+        <h3 className="font-serif text-xl md:text-2xl font-semibold text-dark mb-1.5 group-hover:text-primary/90 transition-colors duration-300">
           LKR {(property.price / 1000000).toFixed(1)}M
         </h3>
-        <p className="text-lg font-semibold text-text-primary mb-1 truncate">{property.title}</p>
-        <p className="text-text-secondary mb-4 flex items-center gap-1">
-          <MapPin className="w-4 h-4" />
+        <p className="text-sm font-medium text-dark/80 mb-1 truncate tracking-wide">{property.title}</p>
+        <p className="text-text-secondary text-xs mb-5 flex items-center gap-1 tracking-wide">
+          <MapPin className="w-3 h-3 text-primary" />
           {property.location_city}
         </p>
-        <div className="flex gap-4 text-sm text-text-secondary border-t border-border-light pt-4">
+
+        <div className="flex gap-5 text-xs text-text-secondary border-t border-border-light/50 pt-4 tracking-wide">
           {property.bedrooms && (
-            <div className="flex items-center gap-1">
-              <Bed className="w-4 h-4" />
-              {property.bedrooms} beds
+            <div className="flex items-center gap-1.5">
+              <Bed className="w-3.5 h-3.5 text-primary/60" />
+              {property.bedrooms} Beds
             </div>
           )}
           {property.bathrooms && (
-            <div className="flex items-center gap-1">
-              <Bath className="w-4 h-4" />
-              {property.bathrooms} baths
+            <div className="flex items-center gap-1.5">
+              <Bath className="w-3.5 h-3.5 text-primary/60" />
+              {property.bathrooms} Baths
             </div>
           )}
           {property.size_sqft && (
-            <div className="flex items-center gap-1">
-              <Square className="w-4 h-4" />
-              {property.size_sqft} sqft
+            <div className="flex items-center gap-1.5">
+              <Square className="w-3.5 h-3.5 text-primary/60" />
+              {property.size_sqft.toLocaleString()} sqft
             </div>
           )}
         </div>
