@@ -1,0 +1,23 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import { all, one } from '../../lib/db';
+import { dateFmt } from '../../lib/util';
+const n = async (sql: string) => (await one<{ n: number }>(sql))!.n;
+const [live, drafts, newInq, newSell, openTix, customers] = await Promise.all([
+  n("SELECT COUNT(*) n FROM listings WHERE status='available'"), n("SELECT COUNT(*) n FROM listings WHERE status='draft'"),
+  n("SELECT COUNT(*) n FROM inquiries WHERE status='new'"), n("SELECT COUNT(*) n FROM seller_leads WHERE status='new'"),
+  n("SELECT COUNT(*) n FROM tickets WHERE status='open'"), n("SELECT COUNT(*) n FROM users WHERE role='customer'"),
+]);
+const recent = await all("SELECT i.*, l.title ltitle FROM inquiries i LEFT JOIN listings l ON l.id=i.listing_id ORDER BY i.id DESC LIMIT 6");
+const tiles: [string, number, string][] = [['Live listings', live, '/admin/listings'], ['Drafts', drafts, '/admin/listings'], ['New inquiries', newInq, '/admin/inquiries'], ['New seller leads', newSell, '/admin/sellers'], ['Open tickets', openTix, '/admin/tickets'], ['Customers', customers, '/admin/customers']];
+---
+<Admin title="Dashboard">
+  <h1 style="font-size:30px">Dashboard</h1>
+  <div class="grid g3">{tiles.map(([l, v, h]) => <a class="panel" href={h}><span class="muted" style="font-size:13px;font-weight:600">{l}</span><h2 style="font-size:34px;color:var(--blue-d)">{v}</h2></a>)}</div>
+  <div class="row"><a class="btn" href="/admin/listings/new">+ Add listing</a><a class="btn ghost" href="/admin/banners">Manage banners & ads</a><a class="btn ghost" href="/admin/customers">Add a customer</a></div>
+  <section class="panel"><h2 style="font-size:18px;margin-bottom:12px">Latest inquiries</h2>
+    <div class="scroll-x"><table class="table"><thead><tr><th>When</th><th>Name</th><th>Phone</th><th>About</th><th>Status</th></tr></thead><tbody>
+      {recent.map((r) => <tr><td>{dateFmt(r.created_at)}</td><td>{r.name}</td><td><a href={`tel:${r.phone}`}>{r.phone}</a></td><td>{r.ltitle ?? 'General'}</td><td><span class="badge">{r.status}</span></td></tr>)}
+      {recent.length === 0 && <tr><td colspan="5" class="muted">Nothing yet.</td></tr>}
+    </tbody></table></div></section>
+</Admin>

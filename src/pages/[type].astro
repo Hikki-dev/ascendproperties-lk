@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+import ListingCard from '../components/ListingCard.astro';
+import Ad from '../components/Ad.astro';
+import { browse, activeBanners } from '../lib/listings';
+import { DISTRICTS, LAND_CATEGORIES } from '../lib/util';
+
+const map: Record<string, [string, string]> = { lands: ['land', 'Lands'], houses: ['house', 'Houses'], apartments: ['apartment', 'Apartments'] };
+const hit = map[Astro.params.type ?? ''];
+if (!hit) return new Response(null, { status: 404 });
+const [type, label] = hit;
+const q = Astro.url.searchParams;
+const num = (k: string) => parseInt((q.get(k) ?? '').replace(/\D/g, ''), 10) || undefined;
+const f = { type, category: q.get('category') || undefined, district: q.get('district') || undefined, city: q.get('city') || undefined, min: num('min'), max: num('max'), q: q.get('q') || undefined, page: num('page') };
+const [{ rows, total, pages, page }, ads] = await Promise.all([browse(f), activeBanners('listing_inline')]);
+const link = (p: number) => { const u = new URLSearchParams(q); u.set('page', String(p)); return `?${u}`; };
+---
+<Base title={`${label} for sale in Sri Lanka`}>
+  <section style="background:var(--blue-d);color:#fff;padding:44px 0"><div class="wrap"><h1 style="font-size:38px">{label} for sale</h1><p style="margin:8px 0 0;color:#D6E1FA">{total} {total === 1 ? 'project matches' : 'projects match'} your search</p></div></section>
+  <div class="wrap" style="display:flex;flex-wrap:wrap;gap:32px;padding-top:36px;align-items:flex-start">
+    <form class="panel stack" method="get" style="flex:0 0 280px">
+      <h2 style="font-size:18px">Filter</h2>
+      {type === 'land' && <label class="field">Category<select name="category"><option value="">All</option>{LAND_CATEGORIES.map((c) => <option selected={c === f.category}>{c}</option>)}</select></label>}
+      <label class="field">District<select name="district"><option value="">All districts</option>{DISTRICTS.map((d) => <option selected={d === f.district}>{d}</option>)}</select></label>
+      <label class="field">City<input name="city" value={f.city ?? ''} /></label>
+      <div class="row" style="flex-wrap:nowrap"><label class="field"  style="flex:1">Min price<input name="min" inputmode="numeric" value={f.min ?? ''} placeholder="0" /></label><label class="field" style="flex:1">Max price<input name="max" inputmode="numeric" value={f.max ?? ''} placeholder="Any" /></label></div>
+      <label class="field">Keyword<input name="q" value={f.q ?? ''} placeholder="Project or area" /></label>
+      <button class="btn">Apply filters</button>
+      <a class="muted" href={`/${Astro.params.type}`} style="text-align:center;font-size:14px">Clear</a>
+    </form>
+    <div style="flex:1 1 640px;min-width:0">
+      {rows.length === 0 ? <div class="panel"><h3>No matches</h3><p class="muted">Try clearing a filter.</p></div> : (
+        <div class="grid g3">
+          {rows.map((l, i) => (<><ListingCard l={l} />{i === 3 && ads[0] && <Ad b={ads[0]} />}</>))}
+        </div>)}
+      {pages > 1 && <nav class="pager" aria-label="Pagination">
+        {page > 1 && <a href={link(page - 1)}>Prev</a>}
+        {Array.from({ length: pages }, (_, i) => i + 1).filter((p) => Math.abs(p - page) <= 2 || p === 1 || p === pages).map((p) => p === page ? <span aria-current="page">{p}</span> : <a href={link(p)}>{p}</a>)}
+        {page < pages && <a href={link(page + 1)}>Next</a>}
+      </nav>}
+    </div>
+  </div>
+</Base>

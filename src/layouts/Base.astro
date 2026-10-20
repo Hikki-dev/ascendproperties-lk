@@ -1,0 +1,43 @@
+---
+import '../styles/global.css';
+interface Props { title: string; description?: string; }
+const { title, description = 'Land, houses and apartments for sale across Sri Lanka, with clear titles, payment plans and after-sales support.' } = Astro.props;
+const p = Astro.url.pathname;
+const user = Astro.locals.user;
+const nav = [['/', 'Home'], ['/lands', 'Lands'], ['/houses', 'Houses'], ['/apartments', 'Apartments'], ['/sell-your-land', 'Sell your land'], ['/contact', 'Contact']];
+const cur = (h: string) => (h === '/' ? p === '/' : p.startsWith(h));
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{title === 'Ascend Properties' ? title : `${title} | Ascend Properties`}</title>
+  <meta name="description" content={description} />
+  <link rel="icon" type="image/png" href="/mark.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a href="/" aria-label="Ascend Properties home"><img src="/mark.png" alt="Ascend Properties" width="33" height="48" /></a>
+      <nav class="nav" id="nav" aria-label="Main">
+        {nav.map(([h, l]) => <a href={h} aria-current={cur(h) ? 'page' : undefined}>{l}</a>)}
+      </nav>
+      <div class="row">
+        <a class="btn ghost sm hide-sm" href={user ? (user.role === 'admin' ? '/admin' : '/portal') : '/login'}>{user ? (user.role === 'admin' ? 'Admin' : 'My account') : 'Customer portal'}</a>
+        <button class="btn ghost sm nav-toggle" aria-controls="nav" aria-expanded="false" onclick="const n=document.getElementById('nav');const o=n.classList.toggle('open');this.setAttribute('aria-expanded',o)">Menu</button>
+      </div>
+    </div>
+  </header>
+  <slot />
+  <footer class="footer">
+    <div class="wrap">
+      <span><b style="color:#fff">Ascend Properties</b><br />[Address] · [Phone] · [Email]</span>
+      <span>© {new Date().getFullYear()} Ascend Properties</span>
+    </div>
+  </footer>
+</body>
+</html>

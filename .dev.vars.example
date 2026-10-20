@@ -1,0 +1,6 @@
+# Local dev secrets (copy to .dev.vars). In production use: wrangler secret put <NAME>
+ADMIN_EMAIL=you@example.com
+ADMIN_PASSWORD=choose-a-long-password
+# Optional: Cloudflare Turnstile (spam protection). Leave unset to disable.
+TURNSTILE_SECRET=
+TURNSTILE_SITE_KEY=

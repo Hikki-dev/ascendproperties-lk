@@ -1,49 +1,28 @@
 {
   "name": "ascendproperties-lk",
-  "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev --webpack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint",
-    "seed": "npx tsx scripts/seed.ts"
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "db:local": "wrangler d1 migrations apply ascend-db --local && wrangler d1 execute ascend-db --local --file=seed.sql",
+    "db:remote": "wrangler d1 migrations apply ascend-db --remote",
+    "deploy": "astro build && wrangler deploy",
+    "test": "node --test tests/"
   },
   "dependencies": {
-    "@google-cloud/vertexai": "^1.10.0",
-    "@google/generative-ai": "^0.24.1",
-    "@radix-ui/react-slot": "^1.2.4",
-    "@supabase/ssr": "^0.7.0",
-    "@supabase/supabase-js": "^2.81.1",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "cmdk": "^1.1.1",
-    "dotenv": "^17.2.3",
-    "embla-carousel-react": "^8.6.0",
-    "framer-motion": "^12.23.26",
-    "lucide-react": "^0.553.0",
-    "next": "^16.0.10",
-    "next-auth": "^4.24.13",
-    "nodemailer": "^7.0.10",
-    "react": "19.2.0",
-    "react-dom": "19.2.0",
-    "react-easy-crop": "^5.5.6",
-    "react-hook-form": "^7.66.0",
-    "recharts": "^3.6.0",
-    "tailwind-merge": "^3.4.0",
-    "zod": "^4.1.12"
+    "@astrojs/cloudflare": "^14.4.1",
+    "@astrojs/react": "^7.1.0",
+    "astro": "^7.4.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "autoprefixer": "^10.4.22",
-    "babel-plugin-react-compiler": "1.0.0",
-    "eslint": "^9",
-    "eslint-config-next": "16.0.3",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.18",
-    "typescript": "^5"
+    "@cloudflare/workers-types": "^5.20261019.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^7.0.2",
+    "wrangler": "^4.151.2"
   }
 }

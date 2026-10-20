@@ -1,0 +1,68 @@
+---
+import Base from '../layouts/Base.astro';
+import ListingCard from '../components/ListingCard.astro';
+import Ad from '../components/Ad.astro';
+import { latest, activeBanners, counts, featured } from '../lib/listings';
+import { all } from '../lib/db';
+import { DISTRICTS, mediaUrl } from '../lib/util';
+
+const [rows, hero, banners, c, d] = await Promise.all([
+  latest(8), activeBanners('hero'), activeBanners('home_banner'), counts(),
+  all<{ n: number }>("SELECT COUNT(DISTINCT district) n FROM listings WHERE status='available'"),
+]);
+const n = (t: string) => c.find((x) => x.type === t)?.n ?? 0;
+const heroBg = hero[0]?.image ? `background-image:linear-gradient(rgba(15,47,122,.65),rgba(15,47,122,.75)),url(${mediaUrl(hero[0].image)})` : '';
+const houses = await featured('house', 4);
+const apts = await featured('apartment', 4);
+---
+<Base title="Ascend Properties" description="Verified lands, houses and apartments across Sri Lanka with payment plans and after-sales support.">
+  <section class="hero" style={heroBg}>
+    <div class="wrap stack" style="gap:20px">
+      <span class="eyebrow" style="color:#9DBBFF">Lands · Houses · Apartments</span>
+      <h1>{hero[0]?.title ?? 'Find land worth building a life on.'}</h1>
+      <p>{hero[0]?.body ?? 'Verified projects across Sri Lanka, with clear titles, payment plans and support long after you sign.'}</p>
+      <form id="search" class="searchbox" method="get" action="/lands">
+        <div class="tabs" role="radiogroup" aria-label="Property type">
+          <label><input type="radio" name="t" value="/lands" checked />Lands</label>
+          <label><input type="radio" name="t" value="/houses" />Houses</label>
+          <label><input type="radio" name="t" value="/apartments" />Apartments</label>
+        </div>
+        <label class="field" style="flex:1 1 180px">District
+          <select name="district"><option value="">All districts</option>{DISTRICTS.map((x) => <option>{x}</option>)}</select></label>
+        <label class="field" style="flex:2 1 220px">Keyword<input name="q" placeholder="Project or area" /></label>
+        <button class="btn" style="height:44px">Search</button>
+      </form>
+      {hero[0]?.cta_url && <a class="btn ghost" style="align-self:flex-start" href={hero[0].cta_url}>{hero[0].cta_label ?? 'Learn more'}</a>}
+    </div>
+  </section>
+  <script is:inline>
+    const f = document.getElementById('search');
+    f.addEventListener('submit', () => { f.action = f.t.value; f.t.disabled = true; });
+  </script>
+
+  <div class="wrap">
+    <section class="stats">
+      <div class="stat"><b>{n('land')}</b><span class="muted">Lands available</span></div>
+      <div class="stat"><b>{n('house')}</b><span class="muted">Houses available</span></div>
+      <div class="stat"><b>{n('apartment')}</b><span class="muted">Apartments available</span></div>
+      <div class="stat"><b>{d[0]?.n ?? 0}</b><span class="muted">Districts covered</span></div>
+    </section>
+
+    <section style="padding-top:72px">
+      <div class="row between" style="margin-bottom:28px"><div><span class="eyebrow">New this week</span><h2 style="font-size:34px;margin-top:6px">Latest listings</h2></div><a class="btn ghost" href="/lands">View all →</a></div>
+      <div class="grid g4">{rows.map((l) => <ListingCard l={l} />)}</div>
+      {rows.length === 0 && <p class="muted">No listings yet. Add the first one in the admin area.</p>}
+    </section>
+
+    {banners.length > 0 && <section style="padding-top:56px"><Ad b={banners[0]} wide /></section>}
+
+    {houses.length > 0 && <section style="padding-top:56px"><div class="row between" style="margin-bottom:24px"><h2 style="font-size:28px">Featured houses</h2><a href="/houses" class="muted">All houses →</a></div><div class="grid g4">{houses.map((l) => <ListingCard l={l} />)}</div></section>}
+    {apts.length > 0 && <section style="padding-top:56px"><div class="row between" style="margin-bottom:24px"><h2 style="font-size:28px">Featured apartments</h2><a href="/apartments" class="muted">All apartments →</a></div><div class="grid g4">{apts.map((l) => <ListingCard l={l} />)}</div></section>}
+
+    <section style="padding-top:56px" class="grid g3">
+      <a class="panel" href="/sell-your-land"><h3>Sell your land</h3><p class="muted">Send us the details and photos. Our team replies with a valuation.</p></a>
+      <a class="panel" href="/portal"><h3>Customer portal</h3><p class="muted">Track payments, download receipts and documents, raise a request.</p></a>
+      <a class="panel" href="/contact"><h3>Talk to us</h3><p class="muted">Questions about a project or a payment plan? We call back.</p></a>
+    </section>
+  </div>
+</Base>

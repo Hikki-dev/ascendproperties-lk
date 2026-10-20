@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+import Turnstile from '../components/Turnstile.astro';
+const sent = Astro.url.searchParams.get('sent'), err = Astro.url.searchParams.get('err');
+---
+<Base title="Sell your land" description="Get the best value for your property. Send us your land details and photos.">
+  <section style="background:var(--blue-d);color:#fff;padding:44px 0"><div class="wrap"><h1 style="font-size:38px">Sell your land</h1><p style="margin:8px 0 0;color:#D6E1FA">Get the best value for your property.</p></div></section>
+  <div class="wrap" style="max-width:820px;padding-top:40px">
+    <form class="panel stack" method="post" action="/api/sell" enctype="multipart/form-data">
+      {sent && <div class="notice" role="status">Thank you! Our team will contact you shortly.</div>}
+      {err && <div class="notice err" role="alert">Could not send. Check your details (photos must be JPG/PNG/WebP under 8 MB).</div>}
+      <input name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px" />
+      <h2 style="font-size:20px">Contact information</h2>
+      <div class="grid g2"><label class="field">Name<input name="name" required maxlength="100" autocomplete="name" /></label><label class="field">Mobile<input name="mobile" type="tel" required maxlength="30" autocomplete="tel" /></label></div>
+      <label class="field">Email<input name="email" type="email" maxlength="120" autocomplete="email" /></label>
+      <h2 style="font-size:20px;margin-top:8px">Land information</h2>
+      <label class="field">Address<textarea name="address" maxlength="400"></textarea></label>
+      <div class="grid g3"><label class="field">City<input name="city" maxlength="80" /></label><label class="field">Extent (perches)<input name="extent" maxlength="40" /></label><label class="field">Expected price (LKR)<input name="price" maxlength="40" /></label></div>
+      <label class="field">Description<textarea name="description" maxlength="1500"></textarea></label>
+      <label class="field">Photos (up to 5)<input type="file" name="photos" accept="image/jpeg,image/png,image/webp" multiple /></label>
+      <Turnstile />
+      <button class="btn" style="align-self:flex-start">Submit</button>
+    </form>
+  </div>
+</Base>

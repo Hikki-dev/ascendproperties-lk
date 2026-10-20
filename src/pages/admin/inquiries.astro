@@ -1,0 +1,17 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import { all } from '../../lib/db';
+import { dateFmt } from '../../lib/util';
+const rows = await all('SELECT i.*, l.title ltitle, l.slug FROM inquiries i LEFT JOIN listings l ON l.id=i.listing_id ORDER BY (i.status=\'new\') DESC, i.id DESC LIMIT 200');
+---
+<Admin title="Inquiries">
+  <h1 style="font-size:30px">Inquiries</h1>
+  <div class="panel scroll-x"><table class="table"><thead><tr><th>When</th><th>Contact</th><th>About</th><th>Message</th><th>Status</th></tr></thead><tbody>
+    {rows.map((r) => <tr><td>{dateFmt(r.created_at)}</td>
+      <td><b>{r.name}</b><br /><a href={`tel:${r.phone}`}>{r.phone}</a>{r.email && <><br /><a href={`mailto:${r.email}`}>{r.email}</a></>}</td>
+      <td>{r.slug ? <a href={`/listing/${r.slug}`} target="_blank" rel="noopener">{r.ltitle}</a> : 'General'}</td><td style="max-width:340px;white-space:pre-line">{r.message}</td>
+      <td><form method="post" action="/admin/api/status"><input type="hidden" name="t" value="inquiries" /><input type="hidden" name="id" value={r.id} /><input type="hidden" name="back" value="/admin/inquiries" />
+        <select name="status" onchange="this.form.submit()" aria-label="Status">{['new', 'contacted', 'closed'].map((s) => <option selected={s === r.status}>{s}</option>)}</select></form></td></tr>)}
+    {rows.length === 0 && <tr><td colspan="5" class="muted">No inquiries yet.</td></tr>}
+  </tbody></table></div>
+</Admin>

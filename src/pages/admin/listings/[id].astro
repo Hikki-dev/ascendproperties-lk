@@ -1,0 +1,62 @@
+---
+import Admin from '../../../layouts/Admin.astro';
+import ImageUploader from '../../../components/ImageUploader';
+import { one } from '../../../lib/db';
+import { arr, DISTRICTS, FACILITIES, LAND_CATEGORIES, mediaUrl, TYPES } from '../../../lib/util';
+
+const id = Astro.params.id!;
+const l: any = id === 'new' ? { type: 'land', status: 'draft', facilities: '[]', images: '[]' } : await one('SELECT * FROM listings WHERE id = ?', id);
+if (!l) return new Response('Not found', { status: 404 });
+const fac = arr(l.facilities);
+const photos = [l.cover, ...arr(l.images)].filter(Boolean);
+const saved = Astro.url.searchParams.get('saved'), err = Astro.url.searchParams.get('err');
+---
+<Admin title={id === 'new' ? 'New listing' : l.title}>
+  <div><p class="muted" style="margin:0;font-size:13px"><a href="/admin/listings">Listings</a> / {id === 'new' ? 'New' : l.title}</p><h1 style="font-size:30px">{id === 'new' ? 'Add a listing' : 'Edit listing'}</h1></div>
+  {saved && <div class="notice" role="status">Saved.</div>}
+  {err && <div class="notice err" role="alert">Please fill in title, district and price.</div>}
+  <form method="post" action="/admin/api/listing" enctype="multipart/form-data" class="grid" style="grid-template-columns:minmax(0,3fr) minmax(0,2fr);align-items:start">
+    <input type="hidden" name="id" value={id === 'new' ? '' : l.id} />
+    <div class="stack">
+      <section class="panel stack"><h2 style="font-size:18px">Basics</h2>
+        <label class="field">Project name<input name="title" required maxlength="140" value={l.title ?? ''} placeholder="e.g. Solara – Meepe" /></label>
+        <div class="grid g3" style="gap:12px">
+          <label class="field">Type<select name="type">{Object.entries(TYPES).map(([k, v]) => <option value={k} selected={k === l.type}>{v}</option>)}</select></label>
+          <label class="field">District<select name="district" required><option value="">Select</option>{DISTRICTS.map((d) => <option selected={d === l.district}>{d}</option>)}</select></label>
+          <label class="field">City / area<input name="city" maxlength="80" value={l.city ?? ''} /></label>
+        </div>
+        <label class="field">Land category (lands only)<select name="category"><option value="">None</option>{LAND_CATEGORIES.map((c) => <option selected={c === l.category}>{c}</option>)}</select></label>
+        <div class="grid g3" style="gap:12px">
+          <label class="field">Price (LKR)<input name="price" required inputmode="numeric" value={l.price ?? ''} /></label>
+          <label class="field">Price label<input name="price_label" maxlength="40" value={l.price_label ?? ''} placeholder="per perch upwards" /></label>
+          <label class="field">Status<select name="status"><option value="draft" selected={l.status === 'draft'}>Draft (hidden)</option><option value="available" selected={l.status === 'available'}>Available</option><option value="sold" selected={l.status === 'sold'}>Sold out</option></select></label>
+        </div>
+        <label class="field">Description<textarea name="description" rows="6" maxlength="5000">{l.description ?? ''}</textarea></label>
+      </section>
+      <section class="panel stack"><h2 style="font-size:18px">Facilities & payment plan</h2>
+        <div class="row">{FACILITIES.map((f) => <label class="check"><input type="checkbox" name="facilities" value={f} checked={fac.includes(f)} />{f}</label>)}</div>
+        <div class="grid g3" style="gap:12px">
+          <label class="field">Down payment %<input name="down_payment_pct" inputmode="numeric" value={l.down_payment_pct ?? ''} /></label>
+          <label class="field">Instalment months<input name="months" inputmode="numeric" value={l.months ?? ''} /></label>
+          <label class="field">Google Maps embed URL<input name="map_url" maxlength="800" value={l.map_url ?? ''} placeholder="https://www.google.com/maps/embed?pb=…" /></label>
+        </div>
+      </section>
+    </div>
+    <div class="stack">
+      <section class="panel stack"><h2 style="font-size:18px">Images</h2><p class="muted" style="margin:0;font-size:13px">First image is the cover.</p>
+        <ImageUploader client:load name="photos" initial={photos} />
+      </section>
+      <section class="panel stack"><h2 style="font-size:18px">Brochure (PDF)</h2>
+        {l.brochure && <a href={mediaUrl(l.brochure)} target="_blank" rel="noopener" class="badge">Current brochure ↗</a>}
+        <input type="file" name="brochure" accept="application/pdf" />
+        <input type="hidden" name="brochure_keep" value={l.brochure ?? ''} />
+      </section>
+      <section class="panel stack"><h2 style="font-size:18px">Visibility</h2>
+        <label class="check"><input type="checkbox" name="featured" checked={!!l.featured} />Feature on home page</label>
+        <label class="field">Publish on (optional)<input type="date" name="published_at" value={(l.published_at ?? '').slice(0, 10)} /></label>
+      </section>
+      <div class="row"><button class="btn">Save listing</button>
+        {id !== 'new' && <button class="btn danger" formaction="/admin/api/listing?delete=1" formnovalidate onclick="return confirm('Delete this listing permanently?')">Delete</button>}</div>
+    </div>
+  </form>
+</Admin>

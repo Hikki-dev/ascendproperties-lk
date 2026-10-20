@@ -1,0 +1,21 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import { all } from '../../lib/db';
+import { arr, dateFmt } from '../../lib/util';
+const rows = await all('SELECT * FROM seller_leads ORDER BY (status=\'new\') DESC, id DESC LIMIT 200');
+---
+<Admin title="Sell-your-land leads">
+  <h1 style="font-size:30px">Sell-your-land leads</h1>
+  <div class="grid g2">
+    {rows.map((r) => <div class="panel stack" style="gap:10px">
+      <div class="row between"><b>{r.name}</b><span class="muted">{dateFmt(r.created_at)}</span></div>
+      <div><a href={`tel:${r.mobile}`}>{r.mobile}</a>{r.email && <> · <a href={`mailto:${r.email}`}>{r.email}</a></>}</div>
+      <div class="muted" style="font-size:14px">{[r.city, r.address].filter(Boolean).join(' · ')}<br />Extent: {r.extent || '–'} · Expected: {r.price || '–'}</div>
+      {r.description && <p style="margin:0;white-space:pre-line">{r.description}</p>}
+      <div class="row">{arr(r.images).map((k) => <a href={`/media/${k}`} target="_blank" rel="noopener"><img src={`/media/${k}`} alt="Seller photo" width="72" height="54" style="object-fit:cover;border-radius:6px" /></a>)}</div>
+      <form method="post" action="/admin/api/status"><input type="hidden" name="t" value="seller_leads" /><input type="hidden" name="id" value={r.id} /><input type="hidden" name="back" value="/admin/sellers" />
+        <select name="status" onchange="this.form.submit()" aria-label="Status">{['new', 'contacted', 'closed'].map((s) => <option selected={s === r.status}>{s}</option>)}</select></form>
+    </div>)}
+  </div>
+  {rows.length === 0 && <p class="muted">No leads yet.</p>}
+</Admin>

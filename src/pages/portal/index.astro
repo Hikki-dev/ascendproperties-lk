@@ -1,0 +1,50 @@
+---
+import Base from '../../layouts/Base.astro';
+import { all } from '../../lib/db';
+import { dateFmt, lkr, STAGES } from '../../lib/util';
+
+const user = Astro.locals.user!;
+if (user.role === 'admin') return Astro.redirect('/admin');
+const purchases = await all('SELECT p.*, l.title FROM purchases p LEFT JOIN listings l ON l.id=p.listing_id WHERE p.user_id=? ORDER BY p.id DESC', user.id);
+const tickets = await all('SELECT * FROM tickets WHERE user_id=? ORDER BY id DESC', user.id);
+const data = await Promise.all(purchases.map(async (p) => ({ p,
+  pay: await all('SELECT * FROM payments WHERE purchase_id=? ORDER BY paid_on DESC, id DESC', p.id),
+  docs: await all('SELECT * FROM documents WHERE purchase_id=? ORDER BY id DESC', p.id) })));
+---
+<Base title="Customer portal">
+  <div class="wrap stack" style="padding-top:36px;gap:28px">
+    <div class="row between"><div><h1 style="font-size:32px">Hello, {user.name}</h1><p class="muted" style="margin:4px 0 0">Your purchases, payments and documents.</p></div>
+      <form method="post" action="/api/logout"><button class="btn ghost sm">Sign out</button></form></div>
+    {data.length === 0 && <div class="panel"><p class="muted" style="margin:0">No purchases linked to your account yet. Contact us if you expected to see one.</p></div>}
+    {data.map(({ p, pay, docs }) => {
+      const paid = pay.reduce((s, y) => s + y.amount, 0);
+      return (<section class="stack" style="gap:20px">
+        <h2 style="font-size:22px">{p.title ?? 'Your purchase'} {p.lot && <span class="muted">· Lot {p.lot}</span>}</h2>
+        <div class="grid g4">
+          <div class="panel"><span class="muted" style="font-size:12px;font-weight:600">Total price</span><h3 style="font-size:22px">LKR {lkr(p.total)}</h3></div>
+          <div class="panel"><span class="muted" style="font-size:12px;font-weight:600">Paid</span><h3 style="font-size:22px;color:var(--ok)">LKR {lkr(paid)}</h3></div>
+          <div class="panel"><span class="muted" style="font-size:12px;font-weight:600">Balance</span><h3 style="font-size:22px">LKR {lkr(Math.max(0, p.total - paid))}</h3></div>
+          <div class="panel"><span class="muted" style="font-size:12px;font-weight:600">Next instalment</span><h3 style="font-size:22px;color:var(--blue)">{p.next_due_on ? dateFmt(p.next_due_on) : '–'}</h3></div>
+        </div>
+        <div class="panel"><h3 style="font-size:18px;margin-bottom:16px">Handover progress</h3><div class="progress">{STAGES.map((s, i) => <div class={i < p.stage ? 'done' : i === p.stage ? 'now' : ''}>{s}</div>)}</div></div>
+        <div class="grid g2" style="align-items:start">
+          <div class="panel scroll-x"><h3 style="font-size:18px;margin-bottom:12px">Payment history</h3><table class="table"><thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Receipt</th></tr></thead><tbody>
+            {pay.map((y) => <tr><td>{dateFmt(y.paid_on)}</td><td>{y.description}</td><td>LKR {lkr(y.amount)}</td><td>{y.receipt ? <a href={`/media/${y.receipt}`} target="_blank" rel="noopener" style="color:var(--blue);font-weight:600">View</a> : '–'}</td></tr>)}
+            {pay.length === 0 && <tr><td colspan="4" class="muted">No payments recorded yet.</td></tr>}</tbody></table></div>
+          <div class="panel stack" style="gap:10px"><h3 style="font-size:18px">Documents</h3>
+            {docs.map((d) => <a class="btn ghost" style="justify-content:flex-start" href={`/media/${d.file}`} target="_blank" rel="noopener">{d.name}</a>)}
+            {docs.length === 0 && <p class="muted" style="margin:0">Documents will appear here when ready.</p>}</div>
+        </div>
+      </section>);
+    })}
+    <section class="grid g2" style="align-items:start">
+      <form class="panel stack" method="post" action="/api/ticket"><h2 style="font-size:20px">Need help?</h2>
+        {purchases.length > 0 && <label class="field">About<select name="purchase_id">{purchases.map((p) => <option value={p.id}>{p.title ?? 'Purchase'} {p.lot ?? ''}</option>)}</select></label>}
+        <label class="field">Subject<input name="subject" required maxlength="120" /></label><label class="field">Message<textarea name="body" required maxlength="3000"></textarea></label>
+        <button class="btn" style="align-self:flex-start">Open support ticket</button></form>
+      <div class="panel stack" style="gap:10px"><h2 style="font-size:20px">Your tickets</h2>
+        {tickets.map((t) => <a class="row between" href={`/portal/tickets/${t.id}`}><span style="font-weight:600">{t.subject}</span><span class={`badge ${t.status === 'open' ? 'warn' : 'gray'}`}>{t.status}</span></a>)}
+        {tickets.length === 0 && <p class="muted" style="margin:0">No tickets yet.</p>}</div>
+    </section>
+  </div>
+</Base>
