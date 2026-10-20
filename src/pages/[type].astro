@@ -51,7 +51,7 @@ const title = `${total} ${total === 1 ? noun.replace(/s$/, '') : noun}${f.distri
       </form>
       </details>
       <script is:inline>if (matchMedia('(max-width:760px)').matches) document.getElementById('fdet').open = false;</script>
-      <div class="stack" style="flex:1 1 620px;min-width:0;gap:12px">
+      <div class="stack" style="flex:1 1 480px;min-width:0;gap:12px">
         {rows.length === 0 ? <div class="panel"><h2 style="font-size:19px">Nothing matches that yet</h2><p class="muted" style="margin-top:6px">Try removing a filter, or tell {s.advisor_name.split(' ')[0]} what you need and he'll look for you.</p></div> : rows.map((l, i) => (<><ListingRow l={l} s={s} />{i === 3 && ads[0] && <Ad b={ads[0]} />}</>))}
         {pages > 1 && <nav class="pager" aria-label="Pages">
           {page > 1 && <a href={link(page - 1)}>Prev</a>}

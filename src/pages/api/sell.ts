@@ -1,12 +1,12 @@
 import type { APIRoute } from 'astro';
 import { run } from '../../lib/db';
-import { saveFile, str, verifyTurnstile } from '../../lib/util';
+import { lkPhone, saveFile, str, verifyTurnstile } from '../../lib/util';
 
 export const POST: APIRoute = async ({ request, redirect, clientAddress }) => {
   const f = await request.formData();
   if (str(f, 'website')) return redirect('/sell-your-land?sent=1');
   const name = str(f, 'name', 100), mobile = str(f, 'mobile', 30);
-  if (!name || !/^[+\d][\d\s\-()]{6,}$/.test(mobile) || !(await verifyTurnstile(f, clientAddress))) return redirect('/sell-your-land?err=1');
+  if (!name || !lkPhone(mobile) || !(await verifyTurnstile(f, clientAddress))) return redirect('/sell-your-land?err=1');
   const keys: string[] = [];
   for (const file of f.getAll('photos').slice(0, 5)) {
     if (file instanceof File && file.size > 0) {

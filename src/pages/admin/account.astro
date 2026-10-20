@@ -1,0 +1,15 @@
+---
+import Admin from '../../layouts/Admin.astro';
+const ok = Astro.url.searchParams.get('ok'), err = Astro.url.searchParams.get('err');
+---
+<Admin title="My password">
+  <h1 style="font-size:30px">Change my password</h1>
+  {ok && <div class="notice" role="status">Password changed. Other devices were signed out.</div>}
+  {err && <div class="notice err" role="alert">{err === 'short' ? 'The new password needs at least 10 characters.' : err === 'same' ? 'The two new passwords do not match.' : 'Your current password is not right.'}</div>}
+  <form class="panel stack" method="post" action="/admin/api/password" style="max-width:480px">
+    <label class="field">Current password<input type="password" name="current" required autocomplete="current-password" /></label>
+    <label class="field">New password (10 or more characters)<input type="password" name="next" required minlength="10" autocomplete="new-password" /></label>
+    <label class="field">New password again<input type="password" name="again" required minlength="10" autocomplete="new-password" /></label>
+    <button class="btn" style="align-self:flex-start">Change password</button>
+  </form>
+</Admin>

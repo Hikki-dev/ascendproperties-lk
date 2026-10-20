@@ -4,15 +4,15 @@ import Turnstile from '../components/Turnstile.astro';
 const sent = Astro.url.searchParams.get('sent'), err = Astro.url.searchParams.get('err');
 ---
 <Base title="Contact us">
-  <section style="background:var(--blue-d);color:#fff;padding:44px 0"><div class="wrap"><h1 style="font-size:38px">Contact us</h1><p style="margin:8px 0 0;color:#D6E1FA">Tell us what you're looking for and we'll call you back.</p></div></section>
-  <div class="wrap" style="max-width:720px;padding-top:40px">
+  <div class="band"><div class="wrap lead"><h1>Contact us</h1><p>Tell us what you're looking for and we'll call you back.</p></div></div>
+  <div class="wrap" style="max-width:720px;padding-top:32px">
     <form class="panel stack" method="post" action="/api/inquiry">
       {sent && <div class="notice" role="status">Thank you! We'll be in touch shortly.</div>}
-      {err && <div class="notice err" role="alert">Could not send. Please check your details.</div>}
+      {err && <div class="notice err" role="alert">Please enter a Sri Lankan phone number, like 077 123 4567.</div>}
       <input type="hidden" name="back" value="/contact" />
       <input name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px" />
       <label class="field">Name<input name="name" required maxlength="100" autocomplete="name" /></label>
-      <div class="grid g2"><label class="field">Phone<input name="phone" type="tel" required maxlength="30" autocomplete="tel" /></label><label class="field">Email<input name="email" type="email" maxlength="120" autocomplete="email" /></label></div>
+      <div class="grid g2"><label class="field">Phone<input name="phone" type="tel" required maxlength="30" autocomplete="tel" placeholder="077 123 4567" inputmode="tel" /></label><label class="field">Email<input name="email" type="email" maxlength="120" autocomplete="email" /></label></div>
       <label class="field">Message<textarea name="message" maxlength="1000"></textarea></label>
       <Turnstile />
       <button class="btn" style="align-self:flex-start">Send message</button>

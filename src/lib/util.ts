@@ -2,7 +2,7 @@ import { secrets, media } from './db';
 
 export const DISTRICTS = ['Ampara','Anuradhapura','Badulla','Batticaloa','Colombo','Galle','Gampaha','Hambantota','Jaffna','Kalutara','Kandy','Kegalle','Kilinochchi','Kurunegala','Mannar','Matale','Matara','Monaragala','Mullaitivu','Nuwara Eliya','Polonnaruwa','Puttalam','Ratnapura','Trincomalee','Vavuniya'];
 export const LAND_CATEGORIES = ['Land','Coconut Land','Water Front Land','Agriculture Land','Paddy field facing lands','Mountain view','Up country lands','Down south lands','Close to sacred / ancient city lands','Close to highways','Close to Airport','Close to railway stations','Residential','Commercial'];
-export const FACILITIES = ['Electricity','Water','Tarred road','Clear title','Parking','Garden','Lift','Pool','Gym','Security'];
+export const FACILITIES = ['Clear title','Survey plan','Approved plan','Electricity','Water','Tarred road','Parking','Garden','Lift','Pool','Gym','Security'];
 export const STAGES = ['Booking confirmed','Agreement signed','Payments in progress','Deed preparation','Handover'];
 export const TYPES = { land: 'Lands', house: 'Houses', apartment: 'Apartments' } as const;
 export type ListingType = keyof typeof TYPES;
@@ -56,3 +56,23 @@ export const monthly = (loan: number, years: number, ratePct: number) => {
   if (n <= 0) return 0;
   return r === 0 ? loan / n : (loan * r) / (1 - Math.pow(1 + r, -n));
 };
+
+/** "5.5 lakhs" / "1.2 million": how Sri Lankans say prices out loud. */
+export const inWords = (n: number) => {
+  const f = (x: number) => String(Math.round(x * 100) / 100).replace(/\.0+$/, '');
+  if (n >= 10_000_000) return `${f(n / 1_000_000)} million`;
+  if (n >= 100_000) return `${f(n / 100_000)} lakhs`;
+  return '';
+};
+
+/** Normalise a Sri Lankan number to 94XXXXXXXXX, or '' if it can't be one. Accepts 077 123 4567, +94 77 123 4567, 94771234567, 0112 345 678. */
+export const lkPhone = (raw: string) => {
+  let d = raw.replace(/[^\d]/g, '');
+  if (d.startsWith('0094')) d = d.slice(2);
+  if (d.startsWith('0')) d = '94' + d.slice(1);
+  else if (d.length === 9) d = '94' + d;
+  return /^94[1-9]\d{8}$/.test(d) ? d : '';
+};
+
+export const mapLink = (u?: string | null) =>
+  u && /^https:\/\/((www\.)?google\.[a-z.]+\/maps|maps\.app\.goo\.gl|goo\.gl\/maps)/i.test(u) ? u : '';

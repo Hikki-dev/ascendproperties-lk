@@ -41,7 +41,7 @@ const photo = advisorPhoto(s), who = firstName(s);
       const count = async () => {
         const { type, min, max } = q();
         const u = new URLSearchParams({ type, district: f.district.value, min, max });
-        try { const n = (await (await fetch('/api/count?' + u)).json()).n; b.textContent = `Show ${n} ${n === 1 ? 'result' : 'results'}`; } catch {}
+        try { const n = (await (await fetch('/api/count?' + u)).json()).n; b.textContent = n ? `Show ${n} ${n === 1 ? 'result' : 'results'}` : 'No matches. Try widening'; } catch {}
       };
       f.addEventListener('change', count);
       f.addEventListener('submit', (e) => {

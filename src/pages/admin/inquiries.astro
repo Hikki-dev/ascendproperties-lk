@@ -5,7 +5,7 @@ import { dateFmt } from '../../lib/util';
 const rows = await all('SELECT i.*, l.title ltitle, l.slug FROM inquiries i LEFT JOIN listings l ON l.id=i.listing_id ORDER BY (i.status=\'new\') DESC, i.id DESC LIMIT 200');
 ---
 <Admin title="Inquiries">
-  <h1 style="font-size:30px">Inquiries</h1>
+  <div class="row between"><h1 style="font-size:30px">Inquiries</h1><a class="btn ghost" href="/admin/api/export?t=inquiries">Download as Excel (CSV)</a></div>
   <div class="panel scroll-x"><table class="table"><thead><tr><th>When</th><th>Contact</th><th>About</th><th>Message</th><th>Status</th></tr></thead><tbody>
     {rows.map((r) => <tr><td>{dateFmt(r.created_at)}</td>
       <td><b>{r.name}</b><br /><a href={`tel:${r.phone}`}>{r.phone}</a>{r.email && <><br /><a href={`mailto:${r.email}`}>{r.email}</a></>}</td>

@@ -1,5 +1,5 @@
 ---
-import { lkr, mediaUrl, arr } from '../lib/util';
+import { lkr, mediaUrl, arr, inWords } from '../lib/util';
 import { firstName, waLink } from '../lib/settings';
 const { l, s } = Astro.props;
 const bg = l.cover ? `background-image:url(${mediaUrl(l.cover)})` : '';
@@ -13,12 +13,13 @@ const where = [l.city, l.district].filter(Boolean).join(', ') + (l.nearby ? ` ·
   <a class="ph" href={`/listing/${l.slug}`} style={bg} role="img" aria-label={l.title}>{l.status === 'sold' ? <span class="label sold">Sold out</span> : isNew && <span class="label">New</span>}</a>
   <a href={`/listing/${l.slug}`}>
     <h3>{l.title}</h3><p class="where">{where}</p>
-    <p class="price" style="margin-top:10px"><b>LKR {lkr(l.price)}</b> {l.price_label && <span>{l.price_label}</span>}</p>
+    <p class="price" style="margin-top:10px"><b>LKR {lkr(l.price)}</b> {l.price_label && <span>{l.price_label}</span>}{inWords(l.price) && <span> · {inWords(l.price)}</span>}</p>
     {facts && <p class="facts">{facts}</p>}
     {monthly > 0 && <p class="facts">Pay in instalments: from <b>LKR {lkr(monthly)}</b> a month</p>}
   </a>
   <div class="acts">
     <a class="wa" href={waLink(s, `Hi ${firstName(s)}, I'm interested in ${l.title} (LKR ${lkr(l.price)}${l.price_label ? ' ' + l.price_label : ''}).`)} target="_blank" rel="noopener">Ask on WhatsApp</a>
     <a class="btn ghost" href={`/listing/${l.slug}`}>View details</a>
+    <button type="button" class="save" data-slug={l.slug} data-title={l.title} data-price={`LKR ${lkr(l.price)}${l.price_label ? ' ' + l.price_label : ''}`} aria-pressed="false"><span class="ico">♡</span> <span class="lbl">Save for later</span></button>
   </div>
 </div>
