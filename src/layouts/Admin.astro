@@ -21,8 +21,9 @@ const cur = (h: string) => (h === '/admin' ? p === '/admin' : p.startsWith(h));
 </head>
 <body>
   <div class="admin">
-    <aside>
-      <b>Ascend Admin</b>
+    <div class="admintop"><b>Ascend Admin</b><button type="button" class="btn ghost sm" aria-controls="aside" aria-expanded="false" onclick="const a=document.getElementById('aside');const o=a.classList.toggle('open');this.setAttribute('aria-expanded',o)">Menu</button></div>
+    <aside id="aside">
+      <b class="brandname">Ascend Admin</b>
       {groups.map(([g, items]) => (<><h4>{g}</h4>{items.map(([h, l]) => <a href={h} aria-current={cur(h) ? 'page' : undefined}>{l}</a>)}</>))}
       <h4>Account</h4>
       <a href="/admin/account" aria-current={p === '/admin/account' ? 'page' : undefined}>My password</a>

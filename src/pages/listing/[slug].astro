@@ -6,7 +6,7 @@ import Turnstile from '../../components/Turnstile.astro';
 import { bySlug } from '../../lib/listings';
 import { all } from '../../lib/db';
 import { advisorPhoto, firstName, getSettings, telLink, waLink } from '../../lib/settings';
-import { arr, inWords, lkr, mapLink, mediaUrl } from '../../lib/util';
+import { arr, inWords, lkr, mapEmbed, mapLink, mediaUrl } from '../../lib/util';
 
 const l: any = await bySlug(Astro.params.slug!);
 if (!l) return new Response('Not found', { status: 404 });
@@ -40,7 +40,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'Product', name: l.title
       {l.description && <section style="margin-top:28px"><h2 style="font-size:20px;margin-bottom:8px">About this {l.type}</h2><p style="white-space:pre-line;color:var(--ink2);max-width:680px">{l.description}</p></section>}
       {l.down_payment_pct && l.months && <section style="margin-top:28px"><h2 style="font-size:20px;margin-bottom:8px">What you'd pay</h2><PlanCalc client:visible price={l.price} perPerch={l.type === 'land'} depositPct={l.down_payment_pct} months={l.months} /></section>}
       {(mapLink(l.map_url)) && <section style="margin-top:28px"><h2 style="font-size:20px;margin-bottom:8px">Where it is</h2>
-        {/google\.[a-z.]+\/maps\/embed/.test(l.map_url) && <iframe src={l.map_url} title="Map" loading="lazy" style="width:100%;height:300px;border:0;border-radius:12px;margin-bottom:12px" referrerpolicy="no-referrer-when-downgrade"></iframe>}
+        {mapEmbed(l.map_url) && <iframe src={mapEmbed(l.map_url)} title="Map" loading="lazy" style="width:100%;height:300px;border:0;border-radius:12px;margin-bottom:12px" referrerpolicy="no-referrer-when-downgrade"></iframe>}
         <a class="btn ghost" href={mapLink(l.map_url)} target="_blank" rel="noopener">Open in Google Maps · Get directions</a></section>}
 
     </main>

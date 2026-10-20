@@ -17,7 +17,7 @@ for (const p of purchases) {
 const A = '/admin/api/aftersales';
 ---
 <Admin title={u.name}>
-  <div><p class="muted" style="margin:0;font-size:13px"><a href="/admin/customers">Customers</a> / {u.name}</p><h1 style="font-size:30px">{u.name}</h1><p class="muted" style="margin:4px 0 0">{u.email} · {u.phone}</p></div>
+  <div><p class="muted" style="margin:0;font-size:13px"><a href="/admin/customers">Customers</a> / {u.name}</p><h1 style="font-size:30px">{u.name}</h1><p class="muted" style="margin:4px 0 0">{[u.email, u.phone].filter(Boolean).join(" · ")}</p></div>
 
   {purchases.map((p) => {
     const paid = pay[p.id].reduce((s, y) => s + y.amount, 0);

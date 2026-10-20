@@ -74,5 +74,19 @@ export const lkPhone = (raw: string) => {
   return /^94[1-9]\d{8}$/.test(d) ? d : '';
 };
 
-export const mapLink = (u?: string | null) =>
-  u && /^https:\/\/((www\.)?google\.[a-z.]+\/maps|maps\.app\.goo\.gl|goo\.gl\/maps)/i.test(u) ? u : '';
+const mapParts = (u?: string | null) => {
+  try {
+    const x = new URL(u ?? '');
+    const h = x.hostname.toLowerCase().replace(/\.$/, '');
+    const google = /^(www\.)?google\.(com|lk|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2,3})$/.test(h);
+    const short = h === 'maps.app.goo.gl' || (h === 'goo.gl' && x.pathname.startsWith('/maps'));
+    if (x.protocol !== 'https:' || x.username || x.password) return null;
+    if (short || (google && x.pathname.startsWith('/maps'))) return { url: x.href, embed: google && x.pathname.startsWith('/maps/embed') };
+  } catch { /* not a URL */ }
+  return null;
+};
+
+/** A Google Maps link we are willing to show as a button ('' if not exactly Google). */
+export const mapLink = (u?: string | null) => mapParts(u)?.url ?? '';
+/** An embeddable Google Maps URL for an iframe ('' otherwise). */
+export const mapEmbed = (u?: string | null) => { const m = mapParts(u); return m?.embed ? m.url : ''; };
