@@ -37,7 +37,9 @@ const title = `${total} ${total === 1 ? noun.replace(/s$/, '') : noun}${f.distri
     {chips.length > 0 && <div class="row" style="gap:8px;margin-bottom:20px">{chips.map(([l, k]) => <a class="chip on" href={without(k)} aria-label={`Remove filter ${l}`}>{l} ✕</a>)}<a class="link" style="font-size:14px;padding:0 4px" href={`/${Astro.params.type}`}>Clear all</a></div>}
 
     <div style="display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start;margin-top:8px">
-      <form class="stack" method="get" style="flex:0 0 240px">
+      <details class="fdet" id="fdet" open>
+      <summary class="btn ghost">Filters{chips.length ? ` (${chips.length})` : ''}</summary>
+      <form class="stack" method="get" style="margin-top:12px">
         {type === 'land' && <label class="field">Type of land<select name="category"><option value="">Any</option>{LAND_CATEGORIES.map((c) => <option selected={c === f.category}>{c}</option>)}</select></label>}
         <label class="field">District<select name="district"><option value="">All districts</option>{DISTRICTS.map((d) => <option selected={d === f.district}>{d}</option>)}</select></label>
         <label class="field">Max price per perch<input name="max" inputmode="numeric" value={f.max ?? ''} placeholder="Any" /></label>
@@ -47,6 +49,8 @@ const title = `${total} ${total === 1 ? noun.replace(/s$/, '') : noun}${f.distri
           <label class="tick"><input type="checkbox" name="water" value="1" checked={f.water} /> Water</label><label class="tick"><input type="checkbox" name="plan" value="1" checked={f.plan} /> Instalment plan</label></fieldset>
         <button class="btn">Update results</button>
       </form>
+      </details>
+      <script is:inline>if (matchMedia('(max-width:760px)').matches) document.getElementById('fdet').open = false;</script>
       <div class="stack" style="flex:1 1 620px;min-width:0;gap:12px">
         {rows.length === 0 ? <div class="panel"><h2 style="font-size:19px">Nothing matches that yet</h2><p class="muted" style="margin-top:6px">Try removing a filter, or tell {s.advisor_name.split(' ')[0]} what you need and he'll look for you.</p></div> : rows.map((l, i) => (<><ListingRow l={l} s={s} />{i === 3 && ads[0] && <Ad b={ads[0]} />}</>))}
         {pages > 1 && <nav class="pager" aria-label="Pages">

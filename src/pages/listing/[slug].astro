@@ -40,16 +40,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'Product', name: l.title
       {l.description && <section style="margin-top:28px"><h2 style="font-size:20px;margin-bottom:8px">About this {l.type}</h2><p style="white-space:pre-line;color:var(--ink2);max-width:680px">{l.description}</p></section>}
       {l.down_payment_pct && l.months && <section style="margin-top:28px"><h2 style="font-size:20px;margin-bottom:8px">What you'd pay</h2><PlanCalc client:visible price={l.price} perPerch={l.type === 'land'} depositPct={l.down_payment_pct} months={l.months} /></section>}
       {l.map_url && /^https:\/\/(www\.)?google\.[a-z.]+\/maps\/embed/.test(l.map_url) && <section style="margin-top:28px"><h2 style="font-size:20px;margin-bottom:8px">Where it is</h2><iframe src={l.map_url} title="Map" loading="lazy" style="width:100%;height:300px;border:0;border-radius:12px" referrerpolicy="no-referrer-when-downgrade"></iframe></section>}
-      {l.status !== 'sold' && <section style="margin-top:36px" class="panel"><h2 style="font-size:19px">Prefer a call back?</h2>
-        {sent && <div class="notice" role="status" style="margin-top:12px">Thanks! {who} will call you shortly.</div>}
-        {err && <div class="notice err" role="alert" style="margin-top:12px">Could not send. Check your phone number.</div>}
-        <form method="post" action="/api/inquiry" class="stack" style="gap:12px;margin-top:12px;max-width:480px">
-          <input type="hidden" name="listing_id" value={l.id} /><input type="hidden" name="back" value={`/listing/${l.slug}`} />
-          <input name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px" />
-          <label class="field">Your name<input name="name" required maxlength="100" autocomplete="name" /></label>
-          <label class="field">Phone<input name="phone" required type="tel" maxlength="30" autocomplete="tel" /></label>
-          <Turnstile /><button class="btn" style="align-self:flex-start">Call me back</button>
-        </form></section>}
+
     </main>
     <aside>
       <div class="sidecard stack" style="gap:14px">
@@ -61,6 +52,16 @@ const ld = { '@context': 'https://schema.org', '@type': 'Product', name: l.title
         <a class="link" style="text-align:center" href={waLink(s, `Hi ${who}, I'd like to visit ${l.title}. When can I come?`)} target="_blank" rel="noopener">Book a site visit</a>
         {l.brochure && <a class="muted" style="text-align:center;font-size:14px" href={mediaUrl(l.brochure)} target="_blank" rel="noopener">Download brochure (PDF)</a>}
       </div>
+      {l.status !== 'sold' && <section class="panel" style="margin-top:20px"><h2 style="font-size:19px">Prefer a call back?</h2>
+        {sent && <div class="notice" role="status" style="margin-top:12px">Thanks! {who} will call you shortly.</div>}
+        {err && <div class="notice err" role="alert" style="margin-top:12px">Could not send. Check your phone number.</div>}
+        <form method="post" action="/api/inquiry" class="stack" style="gap:12px;margin-top:12px;">
+          <input type="hidden" name="listing_id" value={l.id} /><input type="hidden" name="back" value={`/listing/${l.slug}`} />
+          <input name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px" />
+          <label class="field">Your name<input name="name" required maxlength="100" autocomplete="name" /></label>
+          <label class="field">Phone<input name="phone" required type="tel" maxlength="30" autocomplete="tel" /></label>
+          <Turnstile /><button class="btn" style="align-self:flex-start">Call me back</button>
+        </form></section>}
     </aside>
   </div>
   {related.length > 0 && <div class="wrap" style="padding-top:56px"><h2 style="font-size:22px;margin-bottom:16px">You might also like</h2><div class="stack" style="gap:12px">{related.map((r) => <ListingRow l={r} s={s} />)}</div></div>}

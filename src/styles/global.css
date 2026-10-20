@@ -71,6 +71,8 @@ img{max-width:100%}
 .lead p{font-size:18px;color:var(--muted);margin-top:12px;max-width:640px}
 .ask{margin-top:24px;display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;max-width:900px}
 .ask .field{flex:1 1 160px}
+.ask .btn{flex:0 0 auto}
+@media(max-width:620px){.ask .field,.ask .btn{flex:1 1 100%}.band .wrap{padding-top:32px;padding-bottom:32px}}
 .chips{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:14px;color:var(--muted)}
 .chip{display:inline-flex;align-items:center;min-height:36px;border:1px solid #C5D6F5;border-radius:999px;padding:0 14px;font-size:14px;background:#fff;color:var(--ink)}
 .chip:hover{border-color:var(--blue);color:var(--blue)}
@@ -114,10 +116,11 @@ dl.facts dt{font-size:13px;color:var(--muted)}dl.facts dd{margin:0;font-weight:6
 @media(max-width:620px){dl.facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .sidecard{background:#fff;border:1px solid var(--line2);border-radius:var(--radius);padding:20px}
 .quote{font-size:14px;color:var(--ink2);background:var(--wash);border-radius:8px;padding:10px 12px}
-.detail{display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start}
+.detail{display:flex;flex-wrap:wrap;gap:40px;align-items:stretch}
 .detail>main{flex:1 1 620px;min-width:0}
-.detail>aside{flex:0 0 340px;position:sticky;top:16px}
-@media(max-width:900px){.detail>aside{flex:1 1 100%;position:static}}
+.detail>aside{flex:0 0 340px}
+.detail .sidecard{position:sticky;top:16px}
+@media(max-width:900px){.detail>aside{flex:1 1 100%}.detail .sidecard{position:static}}
 .steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
 .steps b{color:var(--blue)}
 @media(max-width:760px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -160,3 +163,9 @@ dl.facts dt{font-size:13px;color:var(--muted)}dl.facts dd{margin:0;font-weight:6
 .thumbs img{width:100%;height:100%;object-fit:cover}
 .thumbs button{position:absolute;top:4px;right:4px;border:0;border-radius:6px;background:rgba(0,0,0,.65);color:#fff;font-size:12px;padding:4px 8px;cursor:pointer}
 .thumbs .cover{position:absolute;left:4px;top:4px;background:var(--blue);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px}
+
+/* results page filters: sidebar on desktop, collapsible on phones */
+.fdet{flex:0 0 240px}
+.fdet>summary{display:none;list-style:none;cursor:pointer}
+.fdet>summary::-webkit-details-marker{display:none}
+@media(max-width:760px){.fdet{flex:1 1 100%}.fdet>summary{display:flex}}
