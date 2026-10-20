@@ -1,6 +1,5 @@
 import { secrets, media } from './db';
 
-export const DISTRICTS = ['Ampara','Anuradhapura','Badulla','Batticaloa','Colombo','Galle','Gampaha','Hambantota','Jaffna','Kalutara','Kandy','Kegalle','Kilinochchi','Kurunegala','Mannar','Matale','Matara','Monaragala','Mullaitivu','Nuwara Eliya','Polonnaruwa','Puttalam','Ratnapura','Trincomalee','Vavuniya'];
 export const LAND_CATEGORIES = ['Land','Coconut Land','Water Front Land','Agriculture Land','Paddy field facing lands','Mountain view','Up country lands','Down south lands','Close to sacred / ancient city lands','Close to highways','Close to Airport','Close to railway stations','Residential','Commercial'];
 export const FACILITIES = ['Clear title','Survey plan','Approved plan','Electricity','Water','Tarred road','Parking','Garden','Lift','Pool','Gym','Security'];
 export const STAGES = ['Booking confirmed','Agreement signed','Payments in progress','Deed preparation','Handover'];

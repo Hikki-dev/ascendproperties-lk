@@ -9,12 +9,13 @@
     "db:local": "wrangler d1 migrations apply ascend-db --local && wrangler d1 execute ascend-db --local --file=seed.sql",
     "db:remote": "wrangler d1 migrations apply ascend-db --remote",
     "deploy": "astro build && wrangler deploy",
-    "test": "node --test tests/util.test.mjs tests/parse.test.mjs"
+    "test": "node --test tests/util.test.mjs tests/parse.test.mjs tests/chat.test.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.4.1",
     "@astrojs/react": "^7.1.0",
     "astro": "^7.4.1",
+    "fflate": "^0.8.3",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },

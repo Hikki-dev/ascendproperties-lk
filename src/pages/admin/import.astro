@@ -1,11 +1,18 @@
 ---
 import Admin from '../../layouts/Admin.astro';
+import ChatImport from '../../components/ChatImport';
 const err = Astro.url.searchParams.get('err');
 ---
 <Admin title="Import from WhatsApp">
   <h1 style="font-size:30px">Add listings from WhatsApp</h1>
-  <p class="muted" style="margin:0;max-width:640px">Already posted a plot in your WhatsApp Business status, a group or a chat? Copy that message, paste it here, and we fill in the form for you. You check it, add photos and press Save.</p>
+  <section class="panel stack" style="max-width:720px"><h2 style="font-size:20px">Option 1: Bring in a whole chat (best for many listings)</h2>
+    <p class="muted" style="margin:0">Export the chat where you post your listings. We find every listing message, attach the photos you sent with it, and save each one as a hidden draft.</p>
+    <details><summary class="link" style="cursor:pointer">How do I export a chat?</summary>
+      <ol style="margin:12px 0 0;padding-left:20px;display:grid;gap:6px"><li>Open the chat in WhatsApp (or WhatsApp Business).</li><li><b>iPhone:</b> tap the chat name, then <b>Export Chat</b>, then <b>Attach Media</b>. <b>Android:</b> tap ⋮, <b>More</b>, <b>Export chat</b>, <b>Include media</b>.</li><li>Send the .zip to yourself (email or Google Drive), then choose it below. Use a computer if the file is large.</li></ol></details>
+    <ChatImport client:load /></section>
+  <p class="muted" style="margin:0;max-width:640px">Already posted your plots on WhatsApp? Bring them here instead of typing them again. Everything lands as a hidden draft that you check before it goes live.</p>
   {err && <div class="notice err" role="alert">Paste some text first.</div>}
+  <h2 style="font-size:20px;max-width:720px">Option 2: Paste one message</h2>
   <form class="panel stack" method="post" action="/admin/api/import" style="max-width:720px">
     <label class="field">Paste the message here<textarea name="text" rows="10" required maxlength="20000" placeholder={'Green Valley Plots, Habaraduwa Galle\n10 to 25 perches\nRs 5.5 lakhs per perch\nClear deed, electricity, water, tarred road'}></textarea></label>
     <p class="muted" style="margin:0;font-size:14px">Have several? Paste them one after another with a line of <b>---</b> between each. Everything is saved as <b>hidden</b> until you check it.</p>
