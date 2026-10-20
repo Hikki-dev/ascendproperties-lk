@@ -27,4 +27,22 @@ ok "customer blocked from admin" "$(curl -s -o /dev/null -w '%{redirect_url}' -b
 ok "customer ticket" "$(post -b $C -F subject=Help -F body='Where is my deed?' -F purchase_id=$PID $B/api/ticket)" "/portal/tickets/"
 ok "private media denied anon" "$(curl -s -o /dev/null -w '%{http_code}' $B/media/priv/x.pdf)" "403"
 ok "admin hidden from anon api" "$(curl -s -o /dev/null -w '%{http_code}' -H "Origin: $B" -F file=@/dev/null $B/admin/api/upload)" "302"
+
+# --- rich listings, video, importer, flyer
+LOTS='[{"l":"Plot 1","p":10.5,"price":5775000,"s":"available"},{"l":"Plot 2","p":12,"price":6600000,"s":"sold"}]'
+R=$(post -b $J -F title='Rich Test Land' -F type=land -F district=Galle -F price=550000 -F status=available -F photos='[]' -F highlights=$'Near the beach\nQuiet lane' -F places=$'Galle town – 12 min\nMain road – 200 m' -F video_url='https://www.youtube.com/watch?v=dQw4w9WgXcQ' -F lots="$LOTS" -F map_url='https://google.evil.com/maps/x' $B/admin/api/listing)
+SLUG=rich-test-land
+PAGE=$(curl -s $B/listing/$SLUG)
+ok "highlights shown" "$(echo "$PAGE" | grep -c 'Near the beach')" "1"
+ok "nearby shown" "$(echo "$PAGE" | grep -c 'Main road')" "1"
+ok "plots table" "$(echo "$PAGE" | grep -c 'Plot 2')" "1"
+ok "video poster" "$(echo "$PAGE" | grep -c 'youtube-nocookie.com/embed/dQw4w9WgXcQ')" "1"
+ok "bad map link hidden" "$(echo "$PAGE" | grep -c 'google.evil.com')" "0"
+ok "og:image present" "$(echo "$PAGE" | grep -c 'property="og:image"')" "1"
+ok "flyer page" "$(curl -s -o /dev/null -w '%{http_code}' $B/listing/$SLUG/flyer)" "200"
+ok "non-video url dropped" "$(post -b $J -F title='Bad Video' -F type=land -F district=Galle -F price=1 -F status=available -F photos='[]' -F video_url='https://evil.com/x' $B/admin/api/listing >/dev/null; curl -s $B/listing/bad-video | grep -c 'class="vf-btn"')" "0"
+ok "import creates hidden draft" "$(post -b $J --data-urlencode "text=Sunrise Plots Matara
+12 perches Rs 4 lakhs per perch
+clear deed, water, electricity" $B/admin/api/import)" "imported=1"
+ok "imported draft not public" "$(curl -s -o /dev/null -w '%{http_code}' $B/listing/sunrise-plots-matara)" "404"
 [[ -z "$FAIL" ]] && echo "ALL PASSED" || exit 1

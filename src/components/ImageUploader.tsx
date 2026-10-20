@@ -2,14 +2,14 @@ import { useRef, useState } from 'react';
 
 type Props = { name: string; initial?: string[]; multiple?: boolean; label?: string };
 
-// Resize in the browser (max 1600px, WebP) so uploads stay small and R2 storage lasts.
-async function toWebp(file: File): Promise<Blob> {
+// Resize in the browser (max 1600px) to JPEG: small files, and WhatsApp/Facebook link previews can show it (they often skip WebP).
+async function toJpeg(file: File): Promise<Blob> {
   const bmp = await createImageBitmap(file);
   const s = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
   const c = document.createElement('canvas');
   c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
   c.getContext('2d')!.drawImage(bmp, 0, 0, c.width, c.height);
-  return new Promise((res, rej) => c.toBlob((b) => (b ? res(b) : rej(new Error('encode'))), 'image/webp', 0.85));
+  return new Promise((res, rej) => c.toBlob((b) => (b ? res(b) : rej(new Error('encode'))), 'image/jpeg', 0.82));
 }
 
 export default function ImageUploader({ name, initial = [], multiple = true, label = 'Drop photos here or browse' }: Props) {
@@ -24,9 +24,9 @@ export default function ImageUploader({ name, initial = [], multiple = true, lab
     for (const f of Array.from(multiple ? files : [files[0]])) {
       setBusy((b) => b + 1);
       try {
-        const blob = await toWebp(f);
+        const blob = await toJpeg(f);
         const fd = new FormData();
-        fd.set('file', new File([blob], 'img.webp', { type: 'image/webp' }));
+        fd.set('file', new File([blob], 'img.jpg', { type: 'image/jpeg' }));
         const r = await fetch('/admin/api/upload', { method: 'POST', body: fd });
         if (!r.ok) throw new Error('upload');
         const { key } = (await r.json()) as { key: string };
@@ -44,7 +44,7 @@ export default function ImageUploader({ name, initial = [], multiple = true, lab
       <button type="button" className="upload-zone" style={{ width: '100%' }} onClick={() => input.current?.click()}
         onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); add(e.dataTransfer.files); }}>
         <strong>{busy ? `Uploading ${busy}…` : label}</strong>
-        <div className="muted" style={{ fontSize: 12, marginTop: 6 }}>Auto-resized to WebP, stored on Cloudflare R2</div>
+        <div className="muted" style={{ fontSize: 12, marginTop: 6 }}>Photos are shrunk automatically so the site stays fast</div>
       </button>
       <input ref={input} type="file" accept="image/jpeg,image/png,image/webp" multiple={multiple} hidden onChange={(e) => add(e.target.files)} />
       {err && <p className="notice err" role="alert" style={{ marginTop: 8 }}>{err}</p>}

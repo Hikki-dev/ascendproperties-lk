@@ -6,7 +6,7 @@ const rows = await all('SELECT * FROM listings ORDER BY id DESC');
 const tone: Record<string, string> = { available: 'ok', draft: 'gray', sold: 'warn' };
 ---
 <Admin title="Listings">
-  <div class="row between"><h1 style="font-size:30px">Listings</h1><a class="btn" href="/admin/listings/new">+ Add listing</a></div>
+  <div class="row between"><h1 style="font-size:30px">Listings</h1><div class="row" style="gap:8px"><a class="btn ghost" href="/admin/import">Add from WhatsApp</a><a class="btn" href="/admin/listings/new">+ Add listing</a></div></div>
   <div class="panel scroll-x"><table class="table cards"><thead><tr><th></th><th>Title</th><th>Type</th><th>District</th><th>Price</th><th>Status</th><th></th></tr></thead><tbody>
     {rows.map((l) => <tr>
       <td class="thumbcell"><div style={`width:56px;height:42px;border-radius:6px;background:#DDE3EE center/cover;${l.cover ? `background-image:url(${mediaUrl(l.cover)})` : ''}`}></div></td>

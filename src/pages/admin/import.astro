@@ -1,0 +1,16 @@
+---
+import Admin from '../../layouts/Admin.astro';
+const err = Astro.url.searchParams.get('err');
+---
+<Admin title="Import from WhatsApp">
+  <h1 style="font-size:30px">Add listings from WhatsApp</h1>
+  <p class="muted" style="margin:0;max-width:640px">Already posted a plot in your WhatsApp Business status, a group or a chat? Copy that message, paste it here, and we fill in the form for you. You check it, add photos and press Save.</p>
+  {err && <div class="notice err" role="alert">Paste some text first.</div>}
+  <form class="panel stack" method="post" action="/admin/api/import" style="max-width:720px">
+    <label class="field">Paste the message here<textarea name="text" rows="10" required maxlength="20000" placeholder={'Green Valley Plots, Habaraduwa Galle\n10 to 25 perches\nRs 5.5 lakhs per perch\nClear deed, electricity, water, tarred road'}></textarea></label>
+    <p class="muted" style="margin:0;font-size:14px">Have several? Paste them one after another with a line of <b>---</b> between each. Everything is saved as <b>hidden</b> until you check it.</p>
+    <button class="btn lg" style="align-self:flex-start">Create draft listing</button>
+  </form>
+  <section class="panel stack" style="max-width:720px"><h2 style="font-size:19px">What we read from the message</h2>
+    <p class="muted" style="margin:0">The first line becomes the name. We pick out the district, size in perches, price (“5.5 lakhs”, “Rs. 1,250,000”, “12 million”) and whether it says clear deed, electricity, water or tarred road. Photos stay in WhatsApp, so add them on the next page.</p></section>
+</Admin>

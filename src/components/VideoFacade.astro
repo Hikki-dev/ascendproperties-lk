@@ -1,0 +1,13 @@
+---
+import { video } from '../lib/util';
+const { url, title = 'Video', class: cls = '' } = Astro.props;
+const v = video(url);
+---
+{v && (
+  <div class={`vf ${cls}`}>
+    <button type="button" class="vf-btn" data-embed={v.embed} aria-label={`Play video: ${title}`} style={v.thumb ? `background-image:url(${v.thumb})` : ''}>
+      <span class="vf-play" aria-hidden="true"></span>
+      {!v.thumb && <span class="vf-kind">{v.kind === 'facebook' ? 'Watch on Facebook' : 'Watch on TikTok'}</span>}
+    </button>
+  </div>
+)}

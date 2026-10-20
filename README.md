@@ -14,7 +14,7 @@ npm run db:local                   # creates the local D1 DB + sample listings
 npm run dev                        # http://localhost:4321
 ```
 Sign in at `/login` with the admin email/password from `.dev.vars` (the first admin is created on first login).
-`tests/smoke.sh` runs an end-to-end check against the dev server.
+`npm test` runs unit tests; `tests/smoke.sh` runs an end-to-end check against the dev server.
 
 ## What staff can do without touching code (`/admin`)
 | Task | Where |
@@ -23,6 +23,8 @@ Sign in at `/login` with the admin email/password from `.dev.vars` (the first ad
 | Home hero, home banner, in-grid sponsored ads — with image, link and start/end dates | Banners & ads |
 | See website inquiries and "sell your land" submissions (with photos), mark contacted/closed | Inquiries, Sell-your-land leads |
 | **After-sales:** create a customer login, attach a purchase, record payments + receipts, upload documents (agreement, deed), set handover stage and next due date, answer support tickets | Customers & purchases, Support tickets |
+
+Also in the admin: **Add from WhatsApp** (paste a posted message, get a hidden draft with district, size, price and papers filled in), per-listing **plots and prices**, **highlights**, **nearby places with distances**, a **video link** (YouTube/Facebook/TikTok, loaded only when tapped), **video ads**, and a printable **flyer** for each listing. Pasted links are checked against exact hostnames.
 
 Customers sign in at `/portal` and see only their own purchases, balance, receipts, documents and tickets. Receipts/documents are stored privately in R2 and only served to the owner or an admin.
 

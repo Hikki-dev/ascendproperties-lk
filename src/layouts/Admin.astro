@@ -4,7 +4,7 @@ interface Props { title: string; }
 const { title } = Astro.props;
 const p = Astro.url.pathname;
 const groups: [string, [string, string][]][] = [
-  ['Website', [['/admin', 'Today'], ['/admin/listings', 'Listings'], ['/admin/banners', 'Banners & ads'], ['/admin/settings', 'Contact & advisor']]],
+  ['Website', [['/admin', 'Today'], ['/admin/listings', 'Listings'], ['/admin/import', 'Add from WhatsApp'], ['/admin/banners', 'Banners & ads'], ['/admin/settings', 'Contact & advisor']]],
   ['Leads', [['/admin/inquiries', 'Inquiries'], ['/admin/sellers', 'Sell-your-land leads']]],
   ['After-sales', [['/admin/customers', 'Customers & purchases'], ['/admin/tickets', 'Support tickets']]],
 ];

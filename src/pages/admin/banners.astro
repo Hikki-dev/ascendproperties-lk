@@ -4,7 +4,7 @@ import ImageUploader from '../../components/ImageUploader';
 import { all } from '../../lib/db';
 import { mediaUrl } from '../../lib/util';
 const rows = await all('SELECT * FROM banners ORDER BY slot, sort, id');
-const slots: Record<string, string> = { hero: 'Home hero (full-width, top of home page)', home_banner: 'Home banner (below latest listings)', listing_inline: 'Inline ad inside the listings grid' };
+const slots: Record<string, string> = { hero: 'Home hero (full-width, top of home page)', home_banner: 'Home page strip (ads and videos, below latest listings)', listing_inline: 'Inline ad inside the listings grid' };
 ---
 <Admin title="Banners & ads">
   <h1 style="font-size:30px">Banners & ads</h1>
@@ -12,7 +12,7 @@ const slots: Record<string, string> = { hero: 'Home hero (full-width, top of hom
   <div class="panel scroll-x"><table class="table"><thead><tr><th></th><th>Title</th><th>Slot</th><th>Runs</th><th>Status</th><th></th></tr></thead><tbody>
     {rows.map((b) => <tr>
       <td><div style={`width:72px;height:44px;border-radius:6px;background:#DDE3EE center/cover;${b.image ? `background-image:url(${mediaUrl(b.image)})` : ''}`}></div></td>
-      <td><b>{b.title}</b><br /><span class="muted">{b.cta_label} {b.cta_url && `→ ${b.cta_url}`}</span></td>
+      <td><b>{b.title}</b>{b.video_url && <span class="badge" style="margin-left:6px">Video</span>}<br /><span class="muted">{b.cta_label} {b.cta_url && `→ ${b.cta_url}`}</span></td>
       <td>{slots[b.slot]?.split(' (')[0]}</td><td>{b.starts_at || 'now'} → {b.ends_at || 'no end'}</td>
       <td><span class={`badge ${b.active ? 'ok' : 'gray'}`}>{b.active ? 'Active' : 'Paused'}</span></td>
       <td><form method="post" action="/admin/api/banner" class="row" style="flex-wrap:nowrap"><input type="hidden" name="id" value={b.id} />
@@ -27,6 +27,7 @@ const slots: Record<string, string> = { hero: 'Home hero (full-width, top of hom
     </div>
     <label class="field">Supporting text<input name="body" maxlength="240" /></label>
     <div class="grid g2" style="gap:12px"><label class="field">Button label<input name="cta_label" maxlength="40" /></label><label class="field">Button link (/lands or https://…)<input name="cta_url" maxlength="300" /></label></div>
+    <label class="field">Video link <span style="font-weight:400">(optional: YouTube, Facebook or TikTok. Shows a play button)</span><input name="video_url" maxlength="300" placeholder="https://www.youtube.com/watch?v=…" /></label>
     <div class="grid g2" style="gap:12px"><label class="field">Start date<input type="date" name="starts_at" /></label><label class="field">End date<input type="date" name="ends_at" /></label></div>
     <div><span class="muted" style="font-size:12px;font-weight:600">Background image (hero: 1920×1080 works best)</span><ImageUploader client:load name="image" multiple={false} label="Drop an image or browse" /></div>
     <button class="btn" style="align-self:flex-start">Add banner</button>

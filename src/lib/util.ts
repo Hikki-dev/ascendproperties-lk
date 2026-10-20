@@ -13,10 +13,6 @@ export const dateFmt = (s?: string | null) => (s ? new Date(s.replace(' ', 'T') 
 export const slugify = (s: string) =>
   s.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80) || 'listing';
 
-/** Safe parse of a JSON array column. */
-export const arr = (s: unknown): string[] => {
-  try { const v = JSON.parse(String(s ?? '[]')); return Array.isArray(v) ? v.map(String) : []; } catch { return []; }
-};
 
 export const mediaUrl = (key?: string | null) => (key ? `/media/${key}` : '');
 
@@ -57,36 +53,5 @@ export const monthly = (loan: number, years: number, ratePct: number) => {
   return r === 0 ? loan / n : (loan * r) / (1 - Math.pow(1 + r, -n));
 };
 
-/** "5.5 lakhs" / "1.2 million": how Sri Lankans say prices out loud. */
-export const inWords = (n: number) => {
-  const f = (x: number) => String(Math.round(x * 100) / 100).replace(/\.0+$/, '');
-  if (n >= 10_000_000) return `${f(n / 1_000_000)} million`;
-  if (n >= 100_000) return `${f(n / 100_000)} lakhs`;
-  return '';
-};
-
-/** Normalise a Sri Lankan number to 94XXXXXXXXX, or '' if it can't be one. Accepts 077 123 4567, +94 77 123 4567, 94771234567, 0112 345 678. */
-export const lkPhone = (raw: string) => {
-  let d = raw.replace(/[^\d]/g, '');
-  if (d.startsWith('0094')) d = d.slice(2);
-  if (d.startsWith('0')) d = '94' + d.slice(1);
-  else if (d.length === 9) d = '94' + d;
-  return /^94[1-9]\d{8}$/.test(d) ? d : '';
-};
-
-const mapParts = (u?: string | null) => {
-  try {
-    const x = new URL(u ?? '');
-    const h = x.hostname.toLowerCase().replace(/\.$/, '');
-    const google = /^(www\.)?google\.(com|lk|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2,3})$/.test(h);
-    const short = h === 'maps.app.goo.gl' || (h === 'goo.gl' && x.pathname.startsWith('/maps'));
-    if (x.protocol !== 'https:' || x.username || x.password) return null;
-    if (short || (google && x.pathname.startsWith('/maps'))) return { url: x.href, embed: google && x.pathname.startsWith('/maps/embed') };
-  } catch { /* not a URL */ }
-  return null;
-};
-
-/** A Google Maps link we are willing to show as a button ('' if not exactly Google). */
-export const mapLink = (u?: string | null) => mapParts(u)?.url ?? '';
-/** An embeddable Google Maps URL for an iframe ('' otherwise). */
-export const mapEmbed = (u?: string | null) => { const m = mapParts(u); return m?.embed ? m.url : ''; };
+export * from './pure';
+import { arr } from './pure';

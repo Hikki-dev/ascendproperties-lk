@@ -4,10 +4,12 @@ import ListingRow from '../components/ListingRow.astro';
 import Ad from '../components/Ad.astro';
 import { latest, activeBanners, countOnly } from '../lib/listings';
 import { advisorPhoto, firstName, getSettings, telLink, waLink } from '../lib/settings';
-import { DISTRICTS } from '../lib/util';
+import VideoFacade from '../components/VideoFacade.astro';
+import { DISTRICTS, video } from '../lib/util';
 
 const [s, rows, hero, banners, total] = await Promise.all([getSettings(), latest(4), activeBanners('hero'), activeBanners('home_banner'), countOnly({ type: 'land' })]);
 const photo = advisorPhoto(s), who = firstName(s);
+const promos = banners.filter((b) => !video(b.video_url)), videos = banners.filter((b) => video(b.video_url));
 ---
 <Base title="Ascend Properties">
   <div class="band">
@@ -64,7 +66,8 @@ const photo = advisorPhoto(s), who = firstName(s);
       </div>
     </section>
 
-    {banners[0] && <section style="padding-top:32px"><Ad b={banners[0]} /></section>}
+    {promos[0] && <section style="padding-top:32px"><Ad b={promos[0]} /></section>}
+    {videos.length > 0 && <section style="padding-top:48px"><div class="section-title"><h2>Watch</h2></div><div class="grid g2">{videos.slice(0, 2).map((v) => <div class="stack" style="gap:10px"><VideoFacade url={v.video_url} title={v.title} /><div><h3 style="font-size:19px">{v.title}</h3>{v.body && <p class="muted" style="margin-top:2px">{v.body}</p>}{v.cta_label && v.cta_url && <a class="link" href={v.cta_url}>{v.cta_label} →</a>}</div></div>)}</div></section>}
 
     <section style="padding-top:48px">
       <div class="advisor">

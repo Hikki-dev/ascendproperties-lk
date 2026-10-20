@@ -1,12 +1,7 @@
-// Run: node --test tests/   (checks the URL allowlist and phone/price helpers)
+// Run: npm test   (URL allowlists, phone/price helpers, plots)
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-
-// util.ts imports the Cloudflare runtime, so evaluate only the pure helpers.
-const src = readFileSync(new URL('../src/lib/util.ts', import.meta.url), 'utf8');
-const pure = src.slice(src.indexOf('/** "5.5 lakhs"')).replace(/export const/g, 'const').replace(/\(u\?: string \| null\)/g, '(u)').replace(/\(raw: string\)/g, '(raw)').replace(/\(n: number\)/g, '(n)').replace(/\(x: number\)/g, '(x)').replace(/: \(.*?\) =>/g, ' =>');
-const { mapLink, mapEmbed, lkPhone, inWords } = new Function(pure.replace(/const mapParts = \(u\?: string \| null\)/, 'const mapParts = (u)') + '; return { mapLink, mapEmbed, lkPhone, inWords };')();
+import { mapLink, mapEmbed, lkPhone, inWords, video, lots, places, lines, arr } from '../src/lib/pure.ts';
 
 test('maps allowlist', () => {
   assert.ok(mapLink('https://maps.app.goo.gl/abc'));
@@ -26,4 +21,22 @@ test('prices in words', () => {
   assert.equal(inWords(550000), '5.5 lakhs');
   assert.equal(inWords(25000000), '25 million');
   assert.equal(inWords(50000), '');
+});
+test('video links', () => {
+  assert.equal(video('https://youtu.be/dQw4w9WgXcQ')?.kind, 'youtube');
+  assert.equal(video('https://www.youtube.com/watch?v=dQw4w9WgXcQ')?.embed.includes('youtube-nocookie.com/embed/dQw4w9WgXcQ'), true);
+  assert.equal(video('https://www.youtube.com/shorts/dQw4w9WgXcQ')?.kind, 'youtube');
+  assert.equal(video('https://www.tiktok.com/@a/video/7123456789012345678')?.kind, 'tiktok');
+  assert.equal(video('https://fb.watch/abc123/')?.kind, 'facebook');
+  assert.equal(video('https://youtube.evil.com/watch?v=dQw4w9WgXcQ'), null);
+  assert.equal(video('http://youtu.be/dQw4w9WgXcQ'), null);
+  assert.equal(video('javascript:alert(1)'), null);
+});
+test('plots, places, lines', () => {
+  assert.equal(lots('[{"l":"Plot 1","p":10,"price":5e6,"s":"sold"},{"l":"","p":1}]').length, 1);
+  assert.equal(lots('[{"l":"A","s":"weird"}]')[0].s, 'available');
+  assert.equal(lots('not json').length, 0);
+  assert.deepEqual(places('["Galle town – 12 min","School: 1 km"]'), [['Galle town', '12 min'], ['School', '1 km']]);
+  assert.deepEqual(lines('✅ Near beach\n- Quiet lane\n\n', 6), ['Near beach', 'Quiet lane']);
+  assert.deepEqual(arr('bad'), []);
 });

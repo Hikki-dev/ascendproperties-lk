@@ -1,0 +1,119 @@
+---
+import Base from '../../../layouts/Base.astro';
+import ListingRow from '../../../components/ListingRow.astro';
+import PlanCalc from '../../../components/LoanCalc';
+import Turnstile from '../../../components/Turnstile.astro';
+import VideoFacade from '../../../components/VideoFacade.astro';
+import { bySlug } from '../../../lib/listings';
+import { all } from '../../../lib/db';
+import { advisorPhoto, firstName, getSettings, telLink, waLink } from '../../../lib/settings';
+import { arr, inWords, lkr, lots as readLots, mapEmbed, mapLink, mediaUrl, places as readPlaces, video } from '../../../lib/util';
+
+const l: any = await bySlug(Astro.params.slug!);
+if (!l) return new Response('Not found', { status: 404 });
+const s = await getSettings(), who = firstName(s);
+const images = [l.cover, ...arr(l.images)].filter(Boolean).filter((v: string, i: number, a: string[]) => a.indexOf(v) === i);
+const fac = arr(l.facilities), highlights = arr(l.highlights), nearby = readPlaces(l.places), lotRows = readLots(l.lots);
+const related = await all("SELECT * FROM listings WHERE type=? AND status='available' AND id<>? ORDER BY (district=?) DESC, published_at DESC LIMIT 3", l.type, l.id, l.district);
+const sent = Astro.url.searchParams.get('sent'), err = Astro.url.searchParams.get('err');
+const where = [l.city, l.district].filter(Boolean).join(', ') + (l.nearby ? ` · ${l.nearby}` : '');
+const priceTxt = `LKR ${lkr(l.price)}${l.price_label ? ' ' + l.price_label : ''}`;
+const msg = `Hi ${who}, I'm interested in ${l.title} at ${priceTxt}.`;
+const facts: [string, string][] = ([
+  ['Plot size', l.extent], ['Deed', fac.includes('Clear title') ? 'Clear title' : ''], ['Survey plan', fac.includes('Survey plan') ? 'Available' : ''], ['Approved plan', fac.includes('Approved plan') ? 'Approved' : ''],
+  ['Water', fac.includes('Water') ? 'Available' : ''], ['Electricity', fac.includes('Electricity') ? 'Available' : ''], ['Road', fac.includes('Tarred road') ? 'Tarred road' : ''],
+] as [string, string][]).filter(([, v]) => v);
+const extras = fac.filter((f: string) => !['Clear title', 'Survey plan', 'Approved plan', 'Water', 'Electricity', 'Tarred road'].includes(f));
+const left = lotRows.filter((x) => x.s === 'available').length;
+const desc = (l.description ?? '').replace(/\s+/g, ' ').slice(0, 155) || `${l.title}. ${priceTxt}. ${where}.`;
+const hasVideo = !!video(l.video_url);
+const ld = { '@context': 'https://schema.org', '@type': 'Product', name: l.title, description: desc, image: images.map((i: string) => new URL(mediaUrl(i), Astro.url).href), offers: { '@type': 'Offer', priceCurrency: 'LKR', price: l.price, availability: l.status === 'sold' ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock' } };
+---
+<Base title={l.title} description={desc} waText={msg} image={images[0] ? mediaUrl(images[0]) : undefined}>
+  <script type="application/ld+json" set:html={JSON.stringify(ld).replace(/</g, '\\u003c')} />
+  <div class="wrap" style="padding-top:20px"><a class="link" href={`/${l.type === 'land' ? 'lands' : l.type + 's'}`}>← Back to results</a></div>
+  <div class="wrap detail" style="padding-top:16px">
+    <main>
+      {images.length > 0 && <div class="gallery" id="gallery">
+        <a class="main" href={mediaUrl(images[0])} data-i="0" style={`background-image:url(${mediaUrl(images[0])})`} aria-label="Open photo 1"></a>
+        {images.slice(1, 5).map((i: string, n: number) => <a href={mediaUrl(i)} data-i={n + 1} style={`background-image:url(${mediaUrl(i)})`} aria-label={`Open photo ${n + 2}`}>{n === 3 && images.length > 5 && <span class="label" style="top:auto;bottom:8px;left:auto;right:8px;background:#fff;color:var(--ink)">+{images.length - 5} more</span>}</a>)}
+      </div>}
+      <h1 style="font-size:30px;font-weight:700;margin-top:24px">{l.title}</h1>
+      <p class="muted" style="margin-top:4px">{where}</p>
+      <p style="margin-top:12px"><b style="font-size:26px">LKR {lkr(l.price)}</b> <span class="muted">{l.price_label}{inWords(l.price) && ` · ${inWords(l.price)}`}</span>{l.status === 'sold' && <span class="badge gray" style="margin-left:8px">Sold out</span>}{lotRows.length > 0 && left > 0 && <span class="badge ok" style="margin-left:8px">{left} {left === 1 ? 'plot' : 'plots'} left</span>}</p>
+
+      {highlights.length > 0 && <ul class="hl" style="margin-top:20px">{highlights.map((h: string) => <li>{h}</li>)}</ul>}
+      {facts.length > 0 && <dl class="facts" style="margin-top:24px">{facts.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>}
+      {extras.length > 0 && <div class="row" style="gap:8px;margin-top:16px">{extras.map((f: string) => <span class="pill">{f}</span>)}</div>}
+
+      {hasVideo && <section style="margin-top:32px"><h2 style="font-size:20px;margin-bottom:12px">Watch the video</h2><VideoFacade url={l.video_url} title={l.title} /></section>}
+      {l.description && <section style="margin-top:32px"><h2 style="font-size:20px;margin-bottom:8px">About this {l.type}</h2><p style="white-space:pre-line;color:var(--ink2);max-width:680px">{l.description}</p></section>}
+
+      {lotRows.length > 0 && <section style="margin-top:32px"><h2 style="font-size:20px;margin-bottom:12px">Plots and prices</h2>
+        <ul class="lotlist">
+          {lotRows.map((x) => <li class={x.s === 'sold' ? 'sold' : ''}>
+            <div><b>{x.l}</b>{x.p ? <span class="muted"> · {x.p} perch</span> : ''}<br />
+              <span class="lp">{x.price ? `LKR ${lkr(x.price)}` : 'Ask for price'}</span>{x.p && x.price ? <span class="muted" style="font-size:14px"> · LKR {lkr(Math.round(x.price / x.p))} per perch</span> : ''}</div>
+            {x.s === 'sold' ? <span class="badge gray">Sold</span> : <a class="wa" style="min-height:44px;padding:0 16px;font-size:15px" href={waLink(s, `Hi ${who}, I'm interested in ${x.l} at ${l.title}${x.price ? ` (LKR ${lkr(x.price)})` : ''}. Is it still available?`)} target="_blank" rel="noopener">{x.s === 'reserved' ? 'Reserved: ask' : 'Ask about this'}</a>}</li>)}
+        </ul></section>}
+
+      {nearby.length > 0 && <section style="margin-top:32px"><h2 style="font-size:20px;margin-bottom:8px">What's nearby</h2><ul class="places">{nearby.map(([a, b]) => <li><span>{a}</span><span>{b}</span></li>)}</ul></section>}
+      {l.down_payment_pct && l.months && <section style="margin-top:32px"><h2 style="font-size:20px;margin-bottom:8px">What you'd pay</h2><PlanCalc client:visible price={l.price} perPerch={l.type === 'land'} depositPct={l.down_payment_pct} months={l.months} /></section>}
+      {mapLink(l.map_url) && <section style="margin-top:32px"><h2 style="font-size:20px;margin-bottom:8px">Where it is</h2>
+        {mapEmbed(l.map_url) && <iframe src={mapEmbed(l.map_url)} title="Map" loading="lazy" style="width:100%;height:300px;border:0;border-radius:12px;margin-bottom:12px" referrerpolicy="no-referrer-when-downgrade"></iframe>}
+        <a class="btn ghost" href={mapLink(l.map_url)} target="_blank" rel="noopener">Open in Google Maps · Get directions</a></section>}
+      {l.status !== 'sold' && <section class="panel" style="margin-top:32px;max-width:480px"><h2 style="font-size:19px">Prefer a call back?</h2>
+        {sent && <div class="notice" role="status" style="margin-top:12px">Thanks! {who} will call you shortly.</div>}
+        {err && <div class="notice err" role="alert" style="margin-top:12px">Please enter a Sri Lankan phone number, like 077 123 4567.</div>}
+        <form method="post" action="/api/inquiry" class="stack" style="gap:12px;margin-top:12px">
+          <input type="hidden" name="listing_id" value={l.id} /><input type="hidden" name="back" value={`/listing/${l.slug}`} />
+          <input name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px" />
+          <label class="field">Your name<input name="name" required maxlength="100" autocomplete="name" /></label>
+          <label class="field">Phone<input name="phone" required type="tel" maxlength="30" autocomplete="tel" placeholder="077 123 4567" inputmode="tel" /></label>
+          <Turnstile /><button class="btn" style="align-self:flex-start">Call me back</button>
+        </form></section>}
+    </main>
+    <aside>
+      <div class="sidecard stack" style="gap:14px">
+        <div><span class="muted" style="font-size:13px">Price</span><p><b style="font-size:28px">LKR {lkr(l.price)}</b> <span class="muted">{l.price_label}</span></p></div>
+        <div class="who"><img src={advisorPhoto(s)} alt={s.advisor_name} width="56" height="56" /><div><b>{s.advisor_name}</b><p class="muted" style="font-size:14px">{s.advisor_title} · Replies {s.advisor_hours}</p></div></div>
+        <p class="quote">"{msg}"</p>
+        <a class="wa lg" href={waLink(s, msg)} target="_blank" rel="noopener">Send this on WhatsApp</a>
+        <a class="btn ghost" href={telLink(s)}>Call {s.phone_display}</a>
+        <div class="stack" style="gap:8px;border-top:1px solid var(--line);padding-top:14px">
+          <label class="field">Want to see it in person? Pick a day<input type="date" id="vd" /></label>
+          <a class="btn ghost" id="visit" data-base={waLink(s, '')} data-who={who} data-title={l.title} href={waLink(s, `Hi ${who}, I'd like to visit ${l.title}. When can I come?`)} target="_blank" rel="noopener">Ask for a site visit</a>
+        </div>
+        <a class="btn ghost" href={`https://wa.me/?text=${encodeURIComponent(`${l.title} – ${priceTxt}\n${Astro.url.origin}/listing/${l.slug}`)}`} target="_blank" rel="noopener">Share with family on WhatsApp</a>
+        <a class="muted" style="text-align:center;font-size:14px" href={`/listing/${l.slug}/flyer`} target="_blank" rel="noopener">Print or save as a PDF flyer</a>
+        {l.brochure && <a class="muted" style="text-align:center;font-size:14px" href={mediaUrl(l.brochure)} target="_blank" rel="noopener">Download brochure (PDF)</a>}
+      </div>
+
+    </aside>
+  </div>
+
+  <dialog class="lb" id="lb" aria-label="Photos"><div class="lb-in"><img id="lbi" alt="" /><button class="x" type="button" id="lbx" aria-label="Close">✕</button><button class="pv" type="button" id="lbp" aria-label="Previous photo">‹</button><button class="nx" type="button" id="lbn" aria-label="Next photo">›</button><span class="ct" id="lbc"></span></div></dialog>
+  <script is:inline define:vars={{ photos: images.map((i: string) => `/media/${i}`) }}>
+    (() => {
+      const d = document.getElementById('vd'), a = document.getElementById('visit');
+      if (d) {
+        d.min = new Date().toISOString().slice(0, 10);
+        d.addEventListener('change', () => {
+          const day = d.value ? new Date(d.value + 'T00:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
+          a.href = a.dataset.base + encodeURIComponent('Hi ' + a.dataset.who + ", I'd like to visit " + a.dataset.title + (day ? ' on ' + day + '. Is that okay?' : '. When can I come?'));
+        });
+      }
+      const lb = document.getElementById('lb'), img = document.getElementById('lbi'); let i = 0, x0 = null;
+      const show = (n) => { i = (n + photos.length) % photos.length; img.src = photos[i]; document.getElementById('lbc').textContent = (i + 1) + ' / ' + photos.length; };
+      document.getElementById('gallery')?.addEventListener('click', (e) => { const t = e.target.closest('a[data-i]'); if (t) { e.preventDefault(); show(+t.dataset.i); lb.showModal(); } });
+      document.getElementById('lbx').onclick = () => lb.close();
+      document.getElementById('lbp').onclick = () => show(i - 1);
+      document.getElementById('lbn').onclick = () => show(i + 1);
+      lb.addEventListener('click', (e) => { if (e.target === lb || e.target.classList.contains('lb-in')) lb.close(); });
+      lb.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') show(i - 1); if (e.key === 'ArrowRight') show(i + 1); });
+      lb.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+      lb.addEventListener('touchend', (e) => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 50) show(i + (dx < 0 ? 1 : -1)); x0 = null; });
+    })();
+  </script>
+  {related.length > 0 && <div class="wrap" style="padding-top:56px"><h2 style="font-size:22px;margin-bottom:16px">You might also like</h2><div class="stack" style="gap:12px">{related.map((r) => <ListingRow l={r} s={s} />)}</div></div>}
+</Base>

@@ -19,6 +19,9 @@ const saved = Astro.url.searchParams.get('saved'), err = Astro.url.searchParams.
     </div>
     <label class="field">Reply hours<input name="advisor_hours" maxlength="60" value={s.advisor_hours} /></label>
     <label class="field">Office address (footer)<input name="address" maxlength="200" value={s.address} /></label>
+    <h2 style="font-size:18px;margin-top:8px">Social pages <span class="muted" style="font-weight:400;font-size:15px">(optional, shown in the footer)</span></h2>
+    <div class="grid g2" style="gap:16px"><label class="field">Facebook page link<input name="facebook" maxlength="200" value={s.facebook} placeholder="https://facebook.com/…" /></label><label class="field">Instagram link<input name="instagram" maxlength="200" value={s.instagram} placeholder="https://instagram.com/…" /></label>
+      <label class="field">YouTube channel link<input name="youtube" maxlength="200" value={s.youtube} placeholder="https://youtube.com/@…" /></label><label class="field">TikTok link<input name="tiktok" maxlength="200" value={s.tiktok} placeholder="https://tiktok.com/@…" /></label></div>
     <div><span class="muted" style="font-size:12px;font-weight:600">Advisor photo</span>
       <ImageUploader client:load name="advisor_photo" multiple={false} initial={s.advisor_photo ? [s.advisor_photo] : []} label="Drop a new photo or browse" />
       {!s.advisor_photo && <p class="muted" style="font-size:12px;margin:8px 0 0">Using the default photo: <img src={advisorPhoto(s)} alt="" width="32" height="32" style="border-radius:50%;vertical-align:middle" /></p>}</div>

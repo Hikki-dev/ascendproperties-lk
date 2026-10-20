@@ -9,6 +9,10 @@ export const DEFAULTS = {
   advisor_hours: 'Mon–Sat, 9am–6pm',
   advisor_photo: '',
   address: '',
+  facebook: '',
+  instagram: '',
+  youtube: '',
+  tiktok: '',
 };
 export type Settings = typeof DEFAULTS;
 

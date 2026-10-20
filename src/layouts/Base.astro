@@ -1,8 +1,10 @@
 ---
 import '../styles/global.css';
 import { advisorPhoto, firstName, getSettings, telLink, waLink } from '../lib/settings';
-interface Props { title: string; description?: string; waText?: string; }
-const { title, description = 'Land, houses and apartments for sale across Sri Lanka. Find the right plot, see the real price, and message an advisor on WhatsApp.', waText } = Astro.props;
+interface Props { title: string; description?: string; waText?: string; image?: string; }
+const { title, description = 'Land, houses and apartments for sale across Sri Lanka. Find the right plot, see the real price, and message an advisor on WhatsApp.', waText, image } = Astro.props;
+const ogImage = new URL(image || '/logo.jpg', Astro.url.origin).href;
+const fullTitle = title === 'Ascend Properties' ? title : `${title} | Ascend Properties`;
 const s = await getSettings();
 const p = Astro.url.pathname;
 const user = Astro.locals.user;
@@ -14,8 +16,16 @@ const msg = waText ?? `Hi ${firstName(s)}, I'm looking for a property.`;
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>{title === 'Ascend Properties' ? title : `${title} | Ascend Properties`}</title>
+  <title>{fullTitle}</title>
   <meta name="description" content={description} />
+  <link rel="canonical" href={Astro.url.origin + Astro.url.pathname} />
+  <meta property="og:site_name" content="Ascend Properties" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:url" content={Astro.url.origin + Astro.url.pathname} />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" type="image/png" href="/mark.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -36,7 +46,8 @@ const msg = waText ?? `Hi ${firstName(s)}, I'm looking for a property.`;
     </div>
   </header>
   <slot />
-  <footer class="footer"><div class="wrap">Ascend Properties{s.address && ` · ${s.address}`} · <a href={telLink(s)}>{s.phone_display}</a></div></footer>
+  <footer class="footer"><div class="wrap">Ascend Properties{s.address && ` · ${s.address}`} · <a href={telLink(s)}>{s.phone_display}</a>
+    {[['Facebook', s.facebook], ['Instagram', s.instagram], ['YouTube', s.youtube], ['TikTok', s.tiktok]].filter(([, u]) => u).map(([n, u]) => <> · <a href={u} target="_blank" rel="noopener">{n}</a></>)}</div></footer>
   <div class="slbar" id="slbar" hidden data-num={s.wa_number} data-who={firstName(s)}>
     <span><b id="slc">0</b> saved</span>
     <a class="wa" id="slwa" href="#" target="_blank" rel="noopener">Send my list to {firstName(s)}</a>
@@ -68,6 +79,16 @@ const msg = waText ?? `Hi ${firstName(s)}, I'm looking for a property.`;
       document.getElementById('slclr').addEventListener('click', () => { put({}); paint(); });
       paint();
     })();
+  </script>
+  <script is:inline>
+    document.addEventListener('click', (e) => {
+      const b = e.target.closest('.vf-btn');
+      if (!b) return;
+      const f = document.createElement('iframe');
+      f.src = b.dataset.embed; f.allow = 'autoplay; fullscreen; encrypted-media'; f.allowFullscreen = true; f.title = 'Video';
+      f.referrerPolicy = 'strict-origin-when-cross-origin'; f.loading = 'lazy';
+      b.replaceWith(f);
+    });
   </script>
   <div class="stickybar">
     <a class="wa" href={waLink(s, msg)} target="_blank" rel="noopener">WhatsApp {firstName(s)}</a>
