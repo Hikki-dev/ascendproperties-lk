@@ -6,7 +6,7 @@
   "assets": { "binding": "ASSETS", "directory": "./dist" },
   "observability": { "enabled": true },
   "d1_databases": [
-    { "binding": "DB", "database_name": "ascend-db", "database_id": "REPLACE_AFTER_wrangler_d1_create", "migrations_dir": "migrations" }
+    { "binding": "DB", "database_name": "ascend-db", "database_id": "85050ad4-a41e-4f2c-9a34-13a6ce27ccca", "migrations_dir": "migrations" }
   ],
   "r2_buckets": [
     { "binding": "MEDIA", "bucket_name": "ascend-media" }
