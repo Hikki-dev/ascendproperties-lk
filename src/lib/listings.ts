@@ -1,10 +1,10 @@
 import { all, one } from './db';
 
-const PAGE = 15; // 15 + 1 inline ad = 16 cells per page like the reference site
+const PAGE = 12;
 
-export type Filters = { type: string; category?: string; district?: string; city?: string; min?: number; max?: number; q?: string; page?: number };
+export type Filters = { type: string; category?: string; district?: string; city?: string; min?: number; max?: number; q?: string; page?: number; deed?: boolean; power?: boolean; water?: boolean; plan?: boolean; sort?: string };
 
-export async function browse(f: Filters) {
+function build(f: Filters) {
   const where = ["status IN ('available','sold')", 'type = ?', "(published_at IS NULL OR published_at <= datetime('now'))"];
   const p: unknown[] = [f.type];
   if (f.category) { where.push('category = ?'); p.push(f.category); }
@@ -13,10 +13,24 @@ export async function browse(f: Filters) {
   if (f.min) { where.push('price >= ?'); p.push(f.min); }
   if (f.max) { where.push('price <= ?'); p.push(f.max); }
   if (f.q) { where.push('(title LIKE ? OR city LIKE ?)'); p.push(`%${f.q}%`, `%${f.q}%`); }
-  const W = where.join(' AND ');
+  if (f.deed) where.push("facilities LIKE '%Clear title%'");
+  if (f.power) where.push("facilities LIKE '%Electricity%'");
+  if (f.water) where.push("facilities LIKE '%Water%'");
+  if (f.plan) where.push('months IS NOT NULL');
+  return { W: where.join(' AND '), p };
+}
+
+export async function countOnly(f: Filters) {
+  const { W, p } = build(f);
+  return (await one<{ n: number }>(`SELECT COUNT(*) n FROM listings WHERE ${W}`, ...p))!.n;
+}
+
+export async function browse(f: Filters) {
+  const { W, p } = build(f);
   const page = Math.max(1, f.page || 1);
-  const total = (await one<{ n: number }>(`SELECT COUNT(*) n FROM listings WHERE ${W}`, ...p))!.n;
-  const rows = await all(`SELECT * FROM listings WHERE ${W} ORDER BY status='sold', featured DESC, published_at DESC, id DESC LIMIT ? OFFSET ?`, ...p, PAGE, (page - 1) * PAGE);
+  const total = await countOnly(f);
+  const order = f.sort === 'new' ? 'published_at DESC' : 'price ASC';
+  const rows = await all(`SELECT * FROM listings WHERE ${W} ORDER BY status='sold', ${order}, id DESC LIMIT ? OFFSET ?`, ...p, PAGE, (page - 1) * PAGE);
   return { rows, total, pages: Math.max(1, Math.ceil(total / PAGE)), page };
 }
 

@@ -25,6 +25,10 @@ const saved = Astro.url.searchParams.get('saved'), err = Astro.url.searchParams.
           <label class="field">District<select name="district" required><option value="">Select</option>{DISTRICTS.map((d) => <option selected={d === l.district}>{d}</option>)}</select></label>
           <label class="field">City / area<input name="city" maxlength="80" value={l.city ?? ''} /></label>
         </div>
+        <div class="grid g2" style="gap:12px">
+          <label class="field">Plot size shown to visitors<input name="extent" maxlength="60" value={l.extent ?? ''} placeholder="10–25 perch" /></label>
+          <label class="field">Nearby (one short line)<input name="nearby" maxlength="80" value={l.nearby ?? ''} placeholder="12 min from Galle town" /></label>
+        </div>
         <label class="field">Land category (lands only)<select name="category"><option value="">None</option>{LAND_CATEGORIES.map((c) => <option selected={c === l.category}>{c}</option>)}</select></label>
         <div class="grid g3" style="gap:12px">
           <label class="field">Price (LKR)<input name="price" required inputmode="numeric" value={l.price ?? ''} /></label>

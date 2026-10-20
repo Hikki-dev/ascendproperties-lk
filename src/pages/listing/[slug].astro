@@ -1,62 +1,67 @@
 ---
 import Base from '../../layouts/Base.astro';
-import ListingCard from '../../components/ListingCard.astro';
-import LoanCalc from '../../components/LoanCalc';
+import ListingRow from '../../components/ListingRow.astro';
+import PlanCalc from '../../components/LoanCalc';
 import Turnstile from '../../components/Turnstile.astro';
 import { bySlug } from '../../lib/listings';
 import { all } from '../../lib/db';
-import { arr, lkr, mediaUrl, monthly, TYPES } from '../../lib/util';
+import { advisorPhoto, firstName, getSettings, telLink, waLink } from '../../lib/settings';
+import { arr, lkr, mediaUrl } from '../../lib/util';
 
 const l: any = await bySlug(Astro.params.slug!);
 if (!l) return new Response('Not found', { status: 404 });
-const images = [l.cover, ...arr(l.images)].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i);
-const facilities = arr(l.facilities);
-const related = await all('SELECT * FROM listings WHERE type=? AND status=\'available\' AND id<>? ORDER BY (district=?) DESC, published_at DESC LIMIT 4', l.type, l.id, l.district);
+const s = await getSettings(), who = firstName(s);
+const images = [l.cover, ...arr(l.images)].filter(Boolean).filter((v: string, i: number, a: string[]) => a.indexOf(v) === i);
+const fac = arr(l.facilities);
+const related = await all("SELECT * FROM listings WHERE type=? AND status='available' AND id<>? ORDER BY (district=?) DESC, published_at DESC LIMIT 3", l.type, l.id, l.district);
 const sent = Astro.url.searchParams.get('sent'), err = Astro.url.searchParams.get('err');
-const down = l.down_payment_pct ? Math.round(l.price * l.down_payment_pct / 100) : 0;
-const ld = { '@context': 'https://schema.org', '@type': 'Product', name: l.title, description: (l.description ?? '').slice(0, 300), image: images.map((i) => new URL(mediaUrl(i), Astro.url).href), offers: { '@type': 'Offer', priceCurrency: 'LKR', price: l.price, availability: l.status === 'sold' ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock' } };
-const hero = images[0] ? `background-image:linear-gradient(rgba(15,47,122,.25),rgba(15,47,122,.8)),url(${mediaUrl(images[0])})` : '';
+const where = [l.city, l.district].filter(Boolean).join(', ') + (l.nearby ? ` · ${l.nearby}` : '');
+const priceTxt = `LKR ${lkr(l.price)}${l.price_label ? ' ' + l.price_label : ''}`;
+const msg = `Hi ${who}, I'm interested in ${l.title} at ${priceTxt}.`;
+const facts: [string, string][] = ([
+  ['Plot size', l.extent], ['Deed', fac.includes('Clear title') ? 'Clear title' : ''], ['Nearby', l.nearby],
+  ['Water', fac.includes('Water') ? 'Available' : ''], ['Electricity', fac.includes('Electricity') ? 'Available' : ''], ['Road', fac.includes('Tarred road') ? 'Tarred road' : ''],
+] as [string, string][]).filter(([, v]) => v);
+const ld = { '@context': 'https://schema.org', '@type': 'Product', name: l.title, description: (l.description ?? '').slice(0, 300), image: images.map((i: string) => new URL(mediaUrl(i), Astro.url).href), offers: { '@type': 'Offer', priceCurrency: 'LKR', price: l.price, availability: l.status === 'sold' ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock' } };
 ---
-<Base title={l.title} description={(l.description ?? '').slice(0, 155)}>
+<Base title={l.title} description={(l.description ?? '').slice(0, 155)} waText={msg}>
   <script type="application/ld+json" set:html={JSON.stringify(ld).replace(/</g, '\\u003c')} />
-  <section class="hero" style={`padding:140px 0 40px;${hero}`}>
-    <div class="wrap">
-      <span class="eyebrow" style="color:#9DBBFF">{TYPES[l.type as keyof typeof TYPES]}{l.category ? ` · ${l.category}` : ''}</span>
-      <h1 style="font-size:clamp(30px,4.5vw,48px);margin-top:8px">{l.title}</h1>
-      <p style="margin:8px 0 0">{[l.city, l.district].filter(Boolean).join(', ')}</p>
-    </div>
-  </section>
-  <div class="wrap" style="display:flex;flex-wrap:wrap;gap:40px;padding-top:40px;align-items:flex-start">
-    <main class="stack" style="flex:1 1 640px;min-width:0;gap:40px">
-      {images.length > 1 && <div class="grid g3" style="gap:12px">{images.slice(1, 7).map((i) => <a href={mediaUrl(i)} target="_blank" rel="noopener"><img src={mediaUrl(i)} alt="" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px" /></a>)}</div>}
-      {l.description && <section><h2 style="font-size:26px;margin-bottom:12px">About this property</h2><p style="white-space:pre-line;line-height:1.7;margin:0">{l.description}</p></section>}
-      {l.down_payment_pct && l.months && <section><h2 style="font-size:26px;margin-bottom:16px">Payment plan</h2><div class="grid g3" style="gap:16px">
-        <div class="panel"><span class="muted" style="font-size:12px;font-weight:600">Down payment</span><h3 style="font-size:22px">{l.down_payment_pct}%</h3><span class="muted">LKR {lkr(down)}</span></div>
-        <div class="panel"><span class="muted" style="font-size:12px;font-weight:600">Instalments</span><h3 style="font-size:22px">{l.months} months</h3></div>
-        <div class="panel"><span class="muted" style="font-size:12px;font-weight:600">Per month</span><h3 style="font-size:22px">LKR {lkr(Math.round((l.price - down) / l.months))}</h3></div></div></section>}
-      {facilities.length > 0 && <section><h2 style="font-size:26px;margin-bottom:16px">Facilities</h2><div class="row">{facilities.map((f) => <span class="pill">{f}</span>)}</div></section>}
-      {l.map_url && /^https:\/\/(www\.)?google\.[a-z.]+\/maps\/embed/.test(l.map_url) && <section><h2 style="font-size:26px;margin-bottom:16px">Location</h2><iframe src={l.map_url} title="Map" loading="lazy" style="width:100%;height:340px;border:0;border-radius:14px" referrerpolicy="no-referrer-when-downgrade"></iframe></section>}
-      <LoanCalc client:visible price={l.price} />
-    </main>
-    <aside class="stack" style="flex:0 0 360px;position:sticky;top:96px">
-      <div class="panel stack" style="box-shadow:0 6px 24px rgba(31,36,48,.08)">
-        <div><span class="muted" style="font-size:12px;font-weight:600">Price from</span><h2 style="font-size:32px;color:var(--blue-d)">LKR {lkr(l.price)}</h2>{l.price_label && <span class="muted" style="font-size:13px">{l.price_label}</span>}</div>
-        {sent && <div class="notice" role="status">Thank you! We'll call you back shortly.</div>}
-        {err && <div class="notice err" role="alert">Could not send. Check your details and try again.</div>}
-        {l.status === 'sold' ? <p class="notice">This project is sold out. <a href="/contact" style="text-decoration:underline">Ask about similar ones</a>.</p> : (
-        <form method="post" action="/api/inquiry" class="stack" style="gap:12px">
+  <div class="wrap" style="padding-top:20px"><a class="link" href={`/${l.type === 'land' ? 'lands' : l.type + 's'}`}>← Back to results</a></div>
+  <div class="wrap detail" style="padding-top:16px">
+    <main>
+      {images.length > 0 && <div class="gallery">
+        <a class="main" href={images[0] ? mediaUrl(images[0]) : undefined} target="_blank" rel="noopener" style={images[0] ? `background-image:url(${mediaUrl(images[0])})` : ''} aria-label="Main photo"></a>
+        {images.slice(1, 5).map((i: string) => <a href={mediaUrl(i)} target="_blank" rel="noopener" style={`background-image:url(${mediaUrl(i)})`} aria-label="Photo"></a>)}
+      </div>}
+      <h1 style="font-size:30px;font-weight:700;margin-top:24px">{l.title}</h1>
+      <p class="muted" style="margin-top:4px">{where}</p>
+      <p style="margin-top:12px"><b style="font-size:26px">LKR {lkr(l.price)}</b> <span class="muted">{l.price_label}</span>{l.status === 'sold' && <span class="badge gray" style="margin-left:8px">Sold out</span>}</p>
+      {facts.length > 0 && <dl class="facts" style="margin-top:24px">{facts.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>}
+      {l.description && <section style="margin-top:28px"><h2 style="font-size:20px;margin-bottom:8px">About this {l.type}</h2><p style="white-space:pre-line;color:var(--ink2);max-width:680px">{l.description}</p></section>}
+      {l.down_payment_pct && l.months && <section style="margin-top:28px"><h2 style="font-size:20px;margin-bottom:8px">What you'd pay</h2><PlanCalc client:visible price={l.price} perPerch={l.type === 'land'} depositPct={l.down_payment_pct} months={l.months} /></section>}
+      {l.map_url && /^https:\/\/(www\.)?google\.[a-z.]+\/maps\/embed/.test(l.map_url) && <section style="margin-top:28px"><h2 style="font-size:20px;margin-bottom:8px">Where it is</h2><iframe src={l.map_url} title="Map" loading="lazy" style="width:100%;height:300px;border:0;border-radius:12px" referrerpolicy="no-referrer-when-downgrade"></iframe></section>}
+      {l.status !== 'sold' && <section style="margin-top:36px" class="panel"><h2 style="font-size:19px">Prefer a call back?</h2>
+        {sent && <div class="notice" role="status" style="margin-top:12px">Thanks! {who} will call you shortly.</div>}
+        {err && <div class="notice err" role="alert" style="margin-top:12px">Could not send. Check your phone number.</div>}
+        <form method="post" action="/api/inquiry" class="stack" style="gap:12px;margin-top:12px;max-width:480px">
           <input type="hidden" name="listing_id" value={l.id} /><input type="hidden" name="back" value={`/listing/${l.slug}`} />
           <input name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px" />
-          <label class="field">Name<input name="name" required maxlength="100" autocomplete="name" /></label>
+          <label class="field">Your name<input name="name" required maxlength="100" autocomplete="name" /></label>
           <label class="field">Phone<input name="phone" required type="tel" maxlength="30" autocomplete="tel" /></label>
-          <label class="field">Email (optional)<input name="email" type="email" maxlength="120" autocomplete="email" /></label>
-          <label class="field">Message<textarea name="message" rows="3" maxlength="1000"></textarea></label>
-          <Turnstile />
-          <button class="btn">Send inquiry</button>
-        </form>)}
-        {l.brochure && <a class="btn ghost" href={mediaUrl(l.brochure)} target="_blank" rel="noopener">Download brochure</a>}
+          <Turnstile /><button class="btn" style="align-self:flex-start">Call me back</button>
+        </form></section>}
+    </main>
+    <aside>
+      <div class="sidecard stack" style="gap:14px">
+        <div><span class="muted" style="font-size:13px">Price</span><p><b style="font-size:28px">LKR {lkr(l.price)}</b> <span class="muted">{l.price_label}</span></p></div>
+        <div class="who"><img src={advisorPhoto(s)} alt={s.advisor_name} width="56" height="56" /><div><b>{s.advisor_name}</b><p class="muted" style="font-size:14px">{s.advisor_title} · Replies {s.advisor_hours}</p></div></div>
+        <p class="quote">"{msg}"</p>
+        <a class="wa lg" href={waLink(s, msg)} target="_blank" rel="noopener">Send this on WhatsApp</a>
+        <a class="btn ghost" href={telLink(s)}>Call {s.phone_display}</a>
+        <a class="link" style="text-align:center" href={waLink(s, `Hi ${who}, I'd like to visit ${l.title}. When can I come?`)} target="_blank" rel="noopener">Book a site visit</a>
+        {l.brochure && <a class="muted" style="text-align:center;font-size:14px" href={mediaUrl(l.brochure)} target="_blank" rel="noopener">Download brochure (PDF)</a>}
       </div>
     </aside>
   </div>
-  {related.length > 0 && <div class="wrap" style="padding-top:64px"><h2 style="font-size:26px;margin-bottom:20px">We also recommend</h2><div class="grid g4">{related.map((r) => <ListingCard l={r} />)}</div></div>}
+  {related.length > 0 && <div class="wrap" style="padding-top:56px"><h2 style="font-size:22px;margin-bottom:16px">You might also like</h2><div class="stack" style="gap:12px">{related.map((r) => <ListingRow l={r} s={s} />)}</div></div>}
 </Base>

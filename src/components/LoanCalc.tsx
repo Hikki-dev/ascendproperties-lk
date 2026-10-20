@@ -1,30 +1,35 @@
 import { useState } from 'react';
 
-const monthly = (loan: number, years: number, ratePct: number) => {
-  const n = years * 12, r = ratePct / 100 / 12;
-  if (n <= 0 || loan <= 0) return 0;
-  return r === 0 ? loan / n : (loan * r) / (1 - Math.pow(1 + r, -n));
-};
+type Props = { price: number; perPerch: boolean; depositPct: number; months: number };
+const lkr = (n: number) => Math.round(n).toLocaleString('en-LK');
 
-export default function LoanCalc({ price }: { price: number }) {
-  const [loan, setLoan] = useState(Math.round(price * 0.7));
-  const [years, setYears] = useState(10);
-  const [rate, setRate] = useState(12);
-  const m = monthly(loan, years, rate);
-  const num = (set: (n: number) => void) => (e: React.ChangeEvent<HTMLInputElement>) => set(Number(e.target.value.replace(/[^\d.]/g, '')) || 0);
+/** "What you'd pay": price × plot size, deposit, and monthly instalment. */
+export default function PlanCalc({ price, perPerch, depositPct, months }: Props) {
+  const [perches, setPerches] = useState(10);
+  const [m, setM] = useState(months);
+  const total = price * (perPerch ? Math.max(1, perches) : 1);
+  const deposit = (total * depositPct) / 100;
+  const monthly = m > 0 ? (total - deposit) / m : 0;
+  const stat = (label: string, value: string, strong = false) => (
+    <div><div className="muted" style={{ fontSize: 13 }}>{label}</div><b style={{ fontSize: 20, color: strong ? 'var(--blue)' : undefined }}>{value}</b></div>
+  );
   return (
-    <div className="panel">
-      <h2 style={{ fontSize: 22, marginBottom: 16 }}>Loan calculator</h2>
-      <div className="row" style={{ alignItems: 'flex-end' }}>
-        <label className="field" style={{ flex: '1 1 140px' }}>Loan amount (LKR)<input inputMode="numeric" value={loan} onChange={num(setLoan)} /></label>
-        <label className="field" style={{ flex: '1 1 100px' }}>Years<input inputMode="numeric" value={years} onChange={num(setYears)} /></label>
-        <label className="field" style={{ flex: '1 1 100px' }}>Rate %<input inputMode="decimal" value={rate} onChange={num(setRate)} /></label>
-        <div style={{ flex: '1 1 200px', background: '#EAF1FF', borderRadius: 10, padding: '10px 16px' }} aria-live="polite">
-          <div className="muted" style={{ fontSize: 12, fontWeight: 600 }}>Monthly payment</div>
-          <div style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: 22, color: '#0F2F7A' }}>LKR {Math.round(m).toLocaleString('en-LK')}</div>
-        </div>
+    <div className="panel" style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'flex-end' }}>
+      {perPerch && (
+        <label className="field">Plot size (perch)
+          <input inputMode="numeric" value={perches} style={{ width: 120 }} onChange={(e) => setPerches(Number(e.target.value.replace(/\D/g, '')) || 0)} />
+        </label>
+      )}
+      <label className="field">Pay over
+        <select value={m} style={{ width: 160 }} onChange={(e) => setM(Number(e.target.value))}>
+          {[...new Set([6, 12, 24, 36, months])].sort((a, b) => a - b).map((x) => <option key={x} value={x}>{x} months</option>)}
+        </select>
+      </label>
+      <div aria-live="polite" style={{ display: 'flex', flexWrap: 'wrap', gap: 28 }}>
+        {stat('Total', `LKR ${lkr(total)}`)}
+        {stat(`Deposit (${depositPct}%)`, `LKR ${lkr(deposit)}`)}
+        {stat('Per month', `LKR ${lkr(monthly)}`, true)}
       </div>
-      <p className="muted" style={{ fontSize: 12, margin: '12px 0 0' }}>Estimate only. Actual rates depend on your bank.</p>
     </div>
   );
 }

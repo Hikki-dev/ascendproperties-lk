@@ -1,68 +1,94 @@
 ---
 import Base from '../layouts/Base.astro';
-import ListingCard from '../components/ListingCard.astro';
+import ListingRow from '../components/ListingRow.astro';
 import Ad from '../components/Ad.astro';
-import { latest, activeBanners, counts, featured } from '../lib/listings';
-import { all } from '../lib/db';
-import { DISTRICTS, mediaUrl } from '../lib/util';
+import { latest, activeBanners, countOnly } from '../lib/listings';
+import { advisorPhoto, firstName, getSettings, telLink, waLink } from '../lib/settings';
+import { DISTRICTS } from '../lib/util';
 
-const [rows, hero, banners, c, d] = await Promise.all([
-  latest(8), activeBanners('hero'), activeBanners('home_banner'), counts(),
-  all<{ n: number }>("SELECT COUNT(DISTINCT district) n FROM listings WHERE status='available'"),
-]);
-const n = (t: string) => c.find((x) => x.type === t)?.n ?? 0;
-const heroBg = hero[0]?.image ? `background-image:linear-gradient(rgba(15,47,122,.65),rgba(15,47,122,.75)),url(${mediaUrl(hero[0].image)})` : '';
-const houses = await featured('house', 4);
-const apts = await featured('apartment', 4);
+const [s, rows, hero, banners, total] = await Promise.all([getSettings(), latest(4), activeBanners('hero'), activeBanners('home_banner'), countOnly({ type: 'land' })]);
+const photo = advisorPhoto(s), who = firstName(s);
 ---
-<Base title="Ascend Properties" description="Verified lands, houses and apartments across Sri Lanka with payment plans and after-sales support.">
-  <section class="hero" style={heroBg}>
-    <div class="wrap stack" style="gap:20px">
-      <span class="eyebrow" style="color:#9DBBFF">Lands · Houses · Apartments</span>
-      <h1>{hero[0]?.title ?? 'Find land worth building a life on.'}</h1>
-      <p>{hero[0]?.body ?? 'Verified projects across Sri Lanka, with clear titles, payment plans and support long after you sign.'}</p>
-      <form id="search" class="searchbox" method="get" action="/lands">
-        <div class="tabs" role="radiogroup" aria-label="Property type">
-          <label><input type="radio" name="t" value="/lands" checked />Lands</label>
-          <label><input type="radio" name="t" value="/houses" />Houses</label>
-          <label><input type="radio" name="t" value="/apartments" />Apartments</label>
-        </div>
-        <label class="field" style="flex:1 1 180px">District
-          <select name="district"><option value="">All districts</option>{DISTRICTS.map((x) => <option>{x}</option>)}</select></label>
-        <label class="field" style="flex:2 1 220px">Keyword<input name="q" placeholder="Project or area" /></label>
-        <button class="btn" style="height:44px">Search</button>
+<Base title="Ascend Properties">
+  <div class="band">
+    <div class="wrap lead">
+      <h1>{hero[0]?.title ?? 'What kind of place are you looking for?'}</h1>
+      <p>{hero[0]?.body ?? 'Pick an area and a budget. We show only what fits, with the real price per perch and the payment plan.'}</p>
+      <form id="ask" class="ask" method="get" action="/lands">
+        <label class="field">I want
+          <select name="go"><option value="/lands|land">Land</option><option value="/houses|house">A house</option><option value="/apartments|apartment">An apartment</option></select></label>
+        <label class="field">In
+          <select name="district"><option value="">Anywhere in Sri Lanka</option>{DISTRICTS.map((d) => <option>{d}</option>)}</select></label>
+        <label class="field">Budget per perch
+          <select name="budget"><option value="">Any budget</option><option value="0-500000">Under LKR 500,000</option><option value="500000-1000000">LKR 500,000 – 1,000,000</option><option value="1000000-">Over LKR 1,000,000</option></select></label>
+        <input type="hidden" name="min" /><input type="hidden" name="max" />
+        <button class="btn lg" id="go">Show {total} {total === 1 ? 'result' : 'results'}</button>
       </form>
-      {hero[0]?.cta_url && <a class="btn ghost" style="align-self:flex-start" href={hero[0].cta_url}>{hero[0].cta_label ?? 'Learn more'}</a>}
+      <div class="chips"><span>Or start with:</span>
+        <a class="chip" href="/lands?deed=1&power=1&water=1">Ready to build</a>
+        <a class="chip" href="/lands?district=Colombo">Near Colombo</a>
+        <a class="chip" href="/lands?category=Water+Front+Land">Beach and waterfront</a>
+        <a class="chip" href="/lands?plan=1">Instalments, no bank loan</a></div>
     </div>
-  </section>
+  </div>
   <script is:inline>
-    const f = document.getElementById('search');
-    f.addEventListener('submit', () => { f.action = f.t.value; f.t.disabled = true; });
+    (() => {
+      const f = document.getElementById('ask'), b = document.getElementById('go');
+      const q = () => {
+        const [path, type] = f.go.value.split('|'), [min, max] = (f.budget.value || '-').split('-');
+        return { path, type, min, max };
+      };
+      const count = async () => {
+        const { type, min, max } = q();
+        const u = new URLSearchParams({ type, district: f.district.value, min, max });
+        try { const n = (await (await fetch('/api/count?' + u)).json()).n; b.textContent = `Show ${n} ${n === 1 ? 'result' : 'results'}`; } catch {}
+      };
+      f.addEventListener('change', count);
+      f.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const { path, min, max } = q();
+        const u = new URLSearchParams();
+        if (f.district.value) u.set('district', f.district.value);
+        if (min) u.set('min', min); if (max) u.set('max', max);
+        location.href = path + (u.size ? '?' + u : '');
+      });
+    })();
   </script>
 
   <div class="wrap">
-    <section class="stats">
-      <div class="stat"><b>{n('land')}</b><span class="muted">Lands available</span></div>
-      <div class="stat"><b>{n('house')}</b><span class="muted">Houses available</span></div>
-      <div class="stat"><b>{n('apartment')}</b><span class="muted">Apartments available</span></div>
-      <div class="stat"><b>{d[0]?.n ?? 0}</b><span class="muted">Districts covered</span></div>
+    <section style="padding-top:40px">
+      <div class="section-title"><h2>New this week</h2><a class="link" href="/lands">See all land →</a></div>
+      <div class="stack" style="gap:12px">
+        {rows.map((l) => <ListingRow l={l} s={s} />)}
+        {rows.length === 0 && <p class="muted">No listings yet.</p>}
+      </div>
     </section>
 
-    <section style="padding-top:72px">
-      <div class="row between" style="margin-bottom:28px"><div><span class="eyebrow">New this week</span><h2 style="font-size:34px;margin-top:6px">Latest listings</h2></div><a class="btn ghost" href="/lands">View all →</a></div>
-      <div class="grid g4">{rows.map((l) => <ListingCard l={l} />)}</div>
-      {rows.length === 0 && <p class="muted">No listings yet. Add the first one in the admin area.</p>}
+    {banners[0] && <section style="padding-top:32px"><Ad b={banners[0]} /></section>}
+
+    <section style="padding-top:48px">
+      <div class="advisor">
+        <img class="photo" src={photo} alt={s.advisor_name} width="104" height="104" />
+        <div class="txt">
+          <h2 style="font-size:24px">Not sure what to pick? Message {who}.</h2>
+          <p style="margin-top:8px;color:var(--ink2);max-width:560px">Tell {who} your budget and the area you like. He'll send you two or three plots that fit, with prices, on WhatsApp. No forms.</p>
+          <p class="muted" style="margin-top:8px;font-size:14px">{s.advisor_name} · {s.advisor_title} · Replies {s.advisor_hours}</p>
+        </div>
+        <div class="stack" style="gap:8px;text-align:center">
+          <a class="wa lg" href={waLink(s, `Hi ${who}, I'm looking for a property. My budget is `)} target="_blank" rel="noopener">Chat on WhatsApp</a>
+          <a class="link" href={telLink(s)}>or call {s.phone_display}</a>
+        </div>
+      </div>
     </section>
 
-    {banners.length > 0 && <section style="padding-top:56px"><Ad b={banners[0]} wide /></section>}
-
-    {houses.length > 0 && <section style="padding-top:56px"><div class="row between" style="margin-bottom:24px"><h2 style="font-size:28px">Featured houses</h2><a href="/houses" class="muted">All houses →</a></div><div class="grid g4">{houses.map((l) => <ListingCard l={l} />)}</div></section>}
-    {apts.length > 0 && <section style="padding-top:56px"><div class="row between" style="margin-bottom:24px"><h2 style="font-size:28px">Featured apartments</h2><a href="/apartments" class="muted">All apartments →</a></div><div class="grid g4">{apts.map((l) => <ListingCard l={l} />)}</div></section>}
-
-    <section style="padding-top:56px" class="grid g3">
-      <a class="panel" href="/sell-your-land"><h3>Sell your land</h3><p class="muted">Send us the details and photos. Our team replies with a valuation.</p></a>
-      <a class="panel" href="/portal"><h3>Customer portal</h3><p class="muted">Track payments, download receipts and documents, raise a request.</p></a>
-      <a class="panel" href="/contact"><h3>Talk to us</h3><p class="muted">Questions about a project or a payment plan? We call back.</p></a>
+    <section style="padding-top:56px">
+      <h2 style="font-size:24px;margin-bottom:16px">How buying with us works</h2>
+      <div class="steps">
+        <div><b>1</b><h3 style="font-size:17px">Visit the plot</h3><p class="muted" style="font-size:14px;margin-top:4px">Book a site visit. We take you there.</p></div>
+        <div><b>2</b><h3 style="font-size:17px">Reserve it</h3><p class="muted" style="font-size:14px;margin-top:4px">Pay a small deposit to hold your plot.</p></div>
+        <div><b>3</b><h3 style="font-size:17px">Pay monthly</h3><p class="muted" style="font-size:14px;margin-top:4px">Track every payment and receipt in your account.</p></div>
+        <div><b>4</b><h3 style="font-size:17px">Get your deed</h3><p class="muted" style="font-size:14px;margin-top:4px">We prepare it and tell you when it's ready.</p></div>
+      </div>
     </section>
   </div>
 </Base>

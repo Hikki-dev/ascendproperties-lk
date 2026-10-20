@@ -1,10 +1,9 @@
 ---
 import { mediaUrl, safeUrl } from '../lib/util';
-const { b, wide = false } = Astro.props;
-const bg = b.image ? `background-image:linear-gradient(90deg,rgba(15,27,61,.85),rgba(15,27,61,.4)),url(${mediaUrl(b.image)});` : '';
+const { b } = Astro.props;
+const bg = b.image ? `background-image:linear-gradient(90deg,rgba(255,255,255,.94) 45%,rgba(255,255,255,.2)),url(${mediaUrl(b.image)})` : '';
 ---
-<a class="ad" href={safeUrl(b.cta_url)} style={`${bg}${wide ? 'min-height:auto;flex-direction:row;align-items:center;flex-wrap:wrap;padding:40px 48px;border-radius:18px' : ''}`}>
-  <small>Sponsored</small>
-  <div style="flex:1 1 320px"><h3 style={wide ? 'font-size:30px' : 'font-size:20px'}>{b.title}</h3>{b.body && <p style="margin:8px 0 0;color:#B8C4E0">{b.body}</p>}</div>
-  {b.cta_label && <span class="btn" style="align-self:flex-start">{b.cta_label}</span>}
+<a class="ad-row" href={safeUrl(b.cta_url)} style={bg}>
+  <div style="flex:1 1 280px"><small>Sponsored</small><h3 style="font-size:20px;margin-top:4px">{b.title}</h3>{b.body && <p class="muted" style="margin-top:4px">{b.body}</p>}</div>
+  {b.cta_label && <span class="btn">{b.cta_label}</span>}
 </a>
