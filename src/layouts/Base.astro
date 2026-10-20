@@ -1,0 +1,98 @@
+---
+import '../styles/global.css';
+import { advisorPhoto, firstName, getSettings, telLink, waLink } from '../lib/settings';
+interface Props { title: string; description?: string; waText?: string; image?: string; }
+const { title, description = 'Land, houses and apartments for sale across Sri Lanka. Find the right plot, see the real price, and message an advisor on WhatsApp.', waText, image } = Astro.props;
+const ogImage = new URL(image || '/logo.jpg', Astro.url.origin).href;
+const fullTitle = title === 'Ascend Properties' ? title : `${title} | Ascend Properties`;
+const s = await getSettings();
+const p = Astro.url.pathname;
+const user = Astro.locals.user;
+const nav = [['/lands', 'Land'], ['/houses', 'Houses'], ['/apartments', 'Apartments'], ['/sell-your-land', 'Sell your land']];
+const msg = waText ?? `Hi ${firstName(s)}, I'm looking for a property.`;
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{fullTitle}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={Astro.url.origin + Astro.url.pathname} />
+  <meta property="og:site_name" content="Ascend Properties" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:url" content={Astro.url.origin + Astro.url.pathname} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/png" href="/mark.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a href="/" class="brand" aria-label="Ascend Properties home"><img src="/mark.png" alt="" width="28" height="40" /><b>Ascend Properties</b></a>
+      <nav class="nav" id="nav" aria-label="Main">
+        {nav.map(([h, l]) => <a href={h} aria-current={p.startsWith(h) ? 'page' : undefined}>{l}</a>)}
+        <a href={user ? (user.role === 'admin' ? '/admin' : '/portal') : '/login'}>{user ? (user.role === 'admin' ? 'Admin' : 'My account') : 'My account'}</a>
+      </nav>
+      <div class="row" style="gap:8px">
+        <a class="wa hide-sm" href={waLink(s, msg)} target="_blank" rel="noopener" style="padding-left:6px"><img class="av" src={advisorPhoto(s)} alt="" width="32" height="32" style="margin-left:0;border:0" />WhatsApp {firstName(s)}</a>
+        <button class="btn ghost sm nav-toggle" aria-controls="nav" aria-expanded="false" onclick="const n=document.getElementById('nav');const o=n.classList.toggle('open');this.setAttribute('aria-expanded',o)">Menu</button>
+      </div>
+    </div>
+  </header>
+  <slot />
+  <footer class="footer"><div class="wrap">Ascend Properties{s.address && ` · ${s.address}`} · <a href={telLink(s)}>{s.phone_display}</a>
+    {[['Facebook', s.facebook], ['Instagram', s.instagram], ['YouTube', s.youtube], ['TikTok', s.tiktok]].filter(([, u]) => u).map(([n, u]) => <> · <a href={u} target="_blank" rel="noopener">{n}</a></>)}</div></footer>
+  <div class="slbar" id="slbar" hidden data-num={s.wa_number} data-who={firstName(s)}>
+    <span><b id="slc">0</b> saved</span>
+    <a class="wa" id="slwa" href="#" target="_blank" rel="noopener">Send my list to {firstName(s)}</a>
+    <button type="button" class="link" id="slclr">Clear</button>
+  </div>
+  <script is:inline>
+    (() => {
+      const K = 'ascend_saved', bar = document.getElementById('slbar');
+      const get = () => { try { return JSON.parse(localStorage.getItem(K) || '{}'); } catch { return {}; } };
+      const put = (v) => { try { localStorage.setItem(K, JSON.stringify(v)); } catch {} };
+      const paint = () => {
+        const v = get(), keys = Object.keys(v);
+        document.querySelectorAll('button.save').forEach((b) => {
+          const on = !!v[b.dataset.slug];
+          b.setAttribute('aria-pressed', on);
+          b.querySelector('.ico').textContent = on ? '♥' : '♡';
+          b.querySelector('.lbl').textContent = on ? 'Saved' : 'Save for later';
+        });
+        bar.hidden = keys.length === 0;
+        document.getElementById('slc').textContent = keys.length;
+        const lines = keys.map((k, i) => (i + 1) + '. ' + v[k].t + ' (' + v[k].p + ')\n' + location.origin + '/listing/' + k);
+        const text = 'Hi ' + bar.dataset.who + ', these are the places I saved:\n\n' + lines.join('\n\n') + '\n\nCan you tell me more?';
+        document.getElementById('slwa').href = 'https://wa.me/' + bar.dataset.num + '?text=' + encodeURIComponent(text);
+      };
+      document.addEventListener('click', (e) => {
+        const b = e.target.closest('button.save');
+        if (b) { const v = get(); if (v[b.dataset.slug]) delete v[b.dataset.slug]; else v[b.dataset.slug] = { t: b.dataset.title, p: b.dataset.price }; put(v); paint(); }
+      });
+      document.getElementById('slclr').addEventListener('click', () => { put({}); paint(); });
+      paint();
+    })();
+  </script>
+  <script is:inline>
+    document.addEventListener('click', (e) => {
+      const b = e.target.closest('.vf-btn');
+      if (!b) return;
+      const f = document.createElement('iframe');
+      f.src = b.dataset.embed; f.allow = 'autoplay; fullscreen; encrypted-media'; f.allowFullscreen = true; f.title = 'Video';
+      f.referrerPolicy = 'strict-origin-when-cross-origin'; f.loading = 'lazy';
+      b.replaceWith(f);
+    });
+  </script>
+  <div class="stickybar">
+    <a class="wa" href={waLink(s, msg)} target="_blank" rel="noopener">WhatsApp {firstName(s)}</a>
+    <a class="btn ghost" href={telLink(s)}>Call</a>
+  </div>
+</body>
+</html>

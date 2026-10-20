@@ -1,0 +1,15 @@
+---
+import { mediaUrl, safeUrl, video } from '../lib/util';
+import VideoFacade from './VideoFacade.astro';
+const { b } = Astro.props;
+const hasVideo = !!video(b.video_url);
+const bg = b.image ? `background-image:linear-gradient(90deg,rgba(255,255,255,.94) 45%,rgba(255,255,255,.2)),url(${mediaUrl(b.image)})` : '';
+---
+{hasVideo ? (
+<div class="ad-row" style="flex-direction:column;align-items:stretch;gap:12px"><small>Sponsored · Video</small><VideoFacade url={b.video_url} title={b.title} /><div class="row between"><div><h3 style="font-size:19px">{b.title}</h3>{b.body && <p class="muted" style="margin-top:2px">{b.body}</p>}</div>{b.cta_label && b.cta_url && <a class="btn" href={safeUrl(b.cta_url)}>{b.cta_label}</a>}</div></div>
+) : (
+<a class="ad-row" href={safeUrl(b.cta_url)} style={bg}>
+  <div style="flex:1 1 280px"><small>Sponsored</small><h3 style="font-size:20px;margin-top:4px">{b.title}</h3>{b.body && <p class="muted" style="margin-top:4px">{b.body}</p>}</div>
+  {b.cta_label && <span class="btn">{b.cta_label}</span>}
+</a>
+)}

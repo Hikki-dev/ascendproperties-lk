@@ -1,0 +1,13 @@
+---
+import Admin from '../../../layouts/Admin.astro';
+import { all } from '../../../lib/db';
+import { dateFmt } from '../../../lib/util';
+const rows = await all(`SELECT t.*, u.name FROM tickets t JOIN users u ON u.id=t.user_id ORDER BY (t.status='open') DESC, t.id DESC LIMIT 200`);
+---
+<Admin title="Support tickets">
+  <h1 style="font-size:30px">Support tickets</h1>
+  <div class="panel scroll-x"><table class="table cards"><thead><tr><th>Opened</th><th>Customer</th><th>Subject</th><th>Status</th></tr></thead><tbody>
+    {rows.map((t) => <tr><td data-l="Opened">{dateFmt(t.created_at)}</td><td data-l="Customer">{t.name}</td><td><a href={`/admin/tickets/${t.id}`} style="font-weight:600;color:var(--blue-d)">{t.subject}</a></td><td data-l="Status"><span class={`badge ${t.status === 'open' ? 'warn' : 'gray'}`}>{t.status}</span></td></tr>)}
+    {rows.length === 0 && <tr><td colspan="4" class="muted">No tickets.</td></tr>}
+  </tbody></table></div>
+</Admin>

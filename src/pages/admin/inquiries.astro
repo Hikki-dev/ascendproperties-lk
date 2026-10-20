@@ -1,0 +1,25 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import { all } from '../../lib/db';
+import { dateFmt, lkPhone } from '../../lib/util';
+import { getSettings } from '../../lib/settings';
+const me = (await getSettings()).advisor_name.split(' ')[0];
+const rows = await all('SELECT i.*, l.title ltitle, l.slug FROM inquiries i LEFT JOIN listings l ON l.id=i.listing_id ORDER BY (i.status=\'new\') DESC, i.id DESC LIMIT 200');
+---
+<Admin title="Inquiries">
+  <div class="row between"><h1 style="font-size:30px">Inquiries</h1><a class="btn ghost" href="/admin/api/export?t=inquiries">Download as Excel (CSV)</a></div>
+  <div class="stack" style="gap:12px">
+    {rows.map((r) => <div class="panel stack" style="gap:10px">
+      <div class="row between"><div><b>{r.name}</b> <span class="muted">· {dateFmt(r.created_at)}</span></div><span class={`badge ${r.status === 'new' ? 'warn' : r.status === 'contacted' ? 'ok' : 'gray'}`}>{({ new: 'New', contacted: 'Replied', closed: 'Closed' } as any)[r.status]}</span></div>
+      <p class="muted" style="margin:0">{r.slug ? <a class="link" href={`/listing/${r.slug}`} target="_blank" rel="noopener">{r.ltitle}</a> : 'General question'}</p>
+      {r.message && <p style="margin:0;white-space:pre-line">{r.message}</p>}
+      <div class="row" style="gap:8px">
+        {lkPhone(r.phone) && <a class="wa" href={`https://wa.me/${lkPhone(r.phone)}?text=${encodeURIComponent(`Hi ${r.name}, this is ${me} from Ascend Properties.${r.ltitle ? ` Thanks for asking about ${r.ltitle}.` : ''} How can I help?`)}`} target="_blank" rel="noopener">Reply on WhatsApp</a>}
+        <a class="btn ghost" href={`tel:${r.phone}`}>Call {r.phone}</a>
+        {r.email && <a class="btn ghost" href={`mailto:${r.email}`}>Email</a>}
+        <form method="post" action="/admin/api/status" class="row" style="gap:8px"><input type="hidden" name="t" value="inquiries" /><input type="hidden" name="id" value={r.id} /><input type="hidden" name="back" value="/admin/inquiries" />
+          <select name="status" onchange="this.form.submit()" aria-label="Status" style="min-height:var(--h-sm)">{[['new', 'New'], ['contacted', 'Replied'], ['closed', 'Closed']].map(([v, l]) => <option value={v} selected={v === r.status}>{l}</option>)}</select></form>
+      </div></div>)}
+    {rows.length === 0 && <div class="panel muted">No inquiries yet.</div>}
+  </div>
+</Admin>

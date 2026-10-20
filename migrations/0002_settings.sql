@@ -1,0 +1,3 @@
+CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
+ALTER TABLE listings ADD COLUMN extent TEXT;
+ALTER TABLE listings ADD COLUMN nearby TEXT;

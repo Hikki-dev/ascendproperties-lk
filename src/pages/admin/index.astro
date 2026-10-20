@@ -1,0 +1,52 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import { all, one } from '../../lib/db';
+import { getSettings } from '../../lib/settings';
+import { dateFmt, lkPhone } from '../../lib/util';
+
+const s = await getSettings(), me = s.advisor_name.split(' ')[0];
+const n = async (sql: string) => (await one<{ n: number }>(sql))!.n;
+const [live, drafts] = await Promise.all([n("SELECT COUNT(*) n FROM listings WHERE status='available'"), n("SELECT COUNT(*) n FROM listings WHERE status='draft'")]);
+const [inq, sellers, tickets] = await Promise.all([
+  all("SELECT i.*, l.title ltitle FROM inquiries i LEFT JOIN listings l ON l.id=i.listing_id WHERE i.status='new' ORDER BY i.id DESC LIMIT 10"),
+  all("SELECT * FROM seller_leads WHERE status='new' ORDER BY id DESC LIMIT 5"),
+  all("SELECT t.*, u.name FROM tickets t JOIN users u ON u.id=t.user_id WHERE t.status='open' ORDER BY t.id DESC LIMIT 5"),
+]);
+const wa = (phone: string, text: string) => { const d = lkPhone(phone); return d ? `https://wa.me/${d}?text=${encodeURIComponent(text)}` : ''; };
+const todo = inq.length + sellers.length + tickets.length;
+---
+<Admin title="Today">
+  <div><h1 style="font-size:30px">{todo ? 'Today: people waiting for you' : 'All caught up'}</h1>
+    <p class="muted" style="margin:4px 0 0">{live} listings are live{drafts ? `, ${drafts} hidden` : ''}.</p></div>
+
+  <div class="row"><a class="btn lg" href="/admin/listings/new">+ Add a new listing</a><a class="btn ghost lg" href="/admin/listings">My listings</a></div>
+
+  {inq.length > 0 && <section class="panel stack"><h2 style="font-size:19px">Buyers who asked about a property ({inq.length})</h2>
+    {inq.map((r) => <div class="row between" style="border-top:1px solid var(--line);padding-top:12px">
+      <div><b>{r.name}</b> <span class="muted">· {dateFmt(r.created_at)}</span><br /><span class="muted">{r.ltitle ?? 'General question'}{r.message ? ` · "${r.message.slice(0, 80)}"` : ''}</span></div>
+      <div class="row" style="gap:8px">
+        {wa(r.phone, `Hi ${r.name}, this is ${me} from Ascend Properties.${r.ltitle ? ` Thanks for asking about ${r.ltitle}.` : ' Thanks for getting in touch.'} How can I help?`) && <a class="wa" href={wa(r.phone, `Hi ${r.name}, this is ${me} from Ascend Properties.${r.ltitle ? ` Thanks for asking about ${r.ltitle}.` : ' Thanks for getting in touch.'} How can I help?`)} target="_blank" rel="noopener">Reply on WhatsApp</a>}
+        <a class="btn ghost" href={`tel:${r.phone}`}>Call {r.phone}</a>
+        <form method="post" action="/admin/api/status"><input type="hidden" name="t" value="inquiries" /><input type="hidden" name="id" value={r.id} /><input type="hidden" name="back" value="/admin" /><button class="btn ghost" name="status" value="contacted">Done</button></form>
+      </div></div>)}
+  </section>}
+
+  {sellers.length > 0 && <section class="panel stack"><h2 style="font-size:19px">People who want to sell land ({sellers.length})</h2>
+    {sellers.map((r) => <div class="row between" style="border-top:1px solid var(--line);padding-top:12px">
+      <div><b>{r.name}</b> <span class="muted">· {[r.city, r.extent && `${r.extent} perches`].filter(Boolean).join(' · ')}</span></div>
+      <div class="row" style="gap:8px">
+        {wa(r.mobile, `Hi ${r.name}, this is ${me} from Ascend Properties. Thanks for sending your land details.`) && <a class="wa" href={wa(r.mobile, `Hi ${r.name}, this is ${me} from Ascend Properties. Thanks for sending your land details.`)} target="_blank" rel="noopener">Reply on WhatsApp</a>}
+        <a class="btn ghost" href={`tel:${r.mobile}`}>Call</a><a class="btn ghost" href="/admin/sellers">See photos</a>
+      </div></div>)}
+  </section>}
+
+  {tickets.length > 0 && <section class="panel stack"><h2 style="font-size:19px">Customer questions ({tickets.length})</h2>
+    {tickets.map((t) => <div class="row between" style="border-top:1px solid var(--line);padding-top:12px"><div><b>{t.name}</b> <span class="muted">· {t.subject}</span></div><a class="btn" href={`/admin/tickets/${t.id}`}>Answer</a></div>)}
+  </section>}
+
+  {todo === 0 && <div class="panel"><p style="margin:0">Nobody is waiting for you. New questions from visitors and customers will show up here with a one-tap WhatsApp reply.</p></div>}
+
+  <section class="panel stack"><h2 style="font-size:19px">How to add a listing (3 steps)</h2>
+    <ol style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px"><li>Press <b>Add a new listing</b>.</li><li>Fill the four boxes at the top and add photos from your phone or computer.</li><li>Press <b>Publish</b>. It's on the website straight away. You can hide or change it any time.</li></ol>
+  </section>
+</Admin>

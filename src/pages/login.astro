@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+const err = Astro.url.searchParams.get('err');
+const next = Astro.url.searchParams.get('next') ?? '';
+---
+<Base title="Sign in">
+  <div class="wrap" style="max-width:440px;padding-top:56px">
+    <form class="panel stack" method="post" action="/api/login">
+      <h1 style="font-size:28px">Sign in</h1>
+      <p class="muted" style="margin:0">Customers: use the email we registered for you. Staff: use your admin account.</p>
+      {err && <div class="notice err" role="alert">Wrong email or password.</div>}
+      <input type="hidden" name="next" value={next} />
+      <label class="field">Email<input name="email" type="email" required autocomplete="username" /></label>
+      <label class="field">Password<input name="password" type="password" required autocomplete="current-password" /></label>
+      <button class="btn">Sign in</button>
+    </form>
+  </div>
+</Base>

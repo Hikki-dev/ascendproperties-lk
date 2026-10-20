@@ -1,0 +1,30 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import ImageUploader from '../../components/ImageUploader';
+import { advisorPhoto, getSettings } from '../../lib/settings';
+const s = await getSettings();
+const saved = Astro.url.searchParams.get('saved'), err = Astro.url.searchParams.get('err');
+---
+<Admin title="Contact & advisor">
+  <h1 style="font-size:30px">Contact & advisor</h1>
+  <p class="muted" style="margin:0">Shown on every page. The WhatsApp buttons open a chat with this number and a message about the property the visitor was viewing.</p>
+  {saved && <div class="notice" role="status">Saved.</div>}
+  {err && <div class="notice err" role="alert">Enter the WhatsApp number with country code, digits only (e.g. 94761500000).</div>}
+  <form class="panel stack" method="post" action="/admin/api/settings" style="max-width:720px">
+    <div class="grid g2" style="gap:12px">
+      <label class="field">WhatsApp number (country code, no +)<input name="wa_number" required inputmode="numeric" value={s.wa_number} /></label>
+      <label class="field">Phone shown to visitors<input name="phone_display" value={s.phone_display} /></label>
+      <label class="field">Advisor name<input name="advisor_name" required maxlength="60" value={s.advisor_name} /></label>
+      <label class="field">Advisor title<input name="advisor_title" maxlength="60" value={s.advisor_title} /></label>
+    </div>
+    <label class="field">Reply hours<input name="advisor_hours" maxlength="60" value={s.advisor_hours} /></label>
+    <label class="field">Office address (footer)<input name="address" maxlength="200" value={s.address} /></label>
+    <h2 style="font-size:18px;margin-top:8px">Social pages <span class="muted" style="font-weight:400;font-size:15px">(optional, shown in the footer)</span></h2>
+    <div class="grid g2" style="gap:16px"><label class="field">Facebook page link<input name="facebook" maxlength="200" value={s.facebook} placeholder="https://facebook.com/…" /></label><label class="field">Instagram link<input name="instagram" maxlength="200" value={s.instagram} placeholder="https://instagram.com/…" /></label>
+      <label class="field">YouTube channel link<input name="youtube" maxlength="200" value={s.youtube} placeholder="https://youtube.com/@…" /></label><label class="field">TikTok link<input name="tiktok" maxlength="200" value={s.tiktok} placeholder="https://tiktok.com/@…" /></label></div>
+    <div><span class="muted" style="font-size:12px;font-weight:600">Advisor photo</span>
+      <ImageUploader client:load name="advisor_photo" multiple={false} initial={s.advisor_photo ? [s.advisor_photo] : []} label="Drop a new photo or browse" />
+      {!s.advisor_photo && <p class="muted" style="font-size:12px;margin:8px 0 0">Using the default photo: <img src={advisorPhoto(s)} alt="" width="32" height="32" style="border-radius:50%;vertical-align:middle" /></p>}</div>
+    <button class="btn" style="align-self:flex-start">Save</button>
+  </form>
+</Admin>

@@ -1,0 +1,97 @@
+---
+import Base from '../layouts/Base.astro';
+import ListingRow from '../components/ListingRow.astro';
+import Ad from '../components/Ad.astro';
+import { latest, activeBanners, countOnly } from '../lib/listings';
+import { advisorPhoto, firstName, getSettings, telLink, waLink } from '../lib/settings';
+import VideoFacade from '../components/VideoFacade.astro';
+import { DISTRICTS, video } from '../lib/util';
+
+const [s, rows, hero, banners, total] = await Promise.all([getSettings(), latest(4), activeBanners('hero'), activeBanners('home_banner'), countOnly({ type: 'land' })]);
+const photo = advisorPhoto(s), who = firstName(s);
+const promos = banners.filter((b) => !video(b.video_url)), videos = banners.filter((b) => video(b.video_url));
+---
+<Base title="Ascend Properties">
+  <div class="band">
+    <div class="wrap lead">
+      <h1>{hero[0]?.title ?? 'What kind of place are you looking for?'}</h1>
+      <p>{hero[0]?.body ?? 'Pick an area and a budget. We show only what fits, with the real price per perch and the payment plan.'}</p>
+      <form id="ask" class="ask" method="get" action="/lands">
+        <label class="field">I want
+          <select name="go"><option value="/lands|land">Land</option><option value="/houses|house">A house</option><option value="/apartments|apartment">An apartment</option></select></label>
+        <label class="field">In
+          <select name="district"><option value="">Anywhere in Sri Lanka</option>{DISTRICTS.map((d) => <option>{d}</option>)}</select></label>
+        <label class="field">Budget per perch
+          <select name="budget"><option value="">Any budget</option><option value="0-500000">Under LKR 500,000</option><option value="500000-1000000">LKR 500,000 – 1,000,000</option><option value="1000000-">Over LKR 1,000,000</option></select></label>
+        <input type="hidden" name="min" /><input type="hidden" name="max" />
+        <button class="btn lg" id="go">Show {total} {total === 1 ? 'result' : 'results'}</button>
+      </form>
+      <div class="chips"><span>Or start with:</span>
+        <a class="chip" href="/lands?deed=1&power=1&water=1">Ready to build</a>
+        <a class="chip" href="/lands?district=Colombo">Near Colombo</a>
+        <a class="chip" href="/lands?category=Water+Front+Land">Beach and waterfront</a>
+        <a class="chip" href="/lands?plan=1">Instalments, no bank loan</a></div>
+    </div>
+  </div>
+  <script is:inline>
+    (() => {
+      const f = document.getElementById('ask'), b = document.getElementById('go');
+      const q = () => {
+        const [path, type] = f.go.value.split('|'), [min, max] = (f.budget.value || '-').split('-');
+        return { path, type, min, max };
+      };
+      const count = async () => {
+        const { type, min, max } = q();
+        const u = new URLSearchParams({ type, district: f.district.value, min, max });
+        try { const n = (await (await fetch('/api/count?' + u)).json()).n; b.textContent = n ? `Show ${n} ${n === 1 ? 'result' : 'results'}` : 'No matches. Try widening'; } catch {}
+      };
+      f.addEventListener('change', count);
+      f.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const { path, min, max } = q();
+        const u = new URLSearchParams();
+        if (f.district.value) u.set('district', f.district.value);
+        if (min) u.set('min', min); if (max) u.set('max', max);
+        location.href = path + (u.size ? '?' + u : '');
+      });
+    })();
+  </script>
+
+  <div class="wrap">
+    <section style="padding-top:40px">
+      <div class="section-title"><h2>New this week</h2><a class="link" href="/lands">See all land →</a></div>
+      <div class="stack" style="gap:12px">
+        {rows.map((l) => <ListingRow l={l} s={s} />)}
+        {rows.length === 0 && <p class="muted">No listings yet.</p>}
+      </div>
+    </section>
+
+    {promos[0] && <section style="padding-top:32px"><Ad b={promos[0]} /></section>}
+    {videos.length > 0 && <section style="padding-top:48px"><div class="section-title"><h2>Watch</h2></div><div class="grid g2">{videos.slice(0, 2).map((v) => <div class="stack" style="gap:10px"><VideoFacade url={v.video_url} title={v.title} /><div><h3 style="font-size:19px">{v.title}</h3>{v.body && <p class="muted" style="margin-top:2px">{v.body}</p>}{v.cta_label && v.cta_url && <a class="link" href={v.cta_url}>{v.cta_label} →</a>}</div></div>)}</div></section>}
+
+    <section style="padding-top:48px">
+      <div class="advisor">
+        <img class="photo" src={photo} alt={s.advisor_name} width="104" height="104" />
+        <div class="txt">
+          <h2 style="font-size:24px">Not sure what to pick? Message {who}.</h2>
+          <p style="margin-top:8px;color:var(--ink2);max-width:560px">Tell {who} your budget and the area you like. He'll send you two or three plots that fit, with prices, on WhatsApp. No forms.</p>
+          <p class="muted" style="margin-top:8px;font-size:14px">{s.advisor_name} · {s.advisor_title} · Replies {s.advisor_hours}</p>
+        </div>
+        <div class="stack" style="gap:8px;text-align:center">
+          <a class="wa lg" href={waLink(s, `Hi ${who}, I'm looking for a property. My budget is `)} target="_blank" rel="noopener">Chat on WhatsApp</a>
+          <a class="link" href={telLink(s)}>or call {s.phone_display}</a>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding-top:56px">
+      <h2 style="font-size:24px;margin-bottom:16px">How buying with us works</h2>
+      <div class="steps">
+        <div><b>1</b><h3 style="font-size:17px">Visit the plot</h3><p class="muted" style="font-size:14px;margin-top:4px">Book a site visit. We take you there.</p></div>
+        <div><b>2</b><h3 style="font-size:17px">Reserve it</h3><p class="muted" style="font-size:14px;margin-top:4px">Pay a small deposit to hold your plot.</p></div>
+        <div><b>3</b><h3 style="font-size:17px">Pay monthly</h3><p class="muted" style="font-size:14px;margin-top:4px">Track every payment and receipt in your account.</p></div>
+        <div><b>4</b><h3 style="font-size:17px">Get your deed</h3><p class="muted" style="font-size:14px;margin-top:4px">We prepare it and tell you when it's ready.</p></div>
+      </div>
+    </section>
+  </div>
+</Base>

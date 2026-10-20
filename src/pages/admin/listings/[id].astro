@@ -1,0 +1,95 @@
+---
+import Admin from '../../../layouts/Admin.astro';
+import ImageUploader from '../../../components/ImageUploader';
+import LotsEditor from '../../../components/LotsEditor';
+import { one } from '../../../lib/db';
+import { arr, DISTRICTS, LAND_CATEGORIES, lots as readLots, mediaUrl, TYPES } from '../../../lib/util';
+
+const id = Astro.params.id!;
+const isNew = id === 'new';
+const l: any = isNew ? { type: 'land', status: 'available', facilities: '[]', images: '[]', price_label: 'per perch' } : await one('SELECT * FROM listings WHERE id = ?', id);
+if (!l) return new Response('Not found', { status: 404 });
+const fac = arr(l.facilities);
+const photos = [l.cover, ...arr(l.images)].filter(Boolean);
+const imported = Astro.url.searchParams.get('imported');
+const saved = Astro.url.searchParams.get('saved'), err = Astro.url.searchParams.get('err');
+const labels = ['per perch', 'per perch upwards', 'total price'];
+const has = (x: string) => fac.includes(x);
+---
+<Admin title={isNew ? 'New listing' : l.title}>
+  <div><p class="muted" style="margin:0;font-size:14px"><a class="link" href="/admin/listings">← My listings</a></p><h1 style="font-size:30px">{isNew ? 'Add a new listing' : l.title}</h1></div>
+  {saved && <div class="notice" role="status">Saved. {l.status === 'available' ? <>It is live on the website. <a class="link" href={`/listing/${l.slug}`} target="_blank" rel="noopener">See it →</a></> : 'It is hidden from the website.'}</div>}
+  {imported && <div class="notice" role="status">Imported from your WhatsApp message and saved as hidden. Check the details, add photos, then choose “Yes, show it”.</div>}
+  {err && <div class="notice err" role="alert">Please fill in the name, the district and the price.</div>}
+
+  <form method="post" action="/admin/api/listing" enctype="multipart/form-data" class="grid" style="grid-template-columns:minmax(0,1fr) 320px;align-items:start" id="lf">
+    <input type="hidden" name="id" value={isNew ? '' : l.id} />
+    <div class="stack" style="gap:20px;min-width:0">
+      <section class="panel stack"><h2 style="font-size:19px">1. The basics</h2>
+        <label class="field">Name of the project or plot<input name="title" required maxlength="140" value={l.title ?? ''} placeholder="Example: Green Valley Plots, Galle" /></label>
+        <div class="grid g2" style="gap:16px;align-items:end">
+          <label class="field">What are you selling?<select name="type">{Object.entries(TYPES).map(([k, v]) => <option value={k} selected={k === l.type}>{v.replace(/s$/, '')}</option>)}</select></label>
+          <label class="field">District<select name="district" required><option value="">Choose…</option>{DISTRICTS.map((d) => <option selected={d === l.district}>{d}</option>)}</select></label>
+        </div>
+        <label class="field"><span>Town or area <i style="font-weight:400;font-style:normal">(optional)</i></span><input name="city" maxlength="80" value={l.city ?? ''} placeholder="Example: Habaraduwa" /></label>
+        <div class="grid g2" style="gap:16px;align-items:end">
+          <label class="field"><span>Price in rupees</span><input name="price" required inputmode="numeric" value={l.price ?? ''} placeholder="550000" /></label>
+          <label class="field">This price is<select name="price_label">{labels.map((x) => <option selected={x === l.price_label}>{x}</option>)}{l.price_label && !labels.includes(l.price_label) && <option selected>{l.price_label}</option>}</select></label>
+        </div>
+      </section>
+
+      <section class="panel stack"><h2 style="font-size:19px">2. Photos and video</h2><p class="muted" style="margin:0">The first photo is the main one. Good light, no people, show the road and the plot.</p>
+        <ImageUploader client:load name="photos" initial={photos} label="Tap to add photos from your phone or computer" />
+        <label class="field">Video link <span style="font-weight:400">(optional, YouTube, Facebook or TikTok)</span><input name="video_url" maxlength="300" value={l.video_url ?? ''} placeholder="https://www.youtube.com/watch?v=…" /></label></section>
+
+      <section class="panel stack"><h2 style="font-size:19px">3. Tell buyers about it</h2>
+        <div class="grid g2" style="gap:16px;align-items:end">
+          <label class="field">Size<input name="extent" maxlength="60" value={l.extent ?? ''} placeholder="Example: 10 to 25 perches" /></label>
+          <label class="field">How far is it from town?<input name="nearby" maxlength="80" value={l.nearby ?? ''} placeholder="Example: 12 min from Galle town" /></label>
+        </div>
+        <label class="field">A few simple sentences<textarea name="description" rows="5" maxlength="5000" placeholder="What is nearby? What is the land good for? Is the road tarred?">{l.description ?? ''}</textarea></label>
+      </section>
+
+      <section class="panel stack"><h2 style="font-size:19px">4. What makes it special?</h2><p class="muted" style="margin:0">This is what stops a listing looking like every other one.</p>
+        <label class="field">Top reasons to buy <span style="font-weight:400">(one per line, up to 6)</span><textarea name="highlights" rows="4" maxlength="900" placeholder={'Walking distance to the beach\nQuiet lane, no flooding\nReady to build, all papers clear'}>{arr(l.highlights).join('\n')}</textarea></label>
+        <label class="field">What is nearby <span style="font-weight:400">(one per line: place – distance)</span><textarea name="places" rows="4" maxlength="900" placeholder={'Galle town – 12 min\nMain road – 200 m\nSt. Mary’s school – 1.5 km'}>{arr(l.places).join('\n')}</textarea></label>
+      </section>
+
+      <section class="panel stack"><h2 style="font-size:19px">5. What comes with it</h2>
+        <div><p style="margin:0 0 8px;font-weight:600">Papers</p><div class="row" style="gap:8px"><label class="check"><input type="checkbox" name="facilities" value="Clear title" checked={has('Clear title')} />Clear deed</label><label class="check"><input type="checkbox" name="facilities" value="Survey plan" checked={has('Survey plan')} />Survey plan</label><label class="check"><input type="checkbox" name="facilities" value="Approved plan" checked={has('Approved plan')} />Approved plan</label></div></div>
+        <div><p style="margin:0 0 8px;font-weight:600">Services</p><div class="row" style="gap:8px"><label class="check"><input type="checkbox" name="facilities" value="Electricity" checked={has('Electricity')} />Electricity</label><label class="check"><input type="checkbox" name="facilities" value="Water" checked={has('Water')} />Water</label><label class="check"><input type="checkbox" name="facilities" value="Tarred road" checked={has('Tarred road')} />Tarred road</label></div></div>
+        <div><p style="margin:0 0 8px;font-weight:600">Houses and apartments</p><div class="row" style="gap:8px">{['Parking', 'Garden', 'Lift', 'Pool', 'Gym', 'Security'].map((f) => <label class="check"><input type="checkbox" name="facilities" value={f} checked={has(f)} />{f}</label>)}</div></div>
+      </section>
+
+      <section class="panel stack"><h2 style="font-size:19px">6. Plots and prices <span class="muted" style="font-weight:400;font-size:15px">(optional)</span></h2>
+        <p class="muted" style="margin:0">If you sell numbered plots, list them here. Buyers see which are available and can ask about one plot on WhatsApp.</p>
+        <LotsEditor client:load initial={readLots(l.lots)} /></section>
+
+      <details class="panel stack"><summary style="cursor:pointer;font-weight:700;font-size:19px">7. Pay-in-instalments plan <span class="muted" style="font-weight:400;font-size:15px">(optional)</span></summary>
+        <div class="grid g2" style="gap:16px;margin-top:16px"><label class="field">Deposit, % of the price<input name="down_payment_pct" inputmode="numeric" value={l.down_payment_pct ?? ''} placeholder="20" /></label><label class="field">Pay the rest over how many months?<input name="months" inputmode="numeric" value={l.months ?? ''} placeholder="24" /></label></div>
+        <p class="muted" style="margin:12px 0 0;font-size:14px">Buyers see the monthly amount worked out for them.</p></details>
+
+      <details class="panel stack"><summary style="cursor:pointer;font-weight:700;font-size:19px">8. More options <span class="muted" style="font-weight:400;font-size:15px">(optional)</span></summary>
+        <div class="stack" style="margin-top:16px">
+          <label class="field">Type of land (for filters)<select name="category"><option value="">Not sure</option>{LAND_CATEGORIES.map((c) => <option selected={c === l.category}>{c}</option>)}</select></label>
+          <label class="field">Google Maps link<input name="map_url" maxlength="800" value={l.map_url ?? ''} placeholder="https://maps.app.goo.gl/…" /><span style="font-weight:400">Open the place in Google Maps, press Share, press Copy link, paste it here.</span></label>
+          <div class="field">Brochure (PDF)<input type="file" name="brochure" accept="application/pdf" />{l.brochure && <a class="link" href={mediaUrl(l.brochure)} target="_blank" rel="noopener">Current brochure ↗</a>}<input type="hidden" name="brochure_keep" value={l.brochure ?? ''} /></div>
+          <label class="check" style="align-self:flex-start"><input type="checkbox" name="featured" checked={!!l.featured} />Show near the top of the home page</label>
+          <label class="field">Publish on a later date<input type="date" name="published_at" value={(l.published_at ?? '').slice(0, 10)} /></label>
+        </div></details>
+    </div>
+
+    <aside class="panel stack" style="position:sticky;top:16px;gap:14px">
+      <h2 style="font-size:19px">Is it on the website?</h2>
+      <label class="tick"><input type="radio" name="status" value="available" checked={l.status === 'available'} /><span><b>Yes, show it</b><br /><span class="muted" style="font-size:14px">Buyers can see it</span></span></label>
+      <label class="tick"><input type="radio" name="status" value="sold" checked={l.status === 'sold'} /><span><b>Sold out</b><br /><span class="muted" style="font-size:14px">Shown as sold, no enquiries</span></span></label>
+      <label class="tick"><input type="radio" name="status" value="draft" checked={l.status === 'draft'} /><span><b>No, hide it</b><br /><span class="muted" style="font-size:14px">Only you can see it</span></span></label>
+      <button class="btn lg">Save</button>
+      {!isNew && <a class="btn ghost" href={`/listing/${l.slug}`} target="_blank" rel="noopener">See it on the website</a>}
+      {!isNew && <details><summary class="muted" style="cursor:pointer;font-size:14px">Delete this listing</summary>
+        <p class="muted" style="font-size:14px">This cannot be undone. To just take it off the website, choose “No, hide it” instead.</p>
+        <button class="btn danger" formaction="/admin/api/listing?delete=1" formnovalidate onclick="return confirm('Delete this listing forever? This cannot be undone.')">Delete forever</button></details>}
+    </aside>
+  </form>
+  <style>@media(max-width:900px){#lf{grid-template-columns:minmax(0,1fr)!important}#lf aside{position:static!important}}</style>
+</Admin>

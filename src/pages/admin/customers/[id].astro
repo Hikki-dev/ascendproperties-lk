@@ -1,0 +1,52 @@
+---
+import Admin from '../../../layouts/Admin.astro';
+import { all, one } from '../../../lib/db';
+import { dateFmt, lkr, STAGES } from '../../../lib/util';
+
+const u: any = await one("SELECT * FROM users WHERE id=? AND role='customer'", Astro.params.id);
+if (!u) return new Response('Not found', { status: 404 });
+const [purchases, listings] = await Promise.all([
+  all('SELECT p.*, l.title FROM purchases p LEFT JOIN listings l ON l.id=p.listing_id WHERE p.user_id=? ORDER BY p.id DESC', u.id),
+  all("SELECT id,title FROM listings ORDER BY title"),
+]);
+const pay: Record<number, any[]> = {}, docs: Record<number, any[]> = {};
+for (const p of purchases) {
+  pay[p.id] = await all('SELECT * FROM payments WHERE purchase_id=? ORDER BY paid_on DESC, id DESC', p.id);
+  docs[p.id] = await all('SELECT * FROM documents WHERE purchase_id=? ORDER BY id DESC', p.id);
+}
+const A = '/admin/api/aftersales';
+---
+<Admin title={u.name}>
+  <div><p class="muted" style="margin:0;font-size:13px"><a href="/admin/customers">Customers</a> / {u.name}</p><h1 style="font-size:30px">{u.name}</h1><p class="muted" style="margin:4px 0 0">{[u.email, u.phone].filter(Boolean).join(" · ")}</p></div>
+
+  {purchases.map((p) => {
+    const paid = pay[p.id].reduce((s, y) => s + y.amount, 0);
+    return (
+    <section class="panel stack">
+      <div class="row between"><h2 style="font-size:20px">{p.title ?? 'Purchase'} {p.lot && `· Lot ${p.lot}`}</h2><span><b>LKR {lkr(paid)}</b> <span class="muted">paid of {lkr(p.total)} · balance {lkr(p.total - paid)}</span></span></div>
+      <form method="post" action={A} class="row" style="align-items:flex-end"><input type="hidden" name="op" value="update_purchase" /><input type="hidden" name="purchase_id" value={p.id} />
+        <label class="field">Handover stage<select name="stage">{STAGES.map((s, i) => <option value={i} selected={i === p.stage}>{s}</option>)}</select></label>
+        <label class="field">Next instalment due<input type="date" name="next_due_on" value={p.next_due_on ?? ''} /></label><button class="btn ghost">Update</button></form>
+      <div class="grid g2" style="align-items:start">
+        <div><h3 style="font-size:16px;margin-bottom:8px">Payments</h3>
+          <table class="table"><tbody>{pay[p.id].map((y) => <tr><td>{dateFmt(y.paid_on)}</td><td>{y.description}</td><td>LKR {lkr(y.amount)}</td><td>{y.receipt && <a href={`/media/${y.receipt}`} target="_blank" rel="noopener">Receipt</a>}</td>
+            <td><form method="post" action={A}><input type="hidden" name="op" value="delete_payment" /><input type="hidden" name="purchase_id" value={p.id} /><input type="hidden" name="payment_id" value={y.id} /><button class="btn danger sm" onclick="return confirm('Delete this payment?')">×</button></form></td></tr>)}</tbody></table>
+          <form method="post" action={A} enctype="multipart/form-data" class="stack" style="gap:10px;margin-top:12px"><input type="hidden" name="op" value="add_payment" /><input type="hidden" name="purchase_id" value={p.id} />
+            <div class="grid g3" style="gap:8px"><label class="field">Date<input type="date" name="paid_on" /></label><label class="field">Description<input name="description" placeholder="Instalment 3" /></label><label class="field">Amount (LKR)<input name="amount" inputmode="numeric" required /></label></div>
+            <label class="field">Receipt (PDF/image, optional)<input type="file" name="file" accept="application/pdf,image/jpeg,image/png,image/webp" /></label><button class="btn sm" style="align-self:flex-start">Record payment</button></form></div>
+        <div><h3 style="font-size:16px;margin-bottom:8px">Documents shown to the customer</h3>
+          <table class="table"><tbody>{docs[p.id].map((d) => <tr><td><a href={`/media/${d.file}`} target="_blank" rel="noopener">{d.name}</a></td><td><form method="post" action={A}><input type="hidden" name="op" value="delete_document" /><input type="hidden" name="purchase_id" value={p.id} /><input type="hidden" name="document_id" value={d.id} /><button class="btn danger sm" onclick="return confirm('Remove this document?')">×</button></form></td></tr>)}</tbody></table>
+          <form method="post" action={A} enctype="multipart/form-data" class="stack" style="gap:10px;margin-top:12px"><input type="hidden" name="op" value="add_document" /><input type="hidden" name="purchase_id" value={p.id} />
+            <label class="field">Name<input name="name" placeholder="Sale agreement" required /></label><label class="field">File<input type="file" name="file" required accept="application/pdf,image/jpeg,image/png,image/webp" /></label><button class="btn sm" style="align-self:flex-start">Upload document</button></form></div>
+      </div>
+    </section>);
+  })}
+
+  <form class="panel stack" method="post" action={A}><h2 style="font-size:18px">Add a purchase</h2><input type="hidden" name="op" value="add_purchase" /><input type="hidden" name="user_id" value={u.id} />
+    <div class="grid g3" style="gap:12px"><label class="field">Project<select name="listing_id"><option value="">(none)</option>{listings.map((l) => <option value={l.id}>{l.title}</option>)}</select></label>
+      <label class="field">Lot / unit<input name="lot" maxlength="40" /></label><label class="field">Total price (LKR)<input name="total" inputmode="numeric" required /></label></div>
+    <button class="btn" style="align-self:flex-start">Add purchase</button></form>
+
+  <form class="panel row" method="post" action={A} style="align-items:flex-end"><input type="hidden" name="op" value="reset_password" /><input type="hidden" name="user_id" value={u.id} />
+    <label class="field" style="flex:1 1 240px">Reset password (min 8)<input name="password" minlength="8" required autocomplete="off" /></label><button class="btn ghost">Reset & sign out</button></form>
+</Admin>

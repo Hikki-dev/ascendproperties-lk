@@ -1,0 +1,63 @@
+---
+import Base from '../layouts/Base.astro';
+import ListingRow from '../components/ListingRow.astro';
+import Ad from '../components/Ad.astro';
+import { browse, activeBanners } from '../lib/listings';
+import { getSettings } from '../lib/settings';
+import { DISTRICTS, LAND_CATEGORIES } from '../lib/util';
+
+const map: Record<string, [string, string, string]> = { lands: ['land', 'land', 'plots of land'], houses: ['house', 'houses', 'houses'], apartments: ['apartment', 'apartments', 'apartments'] };
+const hit = map[Astro.params.type ?? ''];
+if (!hit) return new Response(null, { status: 404 });
+const [type, , noun] = hit;
+const q = Astro.url.searchParams;
+const num = (k: string) => parseInt((q.get(k) ?? '').replace(/\D/g, ''), 10) || undefined;
+const f = { type, category: q.get('category') || undefined, district: q.get('district') || undefined, city: q.get('city') || undefined, min: num('min'), max: num('max'), q: q.get('q') || undefined, page: num('page'), deed: q.has('deed'), power: q.has('power'), water: q.has('water'), plan: q.has('plan'), sort: q.get('sort') || 'price' };
+const [s, { rows, total, pages, page }, ads] = await Promise.all([getSettings(), browse(f), activeBanners('listing_inline')]);
+const link = (p: number) => { const u = new URLSearchParams(q); u.set('page', String(p)); return `?${u}`; };
+const without = (k: string) => { const u = new URLSearchParams(q); u.delete(k); u.delete('page'); return `?${u}`; };
+const chips: [string, string][] = [];
+if (f.district) chips.push([f.district, 'district']);
+if (f.category) chips.push([f.category, 'category']);
+if (f.max) chips.push([`Up to LKR ${f.max.toLocaleString('en-LK')}`, 'max']);
+if (f.min) chips.push([`From LKR ${f.min.toLocaleString('en-LK')}`, 'min']);
+if (f.q) chips.push([`"${f.q}"`, 'q']);
+if (f.deed) chips.push(['Clear deed', 'deed']);
+if (f.power) chips.push(['Electricity', 'power']);
+if (f.water) chips.push(['Water', 'water']);
+if (f.plan) chips.push(['Instalment plan', 'plan']);
+const title = `${total} ${total === 1 ? noun.replace(/s$/, '') : noun}${f.district ? ` in ${f.district}` : ''}`;
+---
+<Base title={title} waText={`Hi ${s.advisor_name.split(' ')[0]}, I'm looking at ${noun}${f.district ? ' in ' + f.district : ''}. Can you help me pick?`}>
+  <main class="wrap" style="padding-top:20px">
+    <p class="muted" style="font-size:14px"><a class="link" href="/">Home</a> / {noun}{f.district && ` / ${f.district}`}</p>
+    <div class="row between" style="margin:8px 0 12px"><h1 style="font-size:26px">{title}</h1>
+      <form method="get" class="row" style="gap:8px">{[...q].filter(([k]) => k !== 'sort').map(([k, v]) => <input type="hidden" name={k} value={v} />)}
+        <label class="muted" style="font-size:14px">Sort <select name="sort" onchange="this.form.submit()" style="min-height:40px;border:1px solid var(--line2);border-radius:8px;padding:0 10px;background:#fff;font:inherit"><option value="price" selected={f.sort === 'price'}>Lowest price</option><option value="new" selected={f.sort === 'new'}>Newest</option></select></label></form></div>
+    {chips.length > 0 && <div class="row" style="gap:8px;margin-bottom:20px">{chips.map(([l, k]) => <a class="chip on" href={without(k)} aria-label={`Remove filter ${l}`}>{l} ✕</a>)}<a class="link" style="font-size:14px;padding:0 4px" href={`/${Astro.params.type}`}>Clear all</a></div>}
+
+    <div style="display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start;margin-top:8px">
+      <details class="fdet" id="fdet" open>
+      <summary class="btn ghost">Filters{chips.length ? ` (${chips.length})` : ''}</summary>
+      <form class="stack" method="get" style="margin-top:12px">
+        {type === 'land' && <label class="field">Type of land<select name="category"><option value="">Any</option>{LAND_CATEGORIES.map((c) => <option selected={c === f.category}>{c}</option>)}</select></label>}
+        <label class="field">District<select name="district"><option value="">All districts</option>{DISTRICTS.map((d) => <option selected={d === f.district}>{d}</option>)}</select></label>
+        <label class="field">Max price per perch<input name="max" inputmode="numeric" value={f.max ?? ''} placeholder="Any" /></label>
+        <label class="field">Keyword<input name="q" value={f.q ?? ''} placeholder="Project or area" /></label>
+        <fieldset style="border:0;padding:0;margin:0" class="stack"><legend class="muted" style="font-size:13px;font-weight:600;padding:0;margin-bottom:8px">Must have</legend>
+          <label class="tick"><input type="checkbox" name="deed" value="1" checked={f.deed} /> Clear deed</label><label class="tick"><input type="checkbox" name="power" value="1" checked={f.power} /> Electricity</label>
+          <label class="tick"><input type="checkbox" name="water" value="1" checked={f.water} /> Water</label><label class="tick"><input type="checkbox" name="plan" value="1" checked={f.plan} /> Instalment plan</label></fieldset>
+        <button class="btn">Update results</button>
+      </form>
+      </details>
+      <script is:inline>if (matchMedia('(max-width:760px)').matches) document.getElementById('fdet').open = false;</script>
+      <div class="stack" style="flex:1 1 480px;min-width:0;gap:12px">
+        {rows.length === 0 ? <div class="panel"><h2 style="font-size:19px">Nothing matches that yet</h2><p class="muted" style="margin-top:6px">Try removing a filter, or tell {s.advisor_name.split(' ')[0]} what you need and he'll look for you.</p></div> : rows.map((l, i) => (<><ListingRow l={l} s={s} />{i === 3 && ads[0] && <Ad b={ads[0]} />}</>))}
+        {pages > 1 && <nav class="pager" aria-label="Pages">
+          {page > 1 && <a href={link(page - 1)}>Prev</a>}
+          {Array.from({ length: pages }, (_, i) => i + 1).filter((p) => Math.abs(p - page) <= 2 || p === 1 || p === pages).map((p) => p === page ? <span aria-current="page">{p}</span> : <a href={link(p)}>{p}</a>)}
+          {page < pages && <a href={link(page + 1)}>Next</a>}</nav>}
+      </div>
+    </div>
+  </main>
+</Base>

@@ -1,0 +1,54 @@
+---
+import { bySlug } from '../../../lib/listings';
+import { advisorPhoto, getSettings } from '../../../lib/settings';
+import { arr, inWords, lkr, lots as readLots, mediaUrl, places as readPlaces } from '../../../lib/util';
+
+const l: any = await bySlug(Astro.params.slug!);
+if (!l) return new Response('Not found', { status: 404 });
+const s = await getSettings();
+const images = [l.cover, ...arr(l.images)].filter(Boolean).slice(0, 4);
+const fac = arr(l.facilities), hl = arr(l.highlights), near = readPlaces(l.places), lotRows = readLots(l.lots).slice(0, 12);
+const where = [l.city, l.district].filter(Boolean).join(', ');
+const link = `${Astro.url.origin}/listing/${l.slug}`;
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>{l.title} – flyer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root{--blue:#1F55CF;--ink:#1A2233;--muted:#5B6577;--line:#E3E9F2}
+    *{box-sizing:border-box}body{margin:0;background:#EEF2F8;font-family:'Figtree',system-ui,sans-serif;color:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .bar{max-width:794px;margin:16px auto;display:flex;gap:12px;justify-content:space-between;padding:0 16px}
+    .bar a,.bar button{min-height:44px;padding:0 18px;border-radius:8px;border:1px solid #B9C6DC;background:#fff;font:600 16px 'Figtree',sans-serif;color:var(--ink);display:inline-flex;align-items:center;cursor:pointer;text-decoration:none}
+    .bar button{background:var(--blue);border-color:var(--blue);color:#fff}
+    .page{width:794px;max-width:100%;margin:0 auto 24px;background:#fff;padding:36px 40px;display:flex;flex-direction:column;gap:18px}
+    header{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--blue);padding-bottom:12px}
+    header div{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px}header img{height:44px}
+    h1{margin:0;font-size:30px;line-height:1.15}.price{font-size:30px;font-weight:700;color:var(--blue)}.muted{color:var(--muted)}
+    .ph{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:repeat(2,130px);gap:8px}
+    .ph div{background:#DFE8F5 center/cover;border-radius:8px}.ph div:first-child{grid-row:1/3}
+    .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 18px;margin:0}.facts dt{font-size:12px;color:var(--muted)}.facts dd{margin:0;font-weight:600}
+    ul{margin:0;padding-left:20px;display:grid;gap:4px}
+    table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;color:var(--muted);font-size:12px}td,th{padding:6px 8px 6px 0;border-top:1px solid var(--line)}
+    footer{margin-top:auto;display:flex;align-items:center;gap:14px;border-top:2px solid var(--blue);padding-top:14px}footer img{width:64px;height:64px;border-radius:50%;object-fit:cover}
+    @media print{body{background:#fff}.bar{display:none}.page{margin:0;padding:0;width:auto}@page{size:A4;margin:14mm}}
+  </style>
+</head>
+<body>
+  <div class="bar"><a href={`/listing/${l.slug}`}>← Back</a><button type="button" onclick="print()">Print or save as PDF</button></div>
+  <div class="page">
+    <header><div><img src="/mark.png" alt="" /><span>Ascend Properties</span></div><span class="muted">{s.phone_display}</span></header>
+    <div><h1>{l.title}</h1><p class="muted" style="margin:4px 0 0">{where}{l.nearby ? ` · ${l.nearby}` : ''}</p></div>
+    <div class="price">LKR {lkr(l.price)} <span class="muted" style="font-size:16px;font-weight:400">{l.price_label}{inWords(l.price) && ` · ${inWords(l.price)}`}</span></div>
+    {images.length > 0 && <div class="ph">{images.slice(0, 3).map((i: string) => <div style={`background-image:url(${mediaUrl(i)})`}></div>)}</div>}
+    <dl class="facts">{([['Plot size', l.extent], ['Deed', fac.includes('Clear title') ? 'Clear title' : ''], ['Survey plan', fac.includes('Survey plan') ? 'Available' : ''], ['Approved plan', fac.includes('Approved plan') ? 'Approved' : ''], ['Water', fac.includes('Water') ? 'Available' : ''], ['Electricity', fac.includes('Electricity') ? 'Available' : '']] as [string, string][]).filter(([, v]) => v).map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+    {hl.length > 0 && <ul>{hl.map((h: string) => <li>{h}</li>)}</ul>}
+    {near.length > 0 && <p style="margin:0"><b>Nearby:</b> {near.map(([a, b]) => `${a}${b ? ' (' + b + ')' : ''}`).join(' · ')}</p>}
+    {lotRows.length > 0 && <table><thead><tr><th>Plot</th><th>Size</th><th>Price</th><th>Status</th></tr></thead><tbody>{lotRows.map((x) => <tr><td>{x.l}</td><td>{x.p ? `${x.p} perch` : '–'}</td><td>{x.price ? `LKR ${lkr(x.price)}` : 'Ask'}</td><td>{x.s === 'sold' ? 'Sold' : x.s === 'reserved' ? 'Reserved' : 'Available'}</td></tr>)}</tbody></table>}
+    <footer><img src={advisorPhoto(s)} alt="" /><div><b>{s.advisor_name}</b><br /><span class="muted">{s.advisor_title}</span><br />Call or WhatsApp <b>{s.phone_display}</b></div><div style="margin-left:auto;text-align:right;font-size:13px" class="muted">See all photos and the video:<br /><b style="color:var(--ink)">{link.replace(/^https?:\/\//, '')}</b></div></footer>
+  </div>
+</body>
+</html>

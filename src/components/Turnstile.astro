@@ -1,0 +1,5 @@
+---
+import { env } from 'cloudflare:workers';
+const key = (env as any).TURNSTILE_SITE_KEY as string | undefined;
+---
+{key && (<><script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer is:inline></script><div class="cf-turnstile" data-sitekey={key}></div></>)}

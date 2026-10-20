@@ -1,0 +1,17 @@
+---
+import Admin from '../../../layouts/Admin.astro';
+import { all, one } from '../../../lib/db';
+import { dateFmt } from '../../../lib/util';
+const t: any = await one('SELECT t.*, u.name, u.email FROM tickets t JOIN users u ON u.id=t.user_id WHERE t.id=?', Astro.params.id);
+if (!t) return new Response('Not found', { status: 404 });
+const msgs = await all('SELECT * FROM ticket_messages WHERE ticket_id=? ORDER BY id', t.id);
+---
+<Admin title={t.subject}>
+  <div><p class="muted" style="margin:0;font-size:13px"><a href="/admin/tickets">Tickets</a> / #{t.id}</p><h1 style="font-size:28px">{t.subject}</h1><p class="muted" style="margin:4px 0 0">{t.name} · {t.email}</p></div>
+  <div class="stack">{msgs.map((m) => <div class="panel" style={m.author_role === 'admin' ? 'background:#EAF1FF' : ''}><div class="muted" style="font-size:12px;font-weight:600;margin-bottom:6px">{m.author_role === 'admin' ? 'Ascend team' : t.name} · {dateFmt(m.created_at)}</div><p style="margin:0;white-space:pre-line">{m.body}</p></div>)}</div>
+  <form class="panel stack" method="post" action="/admin/api/ticket"><input type="hidden" name="ticket_id" value={t.id} />
+    <label class="field">Reply<textarea name="body" required maxlength="3000"></textarea></label>
+    <div class="row"><button class="btn">Send reply</button></div></form>
+  <form method="post" action="/admin/api/status"><input type="hidden" name="t" value="tickets" /><input type="hidden" name="id" value={t.id} /><input type="hidden" name="back" value={`/admin/tickets/${t.id}`} />
+    <button class="btn ghost" name="status" value={t.status === 'open' ? 'closed' : 'open'}>{t.status === 'open' ? 'Close ticket' : 'Reopen ticket'}</button></form>
+</Admin>
