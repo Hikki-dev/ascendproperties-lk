@@ -93,7 +93,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'Product', name: l.title
   </div>
 
   <dialog class="lb" id="lb" aria-label="Photos"><div class="lb-in"><img id="lbi" alt="" /><button class="x" type="button" id="lbx" aria-label="Close">✕</button><button class="pv" type="button" id="lbp" aria-label="Previous photo">‹</button><button class="nx" type="button" id="lbn" aria-label="Next photo">›</button><span class="ct" id="lbc"></span></div></dialog>
-  <script is:inline define:vars={{ photos: images.map((i: string) => `/media/${i}`) }}>
+  <script is:inline define:vars={{ photos: images.map((i: string) => mediaUrl(i)) }}>
     (() => {
       const d = document.getElementById('vd'), a = document.getElementById('visit');
       if (d) {

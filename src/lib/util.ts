@@ -13,7 +13,8 @@ export const slugify = (s: string) =>
   s.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80) || 'listing';
 
 
-export const mediaUrl = (key?: string | null) => (key ? `/media/${key}` : '');
+/** A stored key lives in R2 and is served from /media. A full https link (for example a sample photo) is used as is. */
+export const mediaUrl = (key?: string | null) => (key ? (/^https:\/\//i.test(key) ? key : `/media/${key}`) : '');
 
 /** Banner/ad links must be same-site paths or http(s); blocks javascript: URLs. */
 export const safeUrl = (u?: string | null) => (u && /^(\/(?!\/)|https?:\/\/)/i.test(u) ? u : '#');
