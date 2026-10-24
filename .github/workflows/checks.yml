@@ -1,0 +1,25 @@
+name: Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - name: Unit tests
+        run: npm test
+      - name: Build the Worker
+        run: npm run build
+      - name: Check the demo script and sample SQL
+        run: |
+          bash -n demo/load.sh
+          python3 -m py_compile demo/make_images.py
