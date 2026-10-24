@@ -11,10 +11,11 @@ ADMIN_EMAIL=$(grep '^ADMIN_EMAIL=' .dev.vars | cut -d= -f2-)
 ADMIN_PASSWORD=$(grep '^ADMIN_PASSWORD=' .dev.vars | cut -d= -f2-)
 JAR=$(mktemp)
 
-echo "1/4 drawing the sample pictures"
+echo "1/4 adding the sample photos and the drawn plot plan"
 python3 demo/make_images.py demo/images >/dev/null
-for f in demo/images/*.webp; do
-  npx wrangler r2 object put "ascend-media/pub/demo-$(basename "$f")" --file "$f" --content-type image/webp --local >/dev/null
+npx wrangler r2 object put "ascend-media/pub/demo-plan.webp" --file demo/images/plan.webp --content-type image/webp --local >/dev/null
+for f in demo/photos/*.jpg; do
+  npx wrangler r2 object put "ascend-media/pub/demo-$(basename "$f")" --file "$f" --content-type image/jpeg --local >/dev/null
 done
 
 echo "2/4 adding the sample listing details, inquiries and leads"
