@@ -30,3 +30,13 @@ Then sign in at `/portal` as `nimali@example.com` with the password `demo-custom
 * Run it on a fresh database. A second run adds the enquiries and leads again, cannot add the customer again because the email exists, and adds a second purchase.
 * To start again, stop the dev server, delete the `.wrangler` folder and run `npm run db:local`.
 * Never run it against production. It creates a customer with a known password.
+
+## The photos on the live demo
+
+The live demo's four "Demo" listings use the same photos. `demo/live-photos.sql` points them at the files in this repository. Run it once, after the code is deployed:
+
+```bash
+npx wrangler d1 execute ascend-db --remote --file=demo/live-photos.sql
+```
+
+Do this only on the demo, never on a real site. It replaces the photos of the four listings whose slugs start with `demo-`.
