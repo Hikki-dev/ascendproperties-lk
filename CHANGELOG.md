@@ -7,6 +7,7 @@
 3. New `demo/` folder: six drawn sample pictures, richer sample data and a loader script, so a local copy looks like a real agency's. It only touches the local database.
 4. A Checks workflow, CONTRIBUTING, SECURITY and issue and pull request templates.
 5. Fixed the README: uploaded photos are shrunk to JPEG in the browser (maximum 1,600 pixels), not WebP.
+6. Added an MIT licence, a link and badge for the live demo, a short legal section and a social preview picture.
 
 ## Rebuilt on Astro and Cloudflare (October 2026)
 

@@ -3,6 +3,8 @@
 [![Checks](https://github.com/Hikki-dev/ascendproperties-lk/actions/workflows/checks.yml/badge.svg)](https://github.com/Hikki-dev/ascendproperties-lk/actions/workflows/checks.yml)
 ![Astro](https://img.shields.io/badge/Astro-server%20rendered-BC52EE?logo=astro&logoColor=white)
 ![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers%20%7C%20D1%20%7C%20R2-F6821F?logo=cloudflare&logoColor=white)
+[![Live demo](https://img.shields.io/badge/live-demo-1D4ED8)](https://ascendproperties-lk.makkoacknowledgesstress.workers.dev)
+[![Licence: MIT](https://img.shields.io/github/license/Hikki-dev/ascendproperties-lk)](LICENSE)
 ![React](https://img.shields.io/badge/React-islands-61DAFB?logo=react&logoColor=black)
 
 A real-estate website for Sri Lanka (lands, houses and apartments) with a built-in admin that staff can use without touching code, and a private portal where customers follow what they have bought. It runs entirely on Cloudflare's free tier.
@@ -52,6 +54,10 @@ After a sale, the customer's journey looks like this:
 The longer story is in [How it works](docs/How%20it%20works.md).
 
 ## Try it
+
+**[Open the live demo](https://ascendproperties-lk.makkoacknowledgesstress.workers.dev).** It is the public site running on Cloudflare with a few sample listings (their names start with "Demo"). The admin (`/admin`) and customer portal (`/portal`) need a login, so they are not open to visitors; the pictures below show them.
+
+To run your own copy on your computer:
 
 You need Node 22.22 or newer (Astro 7 requires it). There is nothing to install in the cloud: Wrangler runs a local copy of D1 and R2 for you.
 
@@ -189,6 +195,12 @@ src/components/  ImageUploader, LoanCalc, LotsEditor, ChatImport (React islands)
 demo/            richer sample data and the script that loads it
 tests/           unit tests and an end-to-end smoke script
 ```
+
+## Legal and responsibility
+
+* Ascend Properties is a portfolio and learning project, not a real agency's site. The listings in the demo are samples.
+* The code is released under the [MIT licence](LICENSE), as it is, with no promises.
+* [primelands.lk](docs/PRIMELANDS-RESEARCH.md) is studied only for how a site like this works. This project is not connected to it.
 
 ## Contributing
 
