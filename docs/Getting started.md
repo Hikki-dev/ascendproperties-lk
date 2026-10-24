@@ -48,7 +48,7 @@ Open <http://localhost:4321>. Sign in at `/login` with the email and password fr
 
 ## 5. Make it look lived-in (optional)
 
-The five sample listings have no pictures. To fill the local copy with drawings, plots, highlights, enquiries and a customer with a purchase, leave `npm run dev` running and, in a second terminal:
+The five sample listings have no pictures. To fill the local copy with real sample photos, plots, highlights, enquiries and a customer with a purchase, leave `npm run dev` running and, in a second terminal:
 
 ```bash
 bash demo/load.sh

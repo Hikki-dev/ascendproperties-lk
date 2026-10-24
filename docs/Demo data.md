@@ -6,7 +6,8 @@
 
 | File | What it does |
 |---|---|
-| `demo/make_images.py` | Draws six sample pictures with Pillow: a coconut land at sunset, a hill-country plot, a waterfront, a house, an apartment tower and a plot plan. They are drawings, so the demo never uses anyone else's photographs |
+| `demo/photos/` | Six real photographs from Wikimedia Commons (paddy field, tea estate, Beira Lake, a house, apartment towers). The credits and licences are in [Photo credits](Photo%20credits.md) |
+| `demo/make_images.py` | Draws one picture with Pillow: the plot plan |
 | `demo/demo-data.sql` | Adds plots, highlights, nearby places and pictures to the five sample listings, and three enquiries and two seller leads |
 | `demo/load.sh` | Runs both, uploads the pictures to the local R2 store, then signs in as the admin and uses the real forms to add a customer, a purchase, three payments, a document and a handover stage |
 

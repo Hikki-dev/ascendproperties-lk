@@ -11,7 +11,7 @@ A real-estate website for Sri Lanka (lands, houses and apartments) with a built-
 
 <p align="center"><img src="docs/images/hero.jpg" alt="The home page, a land listing with plots and prices, and the same listing on a phone" width="100%"></p>
 
-<p align="center"><sub>Real screenshots of the running site with the sample data from <code>demo/</code>. The pictures are drawings made by a script, not photographs.</sub></p>
+<p align="center"><sub>Real screenshots of the running site with the sample data from <code>demo/</code>. The listing photos are real photographs from Wikimedia Commons, credited in [Photo credits](docs/Photo%20credits.md).</sub></p>
 
 Buyers pick an area and a budget and see the real price per perch and the payment plan. Staff add listings from a phone. Customers sign in and see their balance, receipts and documents. It is modelled on how primelands.lk works, and [the research](docs/PRIMELANDS-RESEARCH.md) shows the evidence.
 
@@ -180,6 +180,7 @@ To report a security problem, read [SECURITY.md](SECURITY.md).
 | Understand how it is built | [How it works](docs/How%20it%20works.md) |
 | Put it on Cloudflare | [Deploying](docs/Deploying.md) |
 | Fill a local copy with sample data | [Demo data](docs/Demo%20data.md) |
+| See who took the sample photos | [Photo credits](docs/Photo%20credits.md) |
 | Fix a problem | [Fixing problems](docs/Fixing%20problems.md) |
 | Find a quick answer | [Questions and answers](docs/FAQ.md) |
 | See why it works like primelands.lk | [Research](docs/PRIMELANDS-RESEARCH.md) |
