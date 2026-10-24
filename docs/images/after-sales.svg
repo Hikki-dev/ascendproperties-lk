@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="380" viewBox="0 0 1500 380" font-family="Arial, Helvetica, sans-serif" role="img" aria-labelledby="t d">
+<title id="t">After the sale</title><desc id="d">An enquiry becomes a purchase that staff add to a customer account. Payments with receipts and documents are added over time, and the customer sees the balance, the five handover stages and the next due date in their own portal.</desc><defs>
+<marker id="a64748b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#64748b"/></marker>
+<style>.t{font-size:22px;font-weight:700;fill:#0f172a;text-anchor:middle}.s{font-size:16px;fill:#475569;text-anchor:middle}.l{font-size:15px;font-weight:700;fill:#334155;text-anchor:middle}.h{font-size:32px;font-weight:700;fill:#0f172a;text-anchor:middle}.g{font-size:15px;font-weight:700;fill:#94a3b8;letter-spacing:.08em}</style></defs>
+<rect width="1500" height="380" fill="#f8fafc"/>
+<text x="750.0" y="46" class="h">After the sale</text>
+<line x1="274" y1="230" x2="294" y2="230" stroke="#64748b" stroke-width="2.4" marker-end="url(#a64748b)"/>
+<line x1="544" y1="230" x2="564" y2="230" stroke="#64748b" stroke-width="2.4" marker-end="url(#a64748b)"/>
+<line x1="814" y1="230" x2="834" y2="230" stroke="#64748b" stroke-width="2.4" marker-end="url(#a64748b)"/>
+<line x1="1084" y1="230" x2="1104" y2="230" stroke="#64748b" stroke-width="2.4" marker-end="url(#a64748b)"/>
+<rect x="32" y="180" width="235" height="100" rx="16" fill="#ffffff" stroke="#2563eb" stroke-width="2.4"/>
+<rect x="32" y="180" width="9" height="100" rx="4" fill="#2563eb"/>
+<text x="154" y="226" class="t">Enquiry</text>
+<text x="154" y="252" class="s">from a listing page</text>
+<rect x="302" y="180" width="235" height="100" rx="16" fill="#ffffff" stroke="#16a34a" stroke-width="2.4"/>
+<rect x="302" y="180" width="9" height="100" rx="4" fill="#16a34a"/>
+<text x="424" y="226" class="t">Purchase</text>
+<text x="424" y="252" class="s">staff add it to a customer</text>
+<rect x="572" y="180" width="235" height="100" rx="16" fill="#ffffff" stroke="#f6821f" stroke-width="2.4"/>
+<rect x="572" y="180" width="9" height="100" rx="4" fill="#f6821f"/>
+<text x="694" y="226" class="t">Payments</text>
+<text x="694" y="252" class="s">each one with a receipt</text>
+<rect x="842" y="180" width="235" height="100" rx="16" fill="#ffffff" stroke="#7c5cc4" stroke-width="2.4"/>
+<rect x="842" y="180" width="9" height="100" rx="4" fill="#7c5cc4"/>
+<text x="964" y="226" class="t">Documents</text>
+<text x="964" y="252" class="s">agreement, deed</text>
+<rect x="1112" y="180" width="235" height="100" rx="16" fill="#ffffff" stroke="#0f766e" stroke-width="2.4"/>
+<rect x="1112" y="180" width="9" height="100" rx="4" fill="#0f766e"/>
+<text x="1234" y="226" class="t">Handover</text>
+<text x="1234" y="252" class="s">five stages, next due date</text>
+<text x="750.0" y="358" class="s">Receipts and documents are private: only the customer who owns them, or an admin, can open them</text>
+</svg>

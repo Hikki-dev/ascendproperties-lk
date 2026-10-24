@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="700" viewBox="0 0 1500 700" font-family="Arial, Helvetica, sans-serif" role="img" aria-labelledby="t d">
+<title id="t">How the site fits together</title><desc id="d">Visitors, customers and staff all use one Cloudflare Worker that runs the Astro pages. It keeps data in D1, pictures and private files in R2, and sends people to WhatsApp with a link.</desc><defs>
+<marker id="a0f766e" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#0f766e"/></marker>
+<marker id="a16a34a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#16a34a"/></marker>
+<marker id="a2563eb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2563eb"/></marker>
+<marker id="a4479a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#4479a1"/></marker>
+<marker id="a64748b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#64748b"/></marker>
+<style>.t{font-size:22px;font-weight:700;fill:#0f172a;text-anchor:middle}.s{font-size:16px;fill:#475569;text-anchor:middle}.l{font-size:15px;font-weight:700;fill:#334155;text-anchor:middle}.h{font-size:32px;font-weight:700;fill:#0f172a;text-anchor:middle}.g{font-size:15px;font-weight:700;fill:#94a3b8;letter-spacing:.08em}</style></defs>
+<rect width="1500" height="700" fill="#f8fafc"/>
+<text x="750.0" y="46" class="h">How the site fits together</text>
+<line x1="271" y1="219" x2="473" y2="302" stroke="#64748b" stroke-width="2.4" marker-end="url(#a64748b)"/>
+<rect x="338" y="248" width="68" height="26" rx="13" fill="#f8fafc" stroke="#64748b" stroke-width="1.4"/>
+<text x="372" y="266" class="l">browse</text>
+<line x1="271" y1="370" x2="472" y2="370" stroke="#2563eb" stroke-width="2.4" marker-end="url(#a2563eb)"/>
+<rect x="333" y="357" width="77" height="26" rx="13" fill="#f8fafc" stroke="#2563eb" stroke-width="1.4"/>
+<text x="372" y="375" class="l">/portal</text>
+<line x1="271" y1="521" x2="473" y2="438" stroke="#16a34a" stroke-width="2.4" marker-end="url(#a16a34a)"/>
+<rect x="338" y="466" width="68" height="26" rx="13" fill="#f8fafc" stroke="#16a34a" stroke-width="1.4"/>
+<text x="372" y="484" class="l">/admin</text>
+<line x1="806" y1="312" x2="982" y2="251" stroke="#4479a1" stroke-width="2.4" marker-end="url(#a4479a1)"/>
+<rect x="874" y="269" width="41" height="26" rx="13" fill="#f8fafc" stroke="#4479a1" stroke-width="1.4"/>
+<text x="894" y="287" class="l">SQL</text>
+<line x1="806" y1="380" x2="982" y2="391" stroke="#0f766e" stroke-width="2.4" marker-end="url(#a0f766e)"/>
+<rect x="864" y="373" width="59" height="26" rx="13" fill="#f8fafc" stroke="#0f766e" stroke-width="1.4"/>
+<text x="894" y="391" class="l">files</text>
+<line x1="787" y1="436" x2="1010" y2="536" stroke="#16a34a" stroke-width="2.4" stroke-dasharray="7 6" marker-end="url(#a16a34a)"/>
+<rect x="869" y="473" width="59" height="26" rx="13" fill="#f8fafc" stroke="#16a34a" stroke-width="1.4"/>
+<text x="898" y="491" class="l">links</text>
+<rect x="35" y="124" width="230" height="92" rx="16" fill="#ffffff" stroke="#64748b" stroke-width="2.4"/>
+<rect x="35" y="124" width="9" height="92" rx="4" fill="#64748b"/>
+<text x="154" y="166" class="t">Buyers and sellers</text>
+<text x="154" y="192" class="s">search, enquire, sell</text>
+<rect x="35" y="324" width="230" height="92" rx="16" fill="#ffffff" stroke="#2563eb" stroke-width="2.4"/>
+<rect x="35" y="324" width="9" height="92" rx="4" fill="#2563eb"/>
+<text x="154" y="366" class="t">Customers</text>
+<text x="154" y="392" class="s">their own purchases</text>
+<rect x="35" y="524" width="230" height="92" rx="16" fill="#ffffff" stroke="#16a34a" stroke-width="2.4"/>
+<rect x="35" y="524" width="9" height="92" rx="4" fill="#16a34a"/>
+<text x="154" y="566" class="t">Staff</text>
+<text x="154" y="592" class="s">the /admin area</text>
+<rect x="480" y="310" width="320" height="120" rx="16" fill="#ffffff" stroke="#f6821f" stroke-width="2.4"/>
+<rect x="480" y="310" width="9" height="120" rx="4" fill="#f6821f"/>
+<text x="644" y="366" class="t">Cloudflare Worker</text>
+<text x="644" y="392" class="s">Astro server pages + React islands</text>
+<rect x="990" y="154" width="280" height="92" rx="16" fill="#ffffff" stroke="#4479a1" stroke-width="2.4"/>
+<rect x="990" y="154" width="9" height="92" rx="4" fill="#4479a1"/>
+<text x="1134" y="196" class="t">D1</text>
+<text x="1134" y="222" class="s">listings, users, purchases</text>
+<rect x="990" y="354" width="280" height="92" rx="16" fill="#ffffff" stroke="#0f766e" stroke-width="2.4"/>
+<rect x="990" y="354" width="9" height="92" rx="4" fill="#0f766e"/>
+<text x="1134" y="396" class="t">R2</text>
+<text x="1134" y="422" class="s">pictures and files</text>
+<rect x="990" y="544" width="280" height="92" rx="16" fill="#ffffff" stroke="#16a34a" stroke-width="2.4"/>
+<rect x="990" y="544" width="9" height="92" rx="4" fill="#16a34a"/>
+<text x="1134" y="586" class="t">WhatsApp</text>
+<text x="1134" y="612" class="s">links that open a chat</text>
+<text x="750.0" y="678" class="s">Runs on Cloudflare free tiers: Workers, D1 and R2</text>
+</svg>
