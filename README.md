@@ -9,9 +9,9 @@
 
 A real-estate website for Sri Lanka (lands, houses and apartments) with a built-in admin that staff can use without touching code, and a private portal where customers follow what they have bought. It runs entirely on Cloudflare's free tier.
 
-<p align="center"><img src="docs/images/hero.jpg" alt="The home page, a land listing with plots and prices, and the same listing on a phone" width="100%"></p>
+<p align="center"><img src="docs/images/hero.jpg" alt="The home page with three land listings and real photos, and a listing on a phone" width="100%"></p>
 
-<p align="center"><sub>Screenshots of a local copy with the sample data from <code>demo/</code>. They were taken before the real sample photos were added, so the listing pictures in them are the old drawn ones. The demo data now uses real photographs, credited in <a href="docs/Photo%20credits.md">Photo credits</a>. The live demo does not show listing photos yet.</sub></p>
+<p align="center"><sub>The public pages are screenshots of the <a href="https://ascendproperties-lk.makkoacknowledgesstress.workers.dev">live demo</a>. The plots table, the admin and the customer portal are not on the live demo or need a login, so those pictures come from a local copy with the sample data from <code>demo/</code>. The listing photos are real photographs from Wikimedia Commons, credited in <a href="docs/Photo%20credits.md">Photo credits</a>.</sub></p>
 
 Buyers pick an area and a budget and see the real price per perch and the payment plan. Staff add listings from a phone. Customers sign in and see their balance, receipts and documents. It is modelled on how primelands.lk works, and [the research](docs/PRIMELANDS-RESEARCH.md) shows the evidence.
 
