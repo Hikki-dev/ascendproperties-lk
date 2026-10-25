@@ -73,7 +73,7 @@ See [Demo data](Demo%20data.md).
 ## Checks
 
 ```bash
-npm test             # 11 unit tests
+npm test             # 12 unit tests
 npm run build        # builds the Worker into dist/
 bash tests/smoke.sh  # end-to-end, against the running dev server
 ```

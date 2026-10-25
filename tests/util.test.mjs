@@ -1,7 +1,7 @@
 // Run: npm test   (URL allowlists, phone/price helpers, plots)
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mapLink, mapEmbed, lkPhone, inWords, video, lots, places, lines, arr } from '../src/lib/pure.ts';
+import { mapLink, mapEmbed, lkPhone, inWords, video, lots, places, lines, arr, perches } from '../src/lib/pure.ts';
 
 test('maps allowlist', () => {
   assert.ok(mapLink('https://maps.app.goo.gl/abc'));
@@ -39,4 +39,12 @@ test('plots, places, lines', () => {
   assert.deepEqual(places('["Galle town – 12 min","School: 1 km"]'), [['Galle town', '12 min'], ['School', '1 km']]);
   assert.deepEqual(lines('✅ Near beach\n- Quiet lane\n\n', 6), ['Near beach', 'Quiet lane']);
   assert.deepEqual(arr('bad'), []);
+});
+
+test('seller extent gets "perches" only when it is a bare number', () => {
+  assert.equal(perches('20'), '20 perches');
+  assert.equal(perches('20 perches'), '20 perches');
+  assert.equal(perches('1 acre'), '1 acre');
+  assert.equal(perches(''), '');
+  assert.equal(perches(null), '');
 });
