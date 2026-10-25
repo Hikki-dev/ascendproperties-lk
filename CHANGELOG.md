@@ -8,7 +8,7 @@
 4. A Checks workflow, CONTRIBUTING, SECURITY and issue and pull request templates.
 5. Fixed the README: uploaded photos are shrunk to JPEG in the browser (maximum 1,600 pixels), not WebP.
 6. The sample listings now use real photographs from Wikimedia Commons, with credits and licences in `docs/Photo credits.md`, instead of drawn pictures. Only the plot plan is still drawn.
-7. The public-page pictures in the README are now screenshots of the live demo, taken with the real photos on.
+7. The README is now one long walkthrough of every screen, with a picture and a short explanation for each part. The pictures were retaken at twice the sharpness from a running copy filled with the sample data and the real photos.
 8. Added an MIT licence, a link and badge for the live demo, a short legal section and a social preview picture.
 
 ## Rebuilt on Astro and Cloudflare (October 2026)

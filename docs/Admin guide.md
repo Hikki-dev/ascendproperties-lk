@@ -2,7 +2,7 @@
 
 This page is for the people who run the site day to day. You do not need to know how to code. Sign in at `/login` with your admin email.
 
-<p align="center"><a href="images/admin-dashboard.jpg"><img src="images/admin-dashboard.jpg" alt="The admin Today page" width="100%"></a></p>
+<p align="center"><a href="images/admin-today.jpg"><img src="images/admin-today.jpg" alt="The admin Today page" width="100%"></a></p>
 
 ## Today
 
