@@ -4,7 +4,7 @@
 No. `npm run dev` uses a local copy of D1 and R2. You only need an account to put it on the internet.
 
 **Is it a real agency's site?**
-It is a working site built for a Sri Lankan property agency, modelled on primelands.lk. The sample listings in this repository, and the people in the demo data, are made up.
+It is a working site built for a Sri Lankan property agency, modelled on primelands.lk. The sample listings in this repository, and the people in the sample data, are made up.
 
 **Why Cloudflare and not Vercel?**
 D1 and R2 have generous free tiers, R2 has no egress fees, and the Worker, the database and the files sit in one place. The project started on Vercel and Supabase and was rebuilt for Cloudflare in October 2026. See [Changes](../CHANGELOG.md).

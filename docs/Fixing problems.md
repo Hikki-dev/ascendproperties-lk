@@ -12,13 +12,13 @@ The local database does not exist yet. Run `npm run db:local` once.
 
 ## The listings have grey boxes instead of pictures
 
-The sample listings in `seed.sql` have no pictures. Upload some in the admin, or run `bash demo/load.sh` (see [Demo data](Demo%20data.md)).
+The sample listings in `seed.sql` have no pictures. Upload some in the admin, or run `bash sample-data/load.sh` (see [Sample data](Sample%20data.md)).
 
-## `demo/load.sh` says it cannot sign in, or does nothing
+## `sample-data/load.sh` says it cannot sign in, or does nothing
 
-`npm run dev` must be running in another terminal, and `.dev.vars` must have `ADMIN_EMAIL` and `ADMIN_PASSWORD`. Run `npm run db:local` first so the tables exist. If the site is not on port 4321, run `SITE=http://localhost:4322 bash demo/load.sh`.
+`npm run dev` must be running in another terminal, and `.dev.vars` must have `ADMIN_EMAIL` and `ADMIN_PASSWORD`. Run `npm run db:local` first so the tables exist. If the site is not on port 4321, run `SITE=http://localhost:4322 bash sample-data/load.sh`.
 
-## `demo/load.sh` fails at the pictures
+## `sample-data/load.sh` fails at the pictures
 
 It needs Python 3 with Pillow (`pip install pillow`).
 

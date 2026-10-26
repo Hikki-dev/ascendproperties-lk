@@ -6,4 +6,4 @@ dist
 .env
 .DS_Store
 worker-configuration.d.ts
-demo/images
+sample-data/images

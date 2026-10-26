@@ -19,7 +19,7 @@ jobs:
         run: npm test
       - name: Build the Worker
         run: npm run build
-      - name: Check the demo script and sample SQL
+      - name: Check the sample-data script and SQL
         run: |
-          bash -n demo/load.sh
-          python3 -m py_compile demo/make_images.py
+          bash -n sample-data/load.sh
+          python3 -m py_compile sample-data/make_images.py

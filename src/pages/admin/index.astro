@@ -2,7 +2,7 @@
 import Admin from '../../layouts/Admin.astro';
 import { all, one } from '../../lib/db';
 import { getSettings } from '../../lib/settings';
-import { dateFmt, lkPhone } from '../../lib/util';
+import { dateFmt, lkPhone, perches } from '../../lib/util';
 
 const s = await getSettings(), me = s.advisor_name.split(' ')[0];
 const n = async (sql: string) => (await one<{ n: number }>(sql))!.n;
@@ -33,7 +33,7 @@ const todo = inq.length + sellers.length + tickets.length;
 
   {sellers.length > 0 && <section class="panel stack"><h2 style="font-size:19px">People who want to sell land ({sellers.length})</h2>
     {sellers.map((r) => <div class="row between" style="border-top:1px solid var(--line);padding-top:12px">
-      <div><b>{r.name}</b> <span class="muted">· {[r.city, r.extent && `${r.extent} perches`].filter(Boolean).join(' · ')}</span></div>
+      <div><b>{r.name}</b> <span class="muted">· {[r.city, perches(r.extent)].filter(Boolean).join(' · ')}</span></div>
       <div class="row" style="gap:8px">
         {wa(r.mobile, `Hi ${r.name}, this is ${me} from Ascend Properties. Thanks for sending your land details.`) && <a class="wa" href={wa(r.mobile, `Hi ${r.name}, this is ${me} from Ascend Properties. Thanks for sending your land details.`)} target="_blank" rel="noopener">Reply on WhatsApp</a>}
         <a class="btn ghost" href={`tel:${r.mobile}`}>Call</a><a class="btn ghost" href="/admin/sellers">See photos</a>

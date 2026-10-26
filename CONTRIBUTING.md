@@ -30,7 +30,7 @@ The same checks run on every pull request. `bash tests/smoke.sh` is a longer end
 
 ## Trying a change safely
 
-Use the local database only (`npm run db:local`). Never point a test at the real D1 database or R2 bucket. To get realistic data, run `bash demo/load.sh`.
+Use the local database only (`npm run db:local`). Never point a test at the real D1 database or R2 bucket. To get realistic data, run `bash sample-data/load.sh`.
 
 ## Sending a change
 

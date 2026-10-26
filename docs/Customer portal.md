@@ -2,7 +2,7 @@
 
 The portal is the private page where a customer follows what they have bought. It is at `/portal`.
 
-<p align="center"><a href="images/portal.jpg"><img src="images/portal.jpg" alt="The customer portal" width="100%"></a></p>
+<p align="center"><a href="images/portal-top.jpg"><img src="images/portal-top.jpg" alt="The customer portal" width="100%"></a></p>
 
 ## Signing in
 
