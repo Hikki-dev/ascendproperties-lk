@@ -171,18 +171,25 @@ Most buyers will be on a phone. Here is the whole journey on one, left to right.
 
 <table>
 <tr>
-<td valign="top"><a href="docs/images/phone-home.jpg"><img src="docs/images/phone-home.jpg" alt="The home page on a phone with the search and shortcut buttons" width="145"></a></td>
-<td valign="top"><a href="docs/images/phone-lands.jpg"><img src="docs/images/phone-lands.jpg" alt="Land results on a phone with a Filters button and a listing with a photo" width="145"></a></td>
-<td valign="top"><a href="docs/images/phone-listing.jpg"><img src="docs/images/phone-listing.jpg" alt="A listing on a phone with a photo, the thumbnails, the title and the price" width="145"></a></td>
-<td valign="top"><a href="docs/images/phone-listing-2.jpg"><img src="docs/images/phone-listing-2.jpg" alt="Further down a listing on a phone: the description and the plots table" width="145"></a></td>
-<td valign="top"><a href="docs/images/phone-portal.jpg"><img src="docs/images/phone-portal.jpg" alt="The customer portal on a phone with the total, paid, balance and next instalment" width="145"></a></td>
+<td valign="top" width="25%"><a href="docs/images/phone-home.jpg"><img src="docs/images/phone-home.jpg" alt="The home page on a phone with the search and shortcut buttons" width="185"></a></td>
+<td valign="top" width="25%"><a href="docs/images/phone-lands.jpg"><img src="docs/images/phone-lands.jpg" alt="Land results on a phone with a Filters button and a listing with a photo" width="185"></a></td>
+<td valign="top" width="25%"><a href="docs/images/phone-listing.jpg"><img src="docs/images/phone-listing.jpg" alt="A listing on a phone with a photo, the thumbnails, the title and the price" width="185"></a></td>
 </tr>
 <tr>
-<td align="center"><b>1</b><br><sub>Home</sub></td>
-<td align="center"><b>2</b><br><sub>Results</sub></td>
-<td align="center"><b>3</b><br><sub>A listing</sub></td>
-<td align="center"><b>4</b><br><sub>Plots and prices</sub></td>
-<td align="center"><b>5</b><br><sub>Customer portal</sub></td>
+<td align="center" valign="top"><b>1</b><br><sub>Home</sub></td>
+<td align="center" valign="top"><b>2</b><br><sub>Results</sub></td>
+<td align="center" valign="top"><b>3</b><br><sub>A listing</sub></td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td valign="top" width="25%"><a href="docs/images/phone-listing-2.jpg"><img src="docs/images/phone-listing-2.jpg" alt="Further down a listing on a phone: the description and the plots table" width="185"></a></td>
+<td valign="top" width="25%"><a href="docs/images/phone-portal.jpg"><img src="docs/images/phone-portal.jpg" alt="The customer portal on a phone with the total, paid, balance and next instalment" width="185"></a></td>
+</tr>
+<tr>
+<td align="center" valign="top"><b>4</b><br><sub>Plots and prices</sub></td>
+<td align="center" valign="top"><b>5</b><br><sub>Customer portal</sub></td>
 </tr>
 </table>
 
