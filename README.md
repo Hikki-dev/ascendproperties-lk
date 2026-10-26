@@ -205,7 +205,7 @@ Staff and customers use the same sign-in page. An admin is sent to the admin, an
 
 <a href="docs/images/admin-today.jpg"><img src="docs/images/admin-today.jpg" alt="Admin home: buyers who asked about a property, people who want to sell, and three steps to add a listing" width="100%"></a>
 
-The admin opens on **Today**: who has asked about a property, and who wants to sell. Each one has **Reply on WhatsApp** and **Call** buttons, and **Done** when it has been dealt with. At the bottom, three short steps remind staff how to add a listing. The menu on the left groups everything into **Website**, **Leads**, **After-sales** and **Account**.
+The admin opens on **Today**: who has asked about a property, who wants to sell, and which customers have an open support question. Buyers and sellers have **Reply on WhatsApp** and **Call** buttons, and **Done** when it has been dealt with. A customer question has an **Answer** button. At the bottom, three short steps remind staff how to add a listing. The menu on the left groups everything into **Website**, **Leads**, **After-sales** and **Account**.
 
 #### 12. Listings
 

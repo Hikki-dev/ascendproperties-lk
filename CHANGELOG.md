@@ -2,7 +2,7 @@
 
 ## Small fixes
 
-1. The word "demo" is gone from the site, the sample listings and the docs. The listings have real-sounding names, the sample folder is now `sample-data/` and the guide is `Sample data`.
+1. Listings now have ordinary names and descriptions instead of placeholder text, the sample folder is `sample-data/` and the guide is `Sample data`.
 2. Fixed: the admin Today page showed "20 perches perches" when a seller typed the unit themselves. A bare number still gets "perches", and the Sellers page now does the same. One new test.
 
 ## Docs and sample data
