@@ -46,13 +46,14 @@ It also has a form for owners who want to sell their land, a printable flyer for
 
 ### What it is built with
 
-| Tool | What it does here |
-|---|---|
-| **Astro** | Draws the pages on the server, so they load fast and show up in search |
-| **React** | Only for the few interactive parts: the photo uploader, the plots table, the payment calculator and the chat importer |
-| **Cloudflare Workers** | Runs the whole site, with no separate server |
-| **Cloudflare D1** | The database (SQLite): listings, enquiries, customers, payments |
-| **Cloudflare R2** | Stores photos, brochures, receipts and documents |
+<table>
+<tr><td width="64"><img src="docs/images/icons/astro.png" alt="Astro logo" width="48"></td><td width="170"><b>Astro</b></td><td>Draws the pages on the server, so they load fast and show up in search</td></tr>
+<tr><td><img src="docs/images/icons/react.png" alt="React logo" width="48"></td><td><b>React</b></td><td>Only for the few interactive parts: the photo uploader, the plots table, the payment calculator and the chat importer</td></tr>
+<tr><td><img src="docs/images/icons/cloudflare.png" alt="Cloudflare logo" width="48"></td><td><b>Cloudflare Workers</b></td><td>Runs the whole site, with no separate server</td></tr>
+<tr><td><img src="docs/images/icons/cloudflare.png" alt="Cloudflare logo" width="48"></td><td><b>Cloudflare D1</b></td><td>The database (SQLite): listings, enquiries, customers, payments</td></tr>
+<tr><td><img src="docs/images/icons/cloudflare.png" alt="Cloudflare logo" width="48"></td><td><b>Cloudflare R2</b></td><td>Stores photos, brochures, receipts and documents</td></tr>
+<tr><td><img src="docs/images/icons/githubactions.png" alt="GitHub Actions logo" width="48"></td><td><b>GitHub Actions</b></td><td>Runs the checks on every change</td></tr>
+</table>
 
 All of it has a free tier that is enough for a growing agency.
 
