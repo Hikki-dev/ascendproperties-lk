@@ -77,3 +77,9 @@ export const places = (s: unknown): [string, string][] =>
   arr(s).map((line) => { const m = line.split(/\s+[–—-]\s+|\s*:\s*/); return [m[0], m.slice(1).join(' – ')] as [string, string]; }).filter(([a]) => a);
 
 export const lines = (raw: string, max = 8, len = 120) => raw.split('\n').map((x) => x.replace(/^[\s•\-*✅✔]+/, '').trim().slice(0, len)).filter(Boolean).slice(0, max);
+
+/** A seller's extent as text. The form asks for perches, so a bare number gets "perches"; "20 perches" or "1 acre" is left alone. */
+export const perches = (extent?: string | null) => {
+  const e = (extent ?? '').trim();
+  return e && !/[a-z]/i.test(e) ? `${e} perches` : e;
+};

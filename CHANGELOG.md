@@ -1,5 +1,9 @@
 # Changes
 
+## Small fixes
+
+1. Fixed: the admin Today page showed "20 perches perches" when a seller typed the unit themselves. A bare number still gets "perches", and the Sellers page now does the same. One new test.
+
 ## Docs and demo data
 
 1. New README with a hero picture, a tour of the public site, the admin and the customer portal, two diagrams and a security summary.

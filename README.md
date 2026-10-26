@@ -366,7 +366,7 @@ bash demo/load.sh
 
 That adds the sample photos, plots, highlights and nearby places, some enquiries and leads, and a customer with a purchase, three payments and a document. Sign in at `/portal` as `nimali@example.com` with the password `demo-customer-1`. Details are in [Demo data](docs/Demo%20data.md). It only touches your local copy.
 
-`npm test` runs the unit tests (11 of them). `tests/smoke.sh` runs a longer end-to-end check against the dev server. Step by step, with fixes for the usual snags, is in [Getting started](docs/Getting%20started.md).
+`npm test` runs the unit tests (12 of them). `tests/smoke.sh` runs a longer end-to-end check against the dev server. Step by step, with fixes for the usual snags, is in [Getting started](docs/Getting%20started.md).
 
 ## Put it online
 
