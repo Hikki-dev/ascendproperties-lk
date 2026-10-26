@@ -1,14 +1,14 @@
-"""Draws the illustrated sample pictures used by the demo data (demo/demo-data.sql).
+"""Draws the illustrated sample pictures used by the sample data (sample-data/sample-data.sql).
 
-They are simple drawings, not photographs, so the demo never uses someone else's pictures.
-    python3 demo/make_images.py demo/images
+They are simple drawings, not photographs, so the sample data never uses someone else's pictures.
+    python3 sample-data/make_images.py sample-data/images
 Needs Pillow (pip install pillow).
 """
 import math, random, sys, pathlib
 from PIL import Image, ImageDraw, ImageFilter
 
 W, H, S = 1200, 800, 2          # size, and supersampling for smooth edges
-out = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else "demo/images")
+out = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else "sample-data/images")
 out.mkdir(parents=True, exist_ok=True)
 
 

@@ -73,7 +73,7 @@ Every file in R2 has a key that starts with a folder:
 ```
 migrations/         D1 schema, in order
 seed.sql            five sample listings (delete before launch)
-demo/               richer sample data and its loader
+sample-data/               richer sample data and its loader
 src/
 ├── middleware.ts   sessions, access rules, security headers
 ├── lib/            db, auth, util, pure, parse, chat, listings, drafts, settings

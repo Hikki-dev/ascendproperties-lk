@@ -21,7 +21,7 @@ npm run deploy                            # builds, then wrangler deploy
 
 Wrangler prints the address of your site, like `https://ascendproperties-lk.<your-name>.workers.dev`. Sign in there at `/login` with the admin email and password. The first admin is made the first time that email signs in.
 
-`seed.sql` is for local testing only. **Do not** load it, or `demo/`, into the real database.
+`seed.sql` is for local testing only. **Do not** load it, or `sample-data/`, into the real database.
 
 ## Your own domain
 

@@ -1,7 +1,7 @@
 # Ascend Properties
 
 [![Checks](https://github.com/Hikki-dev/ascendproperties-lk/actions/workflows/checks.yml/badge.svg)](https://github.com/Hikki-dev/ascendproperties-lk/actions/workflows/checks.yml)
-[![Live demo](https://img.shields.io/badge/live-demo-1D4ED8)](https://ascendproperties-lk.makkoacknowledgesstress.workers.dev)
+[![Live site](https://img.shields.io/badge/live-site-1D4ED8)](https://ascendproperties-lk.makkoacknowledgesstress.workers.dev)
 [![Licence: MIT](https://img.shields.io/github/license/Hikki-dev/ascendproperties-lk)](LICENSE)
 ![Astro](https://img.shields.io/badge/Astro-server%20rendered-BC52EE?logo=astro&logoColor=white)
 ![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers%20%7C%20D1%20%7C%20R2-F6821F?logo=cloudflare&logoColor=white)
@@ -11,7 +11,7 @@ A website for selling land, houses and apartments in Sri Lanka. It comes with a 
 
 <p align="center"><img src="docs/images/hero.jpg" alt="The home page on a desktop with listings and real photos, and a listing on a phone" width="100%"></p>
 
-<p align="center"><sub>The site on a desktop and on a phone. <b><a href="https://ascendproperties-lk.makkoacknowledgesstress.workers.dev">Open the live demo</a></b> and follow along. The listings are samples. The photos are real ones from Wikimedia Commons, credited in <a href="docs/Photo%20credits.md">Photo credits</a>.</sub></p>
+<p align="center"><sub>The site on a desktop and on a phone. <b><a href="https://ascendproperties-lk.makkoacknowledgesstress.workers.dev">Open the live site</a></b> and follow along. The listings are samples. The photos are real ones from Wikimedia Commons, credited in <a href="docs/Photo%20credits.md">Photo credits</a>.</sub></p>
 
 A buyer picks a place and a budget, and sees the real price per perch and the payment plan. Staff add listings from their phone. A customer signs in and sees their balance, receipts and documents.
 
@@ -70,15 +70,15 @@ The longer story is in [How it works](docs/How%20it%20works.md).
 
 ## Try it first
 
-**[Open the live demo](https://ascendproperties-lk.makkoacknowledgesstress.workers.dev).** It is the public site running on Cloudflare with four sample listings. Their names start with "Demo".
+**[Open the live site](https://ascendproperties-lk.makkoacknowledgesstress.workers.dev).** It is the public site running on Cloudflare with four listings. The listings are made up, and the photos are real ones credited in [Photo credits](docs/Photo%20credits.md).
 
 * Browse the listings, filter them, open one and try the buttons. The WhatsApp and call buttons open your phone's apps.
 * The admin (`/admin`) and the customer portal (`/portal`) need a login, so they are not open to visitors. The story below shows every screen of them.
-* Do not put anything private in the forms. This is a demo.
+* Do not put anything private in the forms. This is a portfolio project.
 
 ## The story, step by step
 
-Every picture below was taken from a copy of the site running on a computer, filled with the sample data in `demo/` (see [Run it yourself](#run-it-yourself)), at twice the normal sharpness. The live demo looks the same but has fewer listings. The names in the pictures, such as Nimali Perera, are made up. Click a picture to see it full size. The same walk, with fewer words, is in [Getting started](docs/Getting%20started.md).
+Every picture below was taken from a copy of the site running on a computer, filled with the sample data in `sample-data/` (see [Run it yourself](#run-it-yourself)), at twice the normal sharpness. The live site looks the same but has fewer listings. The names in the pictures, such as Nimali Perera, are made up. Click a picture to see it full size. The same walk, with fewer words, is in [Getting started](docs/Getting%20started.md).
 
 ### Part 1: The buyer
 
@@ -361,10 +361,10 @@ Sign in at `/login` with the admin email and password from `.dev.vars`. The firs
 **Want it to look like the pictures above?** With `npm run dev` still running, in a second terminal:
 
 ```bash
-bash demo/load.sh
+bash sample-data/load.sh
 ```
 
-That adds the sample photos, plots, highlights and nearby places, some enquiries and leads, and a customer with a purchase, three payments and a document. Sign in at `/portal` as `nimali@example.com` with the password `demo-customer-1`. Details are in [Demo data](docs/Demo%20data.md). It only touches your local copy.
+That adds the sample photos, plots, highlights and nearby places, some enquiries and leads, and a customer with a purchase, three payments and a document. Sign in at `/portal` as `nimali@example.com` with the password `sample-customer-1`. Details are in [Sample data](docs/Sample%20data.md). It only touches your local copy.
 
 `npm test` runs the unit tests (12 of them). `tests/smoke.sh` runs a longer end-to-end check against the dev server. Step by step, with fixes for the usual snags, is in [Getting started](docs/Getting%20started.md).
 
@@ -402,7 +402,7 @@ To report a security problem, read [SECURITY.md](SECURITY.md).
 | See what customers see | [Customer portal](docs/Customer%20portal.md) |
 | Understand how it is built | [How it works](docs/How%20it%20works.md) |
 | Put it on Cloudflare | [Deploying](docs/Deploying.md) |
-| Fill a local copy with sample data | [Demo data](docs/Demo%20data.md) |
+| Fill a local copy with sample data | [Sample data](docs/Sample%20data.md) |
 | See who took the sample photos | [Photo credits](docs/Photo%20credits.md) |
 | Fix a problem | [Fixing problems](docs/Fixing%20problems.md) |
 | Find a quick answer | [Questions and answers](docs/FAQ.md) |
@@ -416,13 +416,13 @@ To report a security problem, read [SECURITY.md](SECURITY.md).
 migrations/      D1 schema            seed.sql   five sample listings (delete before launch)
 src/lib/         db, auth, util, parse, chat      src/pages/   public site, /admin, /portal, /api
 src/components/  ImageUploader, LoanCalc, LotsEditor, ChatImport (React islands), cards, ads
-demo/            sample data, sample photos and the script that loads them
+sample-data/            sample data, sample photos and the script that loads them
 tests/           unit tests and an end-to-end smoke script
 ```
 
 ## Legal and responsibility
 
-* Ascend Properties is a portfolio and learning project, not a real agency's site. The listings in the demo are samples.
+* Ascend Properties is a portfolio and learning project, not a real agency's site. The listings are made up.
 * The code is released under the [MIT licence](LICENSE), as it is, with no promises. The sample photos keep their own licences, see [Photo credits](docs/Photo%20credits.md).
 * [primelands.lk](docs/PRIMELANDS-RESEARCH.md) is studied only for how a site like this works. This project is not connected to it.
 * Built with [Astro](https://astro.build), [React](https://react.dev) and [Cloudflare Workers](https://workers.cloudflare.com). Zip handling is by [fflate](https://github.com/101arrowz/fflate).

@@ -8,7 +8,7 @@ ok "bad login rejected" "$(post -c $J -F email=admin@ascend.local -F password=wr
 ok "admin login" "$(post -c $J -F email=admin@ascend.local -F password=ascend-dev-pass-123 $B/api/login)" "/admin"
 ok "admin dashboard" "$(curl -s -o /dev/null -w '%{http_code}' -b $J $B/admin)" "200"
 ok "cross-origin POST blocked" "$(curl -s -o /dev/null -w '%{http_code}' -H 'Origin: http://evil.example' -F name=x -F phone=0771234567 $B/api/inquiry)" "403"
-ok "inquiry saved" "$(post -F name=Test -F phone=0771234567 -F listing_id=1 -F back=/listing/sample-land-one $B/api/inquiry)" "sent=1"
+ok "inquiry saved" "$(post -F name=Test -F phone=0771234567 -F listing_id=1 -F back=/listing/green-valley-galle $B/api/inquiry)" "sent=1"
 ok "bad phone rejected" "$(post -F name=Test -F phone=abc -F back=/contact $B/api/inquiry)" "err=1"
 ok "create listing" "$(post -b $J -F title='Smoke Test Land' -F type=land -F district=Galle -F price=123000 -F status=available -F photos='[]' $B/admin/api/listing)" "/admin/listings/"
 ok "listing is public" "$(curl -s $B/lands?q=Smoke | grep -c 'Smoke Test Land')" "1"

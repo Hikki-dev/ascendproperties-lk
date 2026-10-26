@@ -51,10 +51,10 @@ Open <http://localhost:4321>. Sign in at `/login` with the email and password fr
 The five sample listings have no pictures. To fill the local copy with real sample photos, plots, highlights, enquiries and a customer with a purchase, leave `npm run dev` running and, in a second terminal:
 
 ```bash
-bash demo/load.sh
+bash sample-data/load.sh
 ```
 
-See [Demo data](Demo%20data.md).
+See [Sample data](Sample%20data.md).
 
 ## 6. Take the tour
 

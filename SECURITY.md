@@ -17,6 +17,6 @@ Please do not open a public issue for a security problem. Use the **Report a vul
 
 1. The app has no rate limiting of its own. Add a Cloudflare WAF rate-limit rule for `/api/*` and `/login`, and turn on Bot Fight Mode.
 2. Consider putting `/admin*` behind Cloudflare Access for a second login.
-3. `seed.sql` and `demo/` create accounts and data for local testing. Never load them into a real database. The demo customer has a known password.
+3. `seed.sql` and `sample-data/` create accounts and data for local testing. Never load them into a real database. The sample customer has a known password.
 4. `wrangler.jsonc` holds the D1 `database_id`. It is an identifier, not a secret, but anyone deploying their own copy must replace it.
 5. Keep `.dev.vars` and the admin password out of screenshots and bug reports.
