@@ -167,17 +167,26 @@ At the bottom, **You might also like** shows more listings, so a buyer who is no
 
 #### 8. On a phone
 
-Most buyers will be on a phone. The menu folds into one button, the filters fold away behind **Filters**, and a **WhatsApp** and **Call** bar stays at the bottom of every listing, so the next step is always one tap away.
+Most buyers will be on a phone. Here is the whole journey on one, left to right. Click a picture to see it full size.
 
 <table>
 <tr>
-<td width="25%"><a href="docs/images/phone-home.jpg"><img src="docs/images/phone-home.jpg" alt="The home page on a phone" width="100%"></a></td>
-<td width="25%"><a href="docs/images/phone-lands.jpg"><img src="docs/images/phone-lands.jpg" alt="Land results on a phone with a Filters button" width="100%"></a></td>
-<td width="25%"><a href="docs/images/phone-listing.jpg"><img src="docs/images/phone-listing.jpg" alt="A listing on a phone with a photo and the title" width="100%"></a></td>
-<td width="25%"><a href="docs/images/phone-listing-2.jpg"><img src="docs/images/phone-listing-2.jpg" alt="Further down a listing on a phone: the description and the plots table" width="100%"></a></td>
+<td width="20%" valign="top"><a href="docs/images/phone-home.jpg"><img src="docs/images/phone-home.jpg" alt="The home page on a phone with the search and shortcut buttons" width="100%"></a></td>
+<td width="20%" valign="top"><a href="docs/images/phone-lands.jpg"><img src="docs/images/phone-lands.jpg" alt="Land results on a phone with a Filters button and a listing with a photo" width="100%"></a></td>
+<td width="20%" valign="top"><a href="docs/images/phone-listing.jpg"><img src="docs/images/phone-listing.jpg" alt="A listing on a phone with a photo, the thumbnails, the title and the price" width="100%"></a></td>
+<td width="20%" valign="top"><a href="docs/images/phone-listing-2.jpg"><img src="docs/images/phone-listing-2.jpg" alt="Further down a listing on a phone: the description and the plots table" width="100%"></a></td>
+<td width="20%" valign="top"><a href="docs/images/phone-portal.jpg"><img src="docs/images/phone-portal.jpg" alt="The customer portal on a phone with the total, paid, balance and next instalment" width="100%"></a></td>
 </tr>
-<tr><td align="center"><sub>Home</sub></td><td align="center"><sub>Results</sub></td><td align="center"><sub>A listing</sub></td><td align="center"><sub>Plots and prices</sub></td></tr>
+<tr>
+<td align="center"><b>1</b><br><sub>Home</sub></td>
+<td align="center"><b>2</b><br><sub>Results</sub></td>
+<td align="center"><b>3</b><br><sub>A listing</sub></td>
+<td align="center"><b>4</b><br><sub>Plots and prices</sub></td>
+<td align="center"><b>5</b><br><sub>Customer portal</sub></td>
+</tr>
 </table>
+
+**1. Home.** The menu folds into one button, and the search and shortcuts fill the screen. **2. Results.** The filters fold away behind **Filters**, so the listings come first. **3. A listing.** The photo, the price and the highlights, with a **WhatsApp** and **Call** bar that stays at the bottom, so the next step is always one tap away. **4. Plots and prices.** Further down, the plots table with its **Ask about this** buttons. **5. Customer portal.** A customer sees the same numbers on a phone as on a desktop ([step 22](#22-the-customer-portal)).
 
 #### 9. Sell your land
 
@@ -339,9 +348,7 @@ Staff open a ticket, read it, reply and close it when it is solved.
 
 The customer sees the reply in their portal, and can answer from there. More in the [Customer portal](docs/Customer%20portal.md) guide.
 
-<p align="center"><a href="docs/images/phone-portal.jpg"><img src="docs/images/phone-portal.jpg" alt="The customer portal on a phone" width="30%"></a></p>
-
-The portal works on a phone too. That closes the loop: the staff's listings are what the buyer searched for in step 2. More in the [Admin guide](docs/Admin%20guide.md).
+The portal works on a phone too (picture 5 in [step 8](#8-on-a-phone)). That closes the loop: the staff's listings are what the buyer searched for in step 2. More in the [Admin guide](docs/Admin%20guide.md).
 
 ## Run it yourself
 
